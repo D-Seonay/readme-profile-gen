@@ -8,7 +8,6 @@ export type ServiceStatus = 'checking' | 'online' | 'offline';
 export type BadgeStyle = 'for-the-badge' | 'flat' | 'flat-square' | 'plastic' | 'social';
 
 interface ReadmeState {
-  // --- Données ---
   name: string;
   title: string;
   description: string;
@@ -20,19 +19,19 @@ interface ReadmeState {
   showTrophies: boolean;
   theme: string;
   skillsViewMode: 'grouped' | 'flat';
+  
+  // --- Style & Layout ---
+  alignment: 'left' | 'center';
+  badgeStyle: BadgeStyle;
+  statsAlign: 'column' | 'row'; // Nouvelle option
+  sectionTitles: Record<SectionId, string>;
+  
   socials: {
     linkedin: string;
     twitter: string;
     portfolio: string;
     email: string;
   };
-  
-  // --- Style & Layout ---
-  alignment: 'left' | 'center';
-  badgeStyle: BadgeStyle;
-  sectionTitles: Record<SectionId, string>;
-  
-  // --- UI States ---
   isLoadingGithubData: boolean;
   githubFetchError: string | null;
   servicesStatus: {
@@ -42,7 +41,6 @@ interface ReadmeState {
   };
   layout: SectionId[];
   
-  // --- Actions ---
   setName: (name: string) => void;
   setTitle: (title: string) => void;
   setDescription: (description: string) => void;
@@ -56,6 +54,7 @@ interface ReadmeState {
   setSkillsViewMode: (mode: 'grouped' | 'flat') => void;
   setAlignment: (alignment: 'left' | 'center') => void;
   setBadgeStyle: (style: BadgeStyle) => void;
+  setStatsAlign: (align: 'column' | 'row') => void;
   setSectionTitle: (id: SectionId, title: string) => void;
   setSocial: (platform: keyof ReadmeState['socials'], value: string) => void;
   reorderLayout: (activeId: SectionId, overId: SectionId) => void;
@@ -78,6 +77,7 @@ const initialState = {
   skillsViewMode: 'grouped' as const,
   alignment: 'left' as const,
   badgeStyle: 'for-the-badge' as BadgeStyle,
+  statsAlign: 'column' as const,
   sectionTitles: {
     bio: '',
     skills: '🛠️ Tech Stack',
@@ -122,6 +122,7 @@ export const useReadmeStore = create<ReadmeState>()(
       setSkillsViewMode: (skillsViewMode: 'grouped' | 'flat') => set({ skillsViewMode }),
       setAlignment: (alignment: 'left' | 'center') => set({ alignment }),
       setBadgeStyle: (badgeStyle: BadgeStyle) => set({ badgeStyle }),
+      setStatsAlign: (statsAlign: 'column' | 'row') => set({ statsAlign }),
       setSectionTitle: (id: SectionId, title: string) => set((state) => ({
         sectionTitles: { ...state.sectionTitles, [id]: title }
       })),

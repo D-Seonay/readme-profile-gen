@@ -14,6 +14,7 @@ interface StoreData {
   theme: string;
   alignment: 'left' | 'center';
   badgeStyle: BadgeStyle;
+  statsAlign: 'column' | 'row';
   sectionTitles: Record<SectionId, string>;
   socials: {
     linkedin: string;
@@ -28,10 +29,11 @@ export const generateMarkdown = (data: StoreData): string => {
   const { 
     name, title, description, skills, githubUsername, 
     showStatsCard, showStreakCard, showTopLanguages, showTrophies, 
-    theme, alignment, badgeStyle, sectionTitles, socials, layout 
+    theme, alignment, badgeStyle, statsAlign, sectionTitles, socials, layout 
   } = data;
 
   const isCentered = alignment === 'center';
+  const isRow = statsAlign === 'row';
 
   // --- Préparateurs de Sections ---
 
@@ -90,15 +92,20 @@ export const generateMarkdown = (data: StoreData): string => {
     if (showTrophies) {
       content += `![GitHub Trophies](https://github-profile-trophy.vercel.app/?username=${githubUsername}&theme=${theme === 'transparent' ? 'flat' : theme}&no-frame=true&margin-w=15)\n\n`;
     }
+
+    // Si row mode, on ne met pas de retours à la ligne entre les images
+    const separator = isRow ? ' ' : '\n';
+
     if (showStatsCard) {
-      content += `![GitHub Stats](https://github-readme-stats.vercel.app/api?username=${githubUsername}&theme=${theme}&hide_border=true&show_icons=true)\n`;
+      content += `![GitHub Stats](https://github-readme-stats.vercel.app/api?username=${githubUsername}&theme=${theme}&hide_border=true&show_icons=true)${separator}`;
     }
     if (showTopLanguages) {
-      content += `![Top Langs](https://github-readme-stats.vercel.app/api/top-langs/?username=${githubUsername}&theme=${theme}&hide_border=true&layout=compact)\n`;
+      content += `![Top Langs](https://github-readme-stats.vercel.app/api/top-langs/?username=${githubUsername}&theme=${theme}&hide_border=true&layout=compact)${separator}`;
     }
     if (showStreakCard) {
-      content += `![GitHub Streak](https://streak-stats.demolab.com/?user=${githubUsername}&theme=${theme}&hide_border=true)\n`;
+      content += `![GitHub Streak](https://streak-stats.demolab.com/?user=${githubUsername}&theme=${theme}&hide_border=true)${separator}`;
     }
+    
     content += '\n</div>';
     
     return `${titleMd}${content}`;

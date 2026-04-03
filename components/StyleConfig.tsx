@@ -14,6 +14,7 @@ export const StyleConfig = () => {
   const { 
     alignment, setAlignment, 
     badgeStyle, setBadgeStyle,
+    statsAlign, setStatsAlign,
     sectionTitles, setSectionTitle 
   } = useReadmeStore();
 
@@ -29,7 +30,7 @@ export const StyleConfig = () => {
       </header>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-        {/* Alignement */}
+        {/* Alignement Global */}
         <div className="space-y-3">
           <label className="text-[9px] font-mono uppercase text-zinc-500 tracking-wider">Global Alignment</label>
           <div className="flex bg-zinc-900 p-1 rounded-xl border border-zinc-800">
@@ -52,7 +53,30 @@ export const StyleConfig = () => {
           </div>
         </div>
 
-        {/* Badge Style */}
+        {/* Orientation des Stats (En ligne / Colonne) */}
+        <div className="space-y-3">
+          <label className="text-[9px] font-mono uppercase text-zinc-500 tracking-wider">Images Orientation</label>
+          <div className="flex bg-zinc-900 p-1 rounded-xl border border-zinc-800">
+            <button
+              onClick={() => setStatsAlign('column')}
+              className={`flex-1 px-3 py-2 text-[10px] font-mono uppercase rounded-lg transition-all ${
+                statsAlign === 'column' ? 'bg-zinc-100 text-zinc-950 shadow-sm' : 'text-zinc-500 hover:text-zinc-300'
+              }`}
+            >
+              Vertical
+            </button>
+            <button
+              onClick={() => setStatsAlign('row')}
+              className={`flex-1 px-3 py-2 text-[10px] font-mono uppercase rounded-lg transition-all ${
+                statsAlign === 'row' ? 'bg-zinc-100 text-zinc-950 shadow-sm' : 'text-zinc-500 hover:text-zinc-300'
+              }`}
+            >
+              Horizontal
+            </button>
+          </div>
+        </div>
+
+        {/* Style des Badges */}
         <div className="space-y-3">
           <label className="text-[9px] font-mono uppercase text-zinc-500 tracking-wider">Badge Style</label>
           <select
