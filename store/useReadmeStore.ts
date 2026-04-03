@@ -5,8 +5,10 @@ import { skillsData } from '@/lib/skillsData';
 
 export type SectionId = 'bio' | 'skills' | 'socials' | 'stats';
 export type ServiceStatus = 'checking' | 'online' | 'offline';
+export type BadgeStyle = 'for-the-badge' | 'flat' | 'flat-square' | 'plastic' | 'social';
 
 interface ReadmeState {
+  // --- Données ---
   name: string;
   title: string;
   description: string;
@@ -24,6 +26,13 @@ interface ReadmeState {
     portfolio: string;
     email: string;
   };
+  
+  // --- Style & Layout ---
+  alignment: 'left' | 'center';
+  badgeStyle: BadgeStyle;
+  sectionTitles: Record<SectionId, string>;
+  
+  // --- UI States ---
   isLoadingGithubData: boolean;
   githubFetchError: string | null;
   servicesStatus: {
@@ -33,6 +42,7 @@ interface ReadmeState {
   };
   layout: SectionId[];
   
+  // --- Actions ---
   setName: (name: string) => void;
   setTitle: (title: string) => void;
   setDescription: (description: string) => void;
@@ -44,6 +54,9 @@ interface ReadmeState {
   toggleTrophies: () => void;
   setTheme: (theme: string) => void;
   setSkillsViewMode: (mode: 'grouped' | 'flat') => void;
+  setAlignment: (alignment: 'left' | 'center') => void;
+  setBadgeStyle: (style: BadgeStyle) => void;
+  setSectionTitle: (id: SectionId, title: string) => void;
   setSocial: (platform: keyof ReadmeState['socials'], value: string) => void;
   reorderLayout: (activeId: SectionId, overId: SectionId) => void;
   checkServicesHealth: () => Promise<void>;
@@ -63,6 +76,14 @@ const initialState = {
   showTrophies: false,
   theme: 'transparent',
   skillsViewMode: 'grouped' as const,
+  alignment: 'left' as const,
+  badgeStyle: 'for-the-badge' as BadgeStyle,
+  sectionTitles: {
+    bio: '',
+    skills: '🛠️ Tech Stack',
+    socials: '📫 Me contacter',
+    stats: '📊 GitHub Stats'
+  },
   socials: {
     linkedin: '',
     twitter: '',
@@ -99,6 +120,11 @@ export const useReadmeStore = create<ReadmeState>()(
       toggleTrophies: () => set((state) => ({ showTrophies: !state.showTrophies })),
       setTheme: (theme: string) => set({ theme }),
       setSkillsViewMode: (skillsViewMode: 'grouped' | 'flat') => set({ skillsViewMode }),
+      setAlignment: (alignment: 'left' | 'center') => set({ alignment }),
+      setBadgeStyle: (badgeStyle: BadgeStyle) => set({ badgeStyle }),
+      setSectionTitle: (id: SectionId, title: string) => set((state) => ({
+        sectionTitles: { ...state.sectionTitles, [id]: title }
+      })),
       setSocial: (platform, value) => set((state) => ({
         socials: { ...state.socials, [platform]: value }
       })),
@@ -153,7 +179,6 @@ export const useReadmeStore = create<ReadmeState>()(
             
             detectedSkills = skillsData
               .filter(skill => {
-                // Échapper les caractères spéciaux du nom pour la regex
                 const escapedName = skill.name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
                 const regex = new RegExp(`(logo=|logo:)${skill.slug}|\\b${escapedName}\\b`, 'gi');
                 return regex.test(readmeContent);
@@ -179,7 +204,7 @@ export const useReadmeStore = create<ReadmeState>()(
             socials: {
               ...s.socials,
               twitter: !s.socials.twitter ? userData.twitter_username || '' : s.socials.twitter,
-              portfolio: !s.socials.portfolio ? userData.blog || '' : s.socials.portfolio,
+              portfolio: !s.socials.portfolio ? data.blog || '' : s.socials.portfolio,
               linkedin: !s.socials.linkedin ? (linkedinAccount?.url || '') : s.socials.linkedin,
               email: !s.socials.email ? (detectedEmail || userData.email || '') : s.socials.email,
             }

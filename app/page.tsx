@@ -7,6 +7,7 @@ import { SkillSelector } from '@/components/SkillSelector';
 import { GithubStatsConfig } from '@/components/GithubStatsConfig';
 import { SocialLinksForm } from '@/components/SocialLinksForm';
 import { LayoutManager } from '@/components/LayoutManager';
+import { StyleConfig } from '@/components/StyleConfig';
 import { PreviewPane } from '@/components/PreviewPane';
 import { GithubProfileFetcher } from '@/components/GithubProfileFetcher';
 
@@ -27,7 +28,7 @@ export default function Home() {
     <main className="flex h-screen w-full overflow-hidden bg-zinc-950 text-zinc-100 font-sans">
       
       {/* --- CÔTÉ GAUCHE : FORMULAIRE (ÉDITEUR) --- */}
-      <section className="w-1/2 h-full flex flex-col p-8 border-r border-zinc-800 bg-zinc-900/50 backdrop-blur-sm overflow-y-auto custom-scrollbar">
+      <section className="w-1/2 h-full flex flex-col p-8 border-r border-zinc-800 bg-zinc-900/50 backdrop-blur-sm overflow-y-auto custom-scrollbar text-zinc-100">
         <header className="mb-10 flex items-start justify-between">
           <div>
             <h1 className="text-3xl font-black italic uppercase tracking-tighter text-zinc-100">
@@ -53,13 +54,16 @@ export default function Home() {
           {/* 0. GITHUB AUTOFILL (Magie) */}
           <GithubProfileFetcher />
 
-          {/* 1. LAYOUT MANAGER */}
+          {/* 1. DESIGN & STYLE (Nouveau) */}
+          <StyleConfig />
+
+          {/* 2. LAYOUT MANAGER */}
           <LayoutManager />
 
-          {/* 2. CONFIGURATION STATS GITHUB */}
+          {/* 3. CONFIGURATION STATS GITHUB */}
           <GithubStatsConfig />
 
-          {/* 3. CHAMPS DE BASE */}
+          {/* 4. CHAMPS DE BASE */}
           <div className="space-y-6 pt-6 border-t border-zinc-800">
              <header className="flex flex-col gap-1">
               <label className="text-[10px] font-mono uppercase tracking-[0.2em] text-zinc-500">
@@ -95,18 +99,18 @@ export default function Home() {
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 rows={4}
-                className="bg-zinc-950 border border-zinc-800 p-3 rounded font-mono text-zinc-100 focus:outline-none focus:border-zinc-500 transition-colors resize-none"
+                className="bg-zinc-950 border border-zinc-800 p-3 rounded font-mono text-zinc-100 focus:outline-none focus:border-zinc-500 transition-all resize-none"
                 placeholder="Parlez de vous..."
               />
             </div>
           </div>
 
-          {/* 4. SÉLECTEUR DE COMPÉTENCES */}
+          {/* 5. SÉLECTEUR DE COMPÉTENCES */}
           <div className="pt-6 border-t border-zinc-800">
             <SkillSelector />
           </div>
 
-          {/* 5. LIENS SOCIAUX & CONTACT */}
+          {/* 6. LIENS SOCIAUX & CONTACT */}
           <SocialLinksForm />
 
           {/* ESPACE POUR FUTURS MODULES */}
