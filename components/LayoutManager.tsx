@@ -69,13 +69,16 @@ export const LayoutManager = () => {
   );
 
   const labels: Record<SectionId, string> = {
+    banner: t.layout.banner,
     bio: t.layout.bio,
     skills: t.layout.skills,
     socials: t.layout.socials,
     stats: t.layout.stats,
     donations: t.layout.donations,
     projects: t.layout.projects,
-    wakatime: t.layout.wakatime
+    wakatime: t.layout.wakatime,
+    spotify: t.layout.spotify,
+    rss: t.layout.rss
   };
 
   const handleDragEnd = (event: DragEndEvent) => {

@@ -21,6 +21,8 @@ export const StyleConfig = () => {
     { id: 'stats', label: t.layout.stats },
     { id: 'socials', label: t.layout.socials },
     { id: 'donations', label: t.layout.donations },
+    { id: 'spotify', label: t.layout.spotify },
+    { id: 'rss', label: t.layout.rss },
   ];
 
   return (
