@@ -20,7 +20,7 @@ import { CSS } from '@dnd-kit/utilities';
 import { useReadmeStore, SectionId } from '@/store/useReadmeStore';
 import { useTranslation } from '@/hooks/useTranslation';
 
-const SortableItem = ({ id, label }: { id: string, label: string }) => {
+const SortableItem = ({ id, label, isDark }: { id: string, label: string, isDark: boolean }) => {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id });
 
   const style = {
@@ -34,21 +34,24 @@ const SortableItem = ({ id, label }: { id: string, label: string }) => {
       ref={setNodeRef}
       style={style}
       className={`
-        flex items-center gap-4 p-3 bg-zinc-900 border border-zinc-800 rounded-lg mb-2 transition-colors
-        ${isDragging ? 'opacity-50 border-zinc-500 bg-zinc-800' : 'hover:border-zinc-700'}
+        flex items-center gap-4 p-3 border rounded-lg mb-2 transition-all
+        ${isDragging 
+          ? (isDark ? 'opacity-50 border-indigo-500 bg-zinc-800' : 'opacity-50 border-indigo-500 bg-zinc-100') 
+          : (isDark ? 'bg-zinc-900 border-zinc-800 hover:border-zinc-700' : 'bg-white border-zinc-200 hover:border-zinc-300 shadow-sm')
+        }
       `}
     >
       <div 
         {...attributes} 
         {...listeners} 
-        className="cursor-grab active:cursor-grabbing p-1 text-zinc-600 hover:text-zinc-400 transition-colors"
+        className={`cursor-grab active:cursor-grabbing p-1 transition-colors ${isDark ? 'text-zinc-600 hover:text-zinc-400' : 'text-zinc-300 hover:text-zinc-500'}`}
       >
         <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
           <path d="M4 8h16M4 16h16" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
       </div>
       
-      <span className="text-xs font-mono uppercase tracking-wider text-zinc-300">
+      <span className={`text-xs font-mono uppercase tracking-wider ${isDark ? 'text-zinc-300' : 'text-zinc-700'}`}>
         {label}
       </span>
     </div>
@@ -56,8 +59,9 @@ const SortableItem = ({ id, label }: { id: string, label: string }) => {
 };
 
 export const LayoutManager = () => {
-  const { layout, reorderLayout } = useReadmeStore();
+  const { layout, reorderLayout, uiTheme } = useReadmeStore();
   const { t } = useTranslation();
+  const isDark = uiTheme === 'dark';
   
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -81,16 +85,7 @@ export const LayoutManager = () => {
   };
 
   return (
-    <div className="space-y-4 pt-6 border-t border-zinc-800 text-zinc-100">
-      <header className="flex flex-col gap-1">
-        <label className="text-[10px] font-mono uppercase tracking-[0.2em] text-zinc-500">
-          {t.layout.label}
-        </label>
-        <p className="text-[9px] font-mono text-zinc-600 italic">
-          {t.layout.help}
-        </p>
-      </header>
-
+    <div className={isDark ? 'text-zinc-100' : 'text-zinc-900'}>
       <DndContext 
         sensors={sensors} 
         collisionDetection={closestCenter} 
@@ -99,7 +94,7 @@ export const LayoutManager = () => {
         <SortableContext items={layout} strategy={verticalListSortingStrategy}>
           <div className="flex flex-col">
             {layout.map((id) => (
-              <SortableItem key={id} id={id} label={labels[id]} />
+              <SortableItem key={id} id={id} label={labels[id]} isDark={isDark} />
             ))}
           </div>
         </SortableContext>
