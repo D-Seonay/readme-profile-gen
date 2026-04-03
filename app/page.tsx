@@ -20,6 +20,7 @@ import { GithubProfileFetcher } from '@/components/GithubProfileFetcher';
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 import { ThemeSwitcher } from '@/components/ThemeSwitcher';
 import { CollapsibleSection } from '@/components/CollapsibleSection';
+import { toast } from 'sonner';
 
 export default function Home() {
   const store = useReadmeStore();
@@ -167,6 +168,7 @@ export default function Home() {
               onClick={() => {
                 if(confirm(t.resetConfirm)) {
                   reset();
+                  toast.success('All data has been reset');
                 }
               }}
               className={`text-[9px] font-mono border ${isDark ? 'border-zinc-800 text-zinc-600 hover:text-zinc-100 hover:border-zinc-500' : 'border-zinc-200 text-zinc-400 hover:text-zinc-900 hover:border-zinc-400'} px-3 py-1.5 rounded transition-all uppercase tracking-widest`}
