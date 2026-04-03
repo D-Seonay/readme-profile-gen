@@ -24,7 +24,9 @@ interface ReadmeState {
     email: string;
   };
   
-  // --- Service Status ---
+  // --- UI States ---
+  isLoadingGithubData: boolean;
+  githubFetchError: string | null;
   servicesStatus: {
     stats: ServiceStatus;
     streak: ServiceStatus;
@@ -49,6 +51,9 @@ interface ReadmeState {
   reorderLayout: (activeId: SectionId, overId: SectionId) => void;
   checkServicesHealth: () => Promise<void>;
   
+  // Autofill Action
+  fetchGithubUserData: (username: string) => Promise<void>;
+  
   reset: () => void;
 }
 
@@ -69,6 +74,8 @@ const initialState = {
     portfolio: '',
     email: '',
   },
+  isLoadingGithubData: false,
+  githubFetchError: null,
   servicesStatus: {
     stats: 'checking' as ServiceStatus,
     streak: 'checking' as ServiceStatus,
@@ -79,7 +86,7 @@ const initialState = {
 
 export const useReadmeStore = create<ReadmeState>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       ...initialState,
 
       setName: (name: string) => set({ name }),
@@ -116,12 +123,44 @@ export const useReadmeStore = create<ReadmeState>()(
             return 'offline';
           }
         };
-
         const [stats, streak, trophies] = await Promise.all([
           check('stats'), check('streak'), check('trophies')
         ]);
-
         set({ servicesStatus: { stats, streak, trophies } });
+      },
+
+      fetchGithubUserData: async (username: string) => {
+        if (!username) return;
+        set({ isLoadingGithubData: true, githubFetchError: null });
+        
+        try {
+          const res = await fetch(`https://api.github.com/users/${username}`);
+          
+          if (!res.ok) {
+            if (res.status === 404) throw new Error('Utilisateur non trouvé');
+            throw new Error('Erreur lors de la récupération');
+          }
+          
+          const data = await res.json();
+          const state = get();
+
+          // Mise à jour intelligente : Ne remplace que si c'est vide ou valeur par défaut
+          set((s) => ({
+            name: !s.name || s.name === initialState.name ? data.name || s.name : s.name,
+            description: !s.description || s.description === initialState.description ? data.bio || s.description : s.description,
+            githubUsername: username,
+            socials: {
+              ...s.socials,
+              twitter: !s.socials.twitter ? data.twitter_username || '' : s.socials.twitter,
+              portfolio: !s.socials.portfolio ? data.blog || '' : s.socials.portfolio,
+            }
+          }));
+
+        } catch (error: any) {
+          set({ githubFetchError: error.message });
+        } finally {
+          set({ isLoadingGithubData: false });
+        }
       },
 
       reset: () => set(initialState),
@@ -129,9 +168,8 @@ export const useReadmeStore = create<ReadmeState>()(
     {
       name: 'readme-generator-storage',
       storage: createJSONStorage(() => localStorage),
-      // On ne persiste pas l'état du Health Check pour le relancer à chaque session
       partialize: (state) => {
-        const { servicesStatus, ...rest } = state;
+        const { servicesStatus, isLoadingGithubData, githubFetchError, ...rest } = state;
         return rest;
       },
     }
