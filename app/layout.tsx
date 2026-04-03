@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import { BMCWidget } from "@/components/BMCWidget";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -23,7 +24,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Ultimate GitHub Profile README Generator",
     description: "The most powerful tool to design your GitHub profile. Auto-fill from your profile, reorder sections with drag & drop, and choose between beautiful themes.",
-    url: "https://readme-profile-gen.vercel.app", // À mettre à jour si différent
+    url: "https://readme-profile-gen.vercel.app",
     siteName: "README Gen",
     locale: "en_US",
     type: "website",
@@ -32,7 +33,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Ultimate GitHub Profile README Generator",
     description: "Design an exceptional GitHub profile in seconds with our smart generator.",
-    creator: "@DSeonay", // À mettre à jour
+    creator: "@DSeonay",
   },
   robots: {
     index: true,
@@ -50,7 +51,10 @@ export default function RootLayout({
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col bg-zinc-950">{children}</body>
+      <body className="min-h-full flex flex-col bg-zinc-950">
+        {children}
+        <BMCWidget />
+      </body>
     </html>
   );
 }
