@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import { useReadmeStore, SectionId } from '@/store/useReadmeStore';
 import { useHydration } from '@/hooks/useHydration';
 import { useTranslation } from '@/hooks/useTranslation';
@@ -20,16 +20,20 @@ import { GithubProfileFetcher } from '@/components/GithubProfileFetcher';
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 import { ThemeSwitcher } from '@/components/ThemeSwitcher';
 import { CollapsibleSection } from '@/components/CollapsibleSection';
+import { ConfirmModal } from '@/components/ConfirmModal';
 import { toast } from 'sonner';
 
 export default function Home() {
   const store = useReadmeStore();
   const hydrated = useHydration();
-  const { t } = useTranslation();
+  const { t, language } = useTranslation();
   const { 
     name, title, description, setName, setTitle, setDescription, reset, 
     layout, sectionTitles, uiTheme 
   } = store;
+
+  // État local pour le modal de reset
+  const [isResetModalOpen, setIsResetModalOpen] = useState(false);
 
   if (!hydrated) {
     return (
@@ -40,6 +44,11 @@ export default function Home() {
   }
 
   const isDark = uiTheme === 'dark';
+
+  const handleConfirmReset = () => {
+    reset();
+    toast.success(language === 'fr' ? 'Toutes les données ont été réinitialisées' : 'All data has been reset');
+  };
 
   const renderSection = (id: SectionId) => {
     switch (id) {
@@ -141,6 +150,19 @@ export default function Home() {
 
   return (
     <main className={`flex h-screen w-full overflow-hidden font-sans transition-colors duration-500 ${isDark ? 'bg-zinc-950 text-zinc-100' : 'bg-zinc-50 text-zinc-900'}`}>
+      
+      {/* Modal de Confirmation */}
+      <ConfirmModal
+        isOpen={isResetModalOpen}
+        onClose={() => setIsResetModalOpen(false)}
+        onConfirm={handleConfirmReset}
+        title={t.resetBtn}
+        description={t.resetConfirm}
+        confirmText={t.resetBtn}
+        cancelText={language === 'fr' ? "Annuler" : "Cancel"}
+      />
+
+      {/* --- CÔTÉ GAUCHE : FORMULAIRE --- */}
       <section className={`w-1/2 h-full flex flex-col border-r ${isDark ? 'border-zinc-800 bg-zinc-900/50' : 'border-zinc-200 bg-white/80'} backdrop-blur-sm overflow-y-auto custom-scrollbar`}>
         <header className="p-8 pb-4 flex items-start justify-between">
           <div>
@@ -165,12 +187,7 @@ export default function Home() {
             <ThemeSwitcher />
             <LanguageSwitcher />
             <button 
-              onClick={() => {
-                if(confirm(t.resetConfirm)) {
-                  reset();
-                  toast.success('All data has been reset');
-                }
-              }}
+              onClick={() => setIsResetModalOpen(true)}
               className={`text-[9px] font-mono border ${isDark ? 'border-zinc-800 text-zinc-600 hover:text-zinc-100 hover:border-zinc-500' : 'border-zinc-200 text-zinc-400 hover:text-zinc-900 hover:border-zinc-400'} px-3 py-1.5 rounded transition-all uppercase tracking-widest`}
             >
               {t.resetBtn}
