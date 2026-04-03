@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import rehypeRaw from 'rehype-raw';
 import { useReadmeStore } from '@/store/useReadmeStore';
 import { generateMarkdown } from '@/utils/generateMarkdown';
 
@@ -123,7 +124,10 @@ export const PreviewPane = () => {
               prose-img:inline prose-img:m-0 prose-img:mr-1
               animate-in fade-in slide-in-from-bottom-2 duration-500"
             >
-              <ReactMarkdown remarkPlugins={[remarkGfm]}>
+              <ReactMarkdown 
+                remarkPlugins={[remarkGfm]} 
+                rehypePlugins={[rehypeRaw]}
+              >
                 {markdown}
               </ReactMarkdown>
             </article>
