@@ -10,6 +10,7 @@ interface StoreData {
   showStatsCard: boolean;
   showStreakCard: boolean;
   showTopLanguages: boolean;
+  theme: string;
   socials: {
     linkedin: string;
     twitter: string;
@@ -20,7 +21,7 @@ interface StoreData {
 }
 
 export const generateMarkdown = (data: StoreData): string => {
-  const { name, title, description, skills, githubUsername, showStatsCard, showStreakCard, showTopLanguages, socials, layout } = data;
+  const { name, title, description, skills, githubUsername, showStatsCard, showStreakCard, showTopLanguages, theme, socials, layout } = data;
 
   // --- Préparateurs de Sections ---
 
@@ -74,9 +75,18 @@ ${description}
 
     let section = '\n### 📊 GitHub Stats\n\n';
     section += '<div align="center">\n\n';
-    if (showStatsCard) section += `![GitHub Stats](https://github-readme-stats.vercel.app/api?username=${githubUsername}&theme=transparent&hide_border=true&show_icons=true)\n`;
-    if (showTopLanguages) section += `![Top Langs](https://github-readme-stats.vercel.app/api/top-langs/?username=${githubUsername}&theme=transparent&hide_border=true&layout=compact)\n`;
-    if (showStreakCard) section += `![GitHub Streak](https://streak-stats.demolab.com/?user=${githubUsername}&theme=transparent&hide_border=true)\n`;
+    
+    // Ajout du paramètre de thème à toutes les cartes
+    if (showStatsCard) {
+      section += `![GitHub Stats](https://github-readme-stats.vercel.app/api?username=${githubUsername}&theme=${theme}&hide_border=true&show_icons=true)\n`;
+    }
+    if (showTopLanguages) {
+      section += `![Top Langs](https://github-readme-stats.vercel.app/api/top-langs/?username=${githubUsername}&theme=${theme}&hide_border=true&layout=compact)\n`;
+    }
+    if (showStreakCard) {
+      section += `![GitHub Streak](https://streak-stats.demolab.com/?user=${githubUsername}&theme=${theme}&hide_border=true)\n`;
+    }
+    
     section += '\n</div>';
     
     return section;

@@ -3,12 +3,26 @@
 import React from 'react';
 import { useReadmeStore } from '@/store/useReadmeStore';
 
+const THEMES = [
+  { name: 'Default', value: 'default' },
+  { name: 'Transparent', value: 'transparent' },
+  { name: 'Radical', value: 'radical' },
+  { name: 'Merko', value: 'merko' },
+  { name: 'Gruvbox', value: 'gruvbox' },
+  { name: 'Tokyonight', value: 'tokyonight' },
+  { name: 'Onedark', value: 'onedark' },
+  { name: 'Cobalt', value: 'cobalt' },
+  { name: 'Synthwave', value: 'synthwave' },
+  { name: 'Dracula', value: 'dracula' },
+];
+
 export const GithubStatsConfig = () => {
   const { 
     githubUsername, setGithubUsername, 
     showStatsCard, toggleStatsCard, 
     showStreakCard, toggleStreakCard,
-    showTopLanguages, toggleTopLanguages
+    showTopLanguages, toggleTopLanguages,
+    theme, setTheme
   } = useReadmeStore();
 
   return (
@@ -18,19 +32,45 @@ export const GithubStatsConfig = () => {
           GitHub Integration
         </label>
         <p className="text-[9px] font-mono text-zinc-600 italic">
-          // Entrez votre pseudo pour charger vos stats réelles
+          // Entrez votre pseudo et choisissez un style
         </p>
       </header>
       
-      {/* Input Pseudo */}
-      <div className="flex flex-col gap-2">
-        <input
-          type="text"
-          value={githubUsername}
-          onChange={(e) => setGithubUsername(e.target.value)}
-          className="bg-zinc-950 border border-zinc-800 p-3 rounded font-mono text-zinc-100 text-sm focus:outline-none focus:border-zinc-500 transition-colors"
-          placeholder="GitHub Username"
-        />
+      <div className="space-y-4">
+        {/* Input Pseudo */}
+        <div className="flex flex-col gap-2">
+          <input
+            type="text"
+            value={githubUsername}
+            onChange={(e) => setGithubUsername(e.target.value)}
+            className="bg-zinc-950 border border-zinc-800 p-3 rounded font-mono text-zinc-100 text-sm focus:outline-none focus:border-zinc-500 transition-colors"
+            placeholder="GitHub Username"
+          />
+        </div>
+
+        {/* Thèmes Selector */}
+        <div className="space-y-3">
+          <label className="text-[9px] font-mono uppercase text-zinc-500 tracking-wider">
+            Card Theme
+          </label>
+          <div className="grid grid-cols-2 sm:grid-cols-5 gap-1.5">
+            {THEMES.map((t) => (
+              <button
+                key={t.value}
+                onClick={() => setTheme(t.value)}
+                className={`
+                  px-2 py-1.5 text-[9px] font-mono border rounded transition-all truncate
+                  ${theme === t.value 
+                    ? 'bg-zinc-100 text-zinc-950 border-zinc-100 shadow-sm' 
+                    : 'bg-zinc-950 text-zinc-500 border-zinc-900 hover:border-zinc-700 hover:text-zinc-300'
+                  }
+                `}
+              >
+                {t.name}
+              </button>
+            ))}
+          </div>
+        </div>
       </div>
 
       {/* Toggles Stat Cards */}
