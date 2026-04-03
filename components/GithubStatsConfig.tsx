@@ -22,6 +22,7 @@ export const GithubStatsConfig = () => {
     showStatsCard, toggleStatsCard, 
     showStreakCard, toggleStreakCard,
     showTopLanguages, toggleTopLanguages,
+    showTrophies, toggleTrophies,
     theme, setTheme
   } = useReadmeStore();
 
@@ -75,6 +76,19 @@ export const GithubStatsConfig = () => {
 
       {/* Toggles Stat Cards */}
       <div className="flex flex-col gap-3">
+        {/* Toggle Trophies */}
+        <button
+          onClick={toggleTrophies}
+          className="flex items-center justify-between group"
+        >
+          <span className="text-xs font-mono text-zinc-400 group-hover:text-zinc-200 transition-colors">
+            GitHub Trophies
+          </span>
+          <div className={`w-8 h-4 rounded-full p-1 transition-colors duration-200 ${showTrophies ? 'bg-zinc-100' : 'bg-zinc-800'}`}>
+            <div className={`w-2 h-2 rounded-full transition-transform duration-200 ${showTrophies ? 'translate-x-4 bg-zinc-950' : 'bg-zinc-500'}`} />
+          </div>
+        </button>
+
         {/* Toggle Stats Card */}
         <button
           onClick={toggleStatsCard}

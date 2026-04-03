@@ -10,6 +10,7 @@ interface StoreData {
   showStatsCard: boolean;
   showStreakCard: boolean;
   showTopLanguages: boolean;
+  showTrophies: boolean;
   theme: string;
   socials: {
     linkedin: string;
@@ -21,7 +22,7 @@ interface StoreData {
 }
 
 export const generateMarkdown = (data: StoreData): string => {
-  const { name, title, description, skills, githubUsername, showStatsCard, showStreakCard, showTopLanguages, theme, socials, layout } = data;
+  const { name, title, description, skills, githubUsername, showStatsCard, showStreakCard, showTopLanguages, showTrophies, theme, socials, layout } = data;
 
   // --- Préparateurs de Sections ---
 
@@ -70,13 +71,16 @@ ${description}
   };
 
   const getStatsSection = () => {
-    const hasActiveStats = githubUsername && (showStatsCard || showStreakCard || showTopLanguages);
+    const hasActiveStats = githubUsername && (showStatsCard || showStreakCard || showTopLanguages || showTrophies);
     if (!hasActiveStats) return '';
 
     let section = '\n### 📊 GitHub Stats\n\n';
     section += '<div align="center">\n\n';
     
-    // Ajout du paramètre de thème à toutes les cartes
+    if (showTrophies) {
+      section += `![GitHub Trophies](https://github-profile-trophy.vercel.app/?username=${githubUsername}&theme=${theme === 'transparent' ? 'flat' : theme}&no-frame=true&margin-w=15)\n\n`;
+    }
+
     if (showStatsCard) {
       section += `![GitHub Stats](https://github-readme-stats.vercel.app/api?username=${githubUsername}&theme=${theme}&hide_border=true&show_icons=true)\n`;
     }
