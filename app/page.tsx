@@ -5,6 +5,7 @@ import { useReadmeStore } from '@/store/useReadmeStore';
 import { SkillSelector } from '@/components/SkillSelector';
 import { GithubStatsConfig } from '@/components/GithubStatsConfig';
 import { SocialLinksForm } from '@/components/SocialLinksForm';
+import { LayoutManager } from '@/components/LayoutManager';
 import { PreviewPane } from '@/components/PreviewPane';
 
 export default function Home() {
@@ -25,6 +26,9 @@ export default function Home() {
 
         <div className="space-y-10">
           
+          {/* 0. LAYOUT MANAGER (Nouveau) */}
+          <LayoutManager />
+
           {/* 1. CONFIGURATION STATS GITHUB */}
           <GithubStatsConfig />
 
