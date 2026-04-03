@@ -87,26 +87,23 @@ export const generateMarkdown = (data: StoreData): string => {
     if (!hasActiveStats) return '';
 
     const titleMd = sectionTitles.stats ? `### ${sectionTitles.stats}\n\n` : '';
-    let content = '<div align="center">\n\n';
+    
+    // Début du bloc d'alignement
+    let content = isCentered ? '<div align="center">\n\n' : '<div>\n\n';
     
     if (showTrophies) {
       content += `![GitHub Trophies](https://github-profile-trophy.vercel.app/?username=${githubUsername}&theme=${theme === 'transparent' ? 'flat' : theme}&no-frame=true&margin-w=15)\n\n`;
     }
 
-    // Si row mode, on ne met pas de retours à la ligne entre les images
-    const separator = isRow ? ' ' : '\n';
+    // IMPORTANT : En mode row, on met TOUTES les images sur une seule ligne physique sans espaces superflus
+    const statsImages = [];
+    if (showStatsCard) statsImages.push(`![GitHub Stats](https://github-readme-stats.vercel.app/api?username=${githubUsername}&theme=${theme}&hide_border=true&show_icons=true)`);
+    if (showTopLanguages) statsImages.push(`![Top Langs](https://github-readme-stats.vercel.app/api/top-langs/?username=${githubUsername}&theme=${theme}&hide_border=true&layout=compact)`);
+    if (showStreakCard) statsImages.push(`![GitHub Streak](https://streak-stats.demolab.com/?user=${githubUsername}&theme=${theme}&hide_border=true)`);
 
-    if (showStatsCard) {
-      content += `![GitHub Stats](https://github-readme-stats.vercel.app/api?username=${githubUsername}&theme=${theme}&hide_border=true&show_icons=true)${separator}`;
-    }
-    if (showTopLanguages) {
-      content += `![Top Langs](https://github-readme-stats.vercel.app/api/top-langs/?username=${githubUsername}&theme=${theme}&hide_border=true&layout=compact)${separator}`;
-    }
-    if (showStreakCard) {
-      content += `![GitHub Streak](https://streak-stats.demolab.com/?user=${githubUsername}&theme=${theme}&hide_border=true)${separator}`;
-    }
+    content += statsImages.join(isRow ? ' ' : '\n');
     
-    content += '\n</div>';
+    content += '\n\n</div>';
     
     return `${titleMd}${content}`;
   };
