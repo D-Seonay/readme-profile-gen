@@ -6,8 +6,9 @@ import { useTranslation } from '@/hooks/useTranslation';
 
 export const GithubProfileFetcher = () => {
   const [localUsername, setLocalUsername] = useState('');
-  const { fetchGithubUserData, isLoadingGithubData, githubFetchError } = useReadmeStore();
+  const { fetchGithubUserData, isLoadingGithubData, githubFetchError, uiTheme } = useReadmeStore();
   const { t } = useTranslation();
+  const isDark = uiTheme === 'dark';
 
   const handleFetch = async () => {
     if (!localUsername) return;
@@ -15,13 +16,13 @@ export const GithubProfileFetcher = () => {
   };
 
   return (
-    <div className="space-y-4 p-5 bg-zinc-900/80 border border-zinc-100/10 rounded-2xl shadow-xl backdrop-blur-xl animate-in fade-in slide-in-from-top-4 duration-700 text-zinc-100">
+    <div className={`space-y-4 p-5 border rounded-2xl shadow-xl backdrop-blur-xl animate-in fade-in slide-in-from-top-4 duration-700 transition-colors ${isDark ? 'bg-zinc-900/80 border-zinc-100/10 text-zinc-100' : 'bg-white border-zinc-200 text-zinc-900'}`}>
       <header className="flex flex-col gap-1">
-        <label className="text-[10px] font-mono uppercase tracking-[0.2em] text-zinc-400 flex items-center gap-2">
+        <label className={`text-[10px] font-mono uppercase tracking-[0.2em] flex items-center gap-2 ${isDark ? 'text-zinc-400' : 'text-zinc-500'}`}>
           <span className="w-1.5 h-1.5 rounded-full bg-indigo-500 animate-pulse" />
           {t.autofill.label}
         </label>
-        <h3 className="text-sm font-bold text-zinc-100 uppercase tracking-tight italic">
+        <h3 className={`text-sm font-bold uppercase tracking-tight italic ${isDark ? 'text-zinc-100' : 'text-zinc-800'}`}>
           {t.autofill.title}
         </h3>
       </header>
@@ -33,7 +34,7 @@ export const GithubProfileFetcher = () => {
             value={localUsername}
             onChange={(e) => setLocalUsername(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && handleFetch()}
-            className={`w-full bg-zinc-950 border ${githubFetchError ? 'border-red-500/50' : 'border-zinc-800'} p-2.5 rounded-xl font-mono text-zinc-100 text-xs focus:outline-none focus:border-indigo-500 transition-all placeholder:text-zinc-700`}
+            className={`w-full border ${githubFetchError ? 'border-red-500/50' : (isDark ? 'border-zinc-800 bg-zinc-950' : 'border-zinc-200 bg-zinc-50')} p-2.5 rounded-xl font-mono text-xs focus:outline-none focus:border-indigo-500 transition-all ${isDark ? 'text-zinc-100 placeholder:text-zinc-700' : 'text-zinc-900 placeholder:text-zinc-300'}`}
             placeholder={t.autofill.placeholder}
           />
           {githubFetchError && (
@@ -65,7 +66,7 @@ export const GithubProfileFetcher = () => {
         </button>
       </div>
       
-      <p className="text-[9px] font-mono text-zinc-600 italic">
+      <p className={`text-[9px] font-mono italic ${isDark ? 'text-zinc-600' : 'text-zinc-400'}`}>
         {t.autofill.help}
       </p>
     </div>

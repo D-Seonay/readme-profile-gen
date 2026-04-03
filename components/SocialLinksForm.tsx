@@ -5,8 +5,9 @@ import { useReadmeStore } from '@/store/useReadmeStore';
 import { useTranslation } from '@/hooks/useTranslation';
 
 export const SocialLinksForm = () => {
-  const { socials, setSocial } = useReadmeStore();
+  const { socials, setSocial, uiTheme } = useReadmeStore();
   const { t } = useTranslation();
+  const isDark = uiTheme === 'dark';
 
   const socialsConfig = [
     { id: 'linkedin', label: t.socials.linkedin, placeholder: 'Username', icon: (
@@ -29,10 +30,10 @@ export const SocialLinksForm = () => {
         {socialsConfig.map((item) => (
           <div key={item.id} className="flex flex-col gap-2 group">
             <div className="flex items-center gap-2">
-              <span className="text-zinc-500 group-focus-within:text-zinc-300 transition-colors">
+              <span className={`transition-colors ${isDark ? 'text-zinc-500 group-focus-within:text-zinc-300' : 'text-zinc-400 group-focus-within:text-zinc-600'}`}>
                 {item.icon}
               </span>
-              <label className="text-[9px] font-mono uppercase text-zinc-500 tracking-wider">
+              <label className={`text-[9px] font-mono uppercase tracking-wider ${isDark ? 'text-zinc-500' : 'text-zinc-400'}`}>
                 {item.label}
               </label>
             </div>
@@ -40,7 +41,7 @@ export const SocialLinksForm = () => {
               type="text"
               value={socials[item.id as keyof typeof socials]}
               onChange={(e) => setSocial(item.id as any, e.target.value)}
-              className="bg-zinc-950 border border-zinc-800 p-2.5 rounded font-mono text-zinc-100 text-xs focus:outline-none focus:border-zinc-500 transition-all placeholder:text-zinc-700"
+              className={`border p-2.5 rounded font-mono text-xs focus:outline-none focus:border-indigo-500 transition-all ${isDark ? 'bg-zinc-950 border-zinc-800 text-zinc-100 placeholder:text-zinc-700' : 'bg-white border-zinc-200 text-zinc-900 placeholder:text-zinc-300'}`}
               placeholder={item.placeholder}
             />
           </div>
