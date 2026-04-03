@@ -8,9 +8,11 @@ export const StyleConfig = () => {
   const { 
     alignment, setAlignment, 
     statsAlign, setStatsAlign,
-    sectionTitles, setSectionTitle 
+    sectionTitles, setSectionTitle,
+    uiTheme
   } = useReadmeStore();
   const { t } = useTranslation();
+  const isDark = uiTheme === 'dark';
 
   const sections: { id: SectionId; label: string }[] = [
     { id: 'bio', label: t.layout.bio },
@@ -22,15 +24,16 @@ export const StyleConfig = () => {
   ];
 
   return (
-    <div className="space-y-8 text-zinc-100">
+    <div className={`space-y-8 transition-colors ${isDark ? 'text-zinc-100' : 'text-zinc-900'}`}>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+        {/* Alignement Global */}
         <div className="space-y-3">
-          <label className="text-[9px] font-mono uppercase text-zinc-500 tracking-wider">{t.style.alignment}</label>
-          <div className="flex bg-zinc-900 p-1 rounded-xl border border-zinc-800">
+          <label className={`text-[9px] font-mono uppercase tracking-wider ${isDark ? 'text-zinc-500' : 'text-zinc-400'}`}>{t.style.alignment}</label>
+          <div className={`flex p-1 rounded-xl border transition-colors ${isDark ? 'bg-zinc-900 border-zinc-800' : 'bg-zinc-100 border-zinc-200'}`}>
             <button
               onClick={() => setAlignment('left')}
               className={`flex-1 px-3 py-2 text-[10px] font-mono uppercase rounded-lg transition-all ${
-                alignment === 'left' ? 'bg-zinc-100 text-zinc-950 shadow-sm' : 'text-zinc-500 hover:text-zinc-300'
+                alignment === 'left' ? (isDark ? 'bg-zinc-100 text-zinc-950 shadow-sm' : 'bg-white text-zinc-950 shadow-sm') : (isDark ? 'text-zinc-500 hover:text-zinc-300' : 'text-zinc-400 hover:text-zinc-600')
               }`}
             >
               {t.style.left}
@@ -38,7 +41,7 @@ export const StyleConfig = () => {
             <button
               onClick={() => setAlignment('center')}
               className={`flex-1 px-3 py-2 text-[10px] font-mono uppercase rounded-lg transition-all ${
-                alignment === 'center' ? 'bg-zinc-100 text-zinc-950 shadow-sm' : 'text-zinc-500 hover:text-zinc-300'
+                alignment === 'center' ? (isDark ? 'bg-zinc-100 text-zinc-950 shadow-sm' : 'bg-white text-zinc-950 shadow-sm') : (isDark ? 'text-zinc-500 hover:text-zinc-300' : 'text-zinc-400 hover:text-zinc-600')
               }`}
             >
               {t.style.center}
@@ -46,13 +49,14 @@ export const StyleConfig = () => {
           </div>
         </div>
 
+        {/* Orientation des Stats */}
         <div className="space-y-3">
-          <label className="text-[9px] font-mono uppercase text-zinc-500 tracking-wider">{t.style.orientation}</label>
-          <div className="flex bg-zinc-900 p-1 rounded-xl border border-zinc-800">
+          <label className={`text-[9px] font-mono uppercase tracking-wider ${isDark ? 'text-zinc-500' : 'text-zinc-400'}`}>{t.style.orientation}</label>
+          <div className={`flex p-1 rounded-xl border transition-colors ${isDark ? 'bg-zinc-900 border-zinc-800' : 'bg-zinc-100 border-zinc-200'}`}>
             <button
               onClick={() => setStatsAlign('column')}
               className={`flex-1 px-3 py-2 text-[10px] font-mono uppercase rounded-lg transition-all ${
-                statsAlign === 'column' ? 'bg-zinc-100 text-zinc-950 shadow-sm' : 'text-zinc-500 hover:text-zinc-300'
+                statsAlign === 'column' ? (isDark ? 'bg-zinc-100 text-zinc-950 shadow-sm' : 'bg-white text-zinc-950 shadow-sm') : (isDark ? 'text-zinc-500 hover:text-zinc-300' : 'text-zinc-400 hover:text-zinc-600')
               }`}
             >
               {t.style.vertical}
@@ -60,7 +64,7 @@ export const StyleConfig = () => {
             <button
               onClick={() => setStatsAlign('row')}
               className={`flex-1 px-3 py-2 text-[10px] font-mono uppercase rounded-lg transition-all ${
-                statsAlign === 'row' ? 'bg-zinc-100 text-zinc-950 shadow-sm' : 'text-zinc-500 hover:text-zinc-300'
+                statsAlign === 'row' ? (isDark ? 'bg-zinc-100 text-zinc-950 shadow-sm' : 'bg-white text-zinc-950 shadow-sm') : (isDark ? 'text-zinc-500 hover:text-zinc-300' : 'text-zinc-400 hover:text-zinc-600')
               }`}
             >
               {t.style.horizontal}
@@ -70,16 +74,16 @@ export const StyleConfig = () => {
       </div>
 
       <div className="space-y-4">
-        <label className="text-[9px] font-mono uppercase text-zinc-500 tracking-wider">{t.style.sectionTitles}</label>
+        <label className={`text-[9px] font-mono uppercase tracking-wider ${isDark ? 'text-zinc-500' : 'text-zinc-400'}`}>{t.style.sectionTitles}</label>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           {sections.map((section) => (
             <div key={section.id} className="space-y-1.5">
-              <span className="text-[8px] font-mono text-zinc-600 uppercase ml-1 truncate block">{section.label}</span>
+              <span className={`text-[8px] font-mono uppercase ml-1 truncate block ${isDark ? 'text-zinc-600' : 'text-zinc-400'}`}>{section.label}</span>
               <input
                 type="text"
                 value={sectionTitles[section.id]}
                 onChange={(e) => setSectionTitle(section.id, e.target.value)}
-                className="w-full bg-zinc-950 border border-zinc-800 p-2.5 rounded-xl font-mono text-zinc-100 text-[10px] focus:outline-none focus:border-zinc-500 transition-all"
+                className={`w-full border p-2.5 rounded-xl font-mono text-[10px] focus:outline-none focus:border-indigo-500 transition-all ${isDark ? 'bg-zinc-950 border-zinc-800 text-zinc-100 placeholder:text-zinc-700' : 'bg-white border-zinc-200 text-zinc-900 placeholder:text-zinc-300'}`}
                 placeholder={section.label}
               />
             </div>
