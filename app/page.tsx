@@ -7,6 +7,7 @@ import { useTranslation } from '@/hooks/useTranslation';
 import { SkillSelector } from '@/components/SkillSelector';
 import { GithubStatsConfig } from '@/components/GithubStatsConfig';
 import { SocialLinksForm } from '@/components/SocialLinksForm';
+import { DonationsForm } from '@/components/DonationsForm';
 import { LayoutManager } from '@/components/LayoutManager';
 import { StyleConfig } from '@/components/StyleConfig';
 import { PreviewPane } from '@/components/PreviewPane';
@@ -28,7 +29,7 @@ export default function Home() {
   }
 
   return (
-    <main className="flex h-screen w-full overflow-hidden bg-zinc-950 text-zinc-100 font-sans text-zinc-100">
+    <main className="flex h-screen w-full overflow-hidden bg-zinc-950 text-zinc-100 font-sans">
       
       {/* --- CÔTÉ GAUCHE : FORMULAIRE --- */}
       <section className="w-1/2 h-full flex flex-col p-8 border-r border-zinc-800 bg-zinc-900/50 backdrop-blur-sm overflow-y-auto custom-scrollbar">
@@ -62,7 +63,7 @@ export default function Home() {
           <GithubStatsConfig />
 
           {/* BASE INFO */}
-          <div className="space-y-6 pt-6 border-t border-zinc-800">
+          <div className="space-y-6 pt-6 border-t border-zinc-800 text-zinc-100">
              <header className="flex flex-col gap-1">
               <label className="text-[10px] font-mono uppercase tracking-[0.2em] text-zinc-500">
                 {t.baseInfo.label}
@@ -108,6 +109,8 @@ export default function Home() {
           </div>
 
           <SocialLinksForm />
+          
+          <DonationsForm />
 
           <div className="mt-8 pt-8 border-t border-zinc-800 opacity-20 pointer-events-none">
             <p className="text-xs font-mono italic">// Future modules: Project Showcases, Extra Sections...</p>

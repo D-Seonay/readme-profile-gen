@@ -3,7 +3,7 @@ import { persist, createJSONStorage } from 'zustand/middleware';
 import { arrayMove } from '@dnd-kit/sortable';
 import { skillsData } from '@/lib/skillsData';
 
-export type SectionId = 'bio' | 'skills' | 'socials' | 'stats';
+export type SectionId = 'bio' | 'skills' | 'socials' | 'stats' | 'donations';
 export type ServiceStatus = 'checking' | 'online' | 'offline';
 export type BadgeStyle = 'for-the-badge' | 'flat' | 'flat-square' | 'plastic' | 'social';
 export type Language = 'en' | 'fr';
@@ -37,6 +37,12 @@ interface ReadmeState {
     portfolio: string;
     email: string;
   };
+
+  donations: {
+    buymeacoffee: string;
+    kofi: string;
+    paypal: string;
+  };
   
   // --- UI States ---
   isLoadingGithubData: boolean;
@@ -66,6 +72,7 @@ interface ReadmeState {
   setStatsAlign: (align: 'column' | 'row') => void;
   setSectionTitle: (id: SectionId, title: string) => void;
   setSocial: (platform: keyof ReadmeState['socials'], value: string) => void;
+  setDonation: (platform: keyof ReadmeState['donations'], value: string) => void;
   reorderLayout: (activeId: SectionId, overId: SectionId) => void;
   checkServicesHealth: () => Promise<void>;
   fetchGithubUserData: (username: string) => Promise<void>;
@@ -92,13 +99,19 @@ const initialState = {
     bio: '',
     skills: '🛠️ Tech Stack',
     socials: '📫 Contact Me',
-    stats: '📊 GitHub Stats'
+    stats: '📊 GitHub Stats',
+    donations: '🎁 Support Me'
   },
   socials: {
     linkedin: '',
     twitter: '',
     portfolio: '',
     email: '',
+  },
+  donations: {
+    buymeacoffee: '',
+    kofi: '',
+    paypal: '',
   },
   isLoadingGithubData: false,
   githubFetchError: null,
@@ -107,7 +120,7 @@ const initialState = {
     streak: 'checking' as ServiceStatus,
     trophies: 'checking' as ServiceStatus,
   },
-  layout: ['bio', 'skills', 'socials', 'stats'] as SectionId[],
+  layout: ['bio', 'skills', 'socials', 'stats', 'donations'] as SectionId[],
 };
 
 export const useReadmeStore = create<ReadmeState>()(
@@ -139,6 +152,9 @@ export const useReadmeStore = create<ReadmeState>()(
       })),
       setSocial: (platform, value) => set((state) => ({
         socials: { ...state.socials, [platform]: value }
+      })),
+      setDonation: (platform, value) => set((state) => ({
+        donations: { ...state.donations, [platform]: value }
       })),
 
       reorderLayout: (activeId, overId) => set((state) => {

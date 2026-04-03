@@ -1,9 +1,10 @@
 import { describe, it, expect } from 'vitest';
 import { generateMarkdown } from './generateMarkdown';
-import { SectionId, BadgeStyle } from '@/store/useReadmeStore';
+import { SectionId, BadgeStyle, Language } from '@/store/useReadmeStore';
 
 describe('generateMarkdown', () => {
   const mockData: any = {
+    language: 'en' as Language,
     name: 'John Doe',
     title: 'Developer',
     description: 'Test Bio',
@@ -21,7 +22,8 @@ describe('generateMarkdown', () => {
       bio: '',
       skills: '🛠️ Tech Stack',
       socials: '📫 Me contacter',
-      stats: '📊 GitHub Stats'
+      stats: '📊 GitHub Stats',
+      donations: '🎁 Support Me'
     },
     socials: {
       linkedin: 'johndoe',
@@ -29,7 +31,12 @@ describe('generateMarkdown', () => {
       portfolio: '',
       email: 'test@example.com'
     },
-    layout: ['bio', 'skills', 'socials', 'stats'] as SectionId[],
+    donations: {
+      buymeacoffee: 'johndoe',
+      kofi: '',
+      paypal: ''
+    },
+    layout: ['bio', 'skills', 'socials', 'stats', 'donations'] as SectionId[],
   };
 
   it('should generate a bio section correctly', () => {
@@ -68,6 +75,12 @@ describe('generateMarkdown', () => {
     const md = generateMarkdown(mockData);
     expect(md).toContain('https://linkedin.com/in/johndoe');
     expect(md).toContain('mailto:test@example.com');
+  });
+
+  it('should include donation badges', () => {
+    const md = generateMarkdown(mockData);
+    expect(md).toContain('https://www.buymeacoffee.com/johndoe');
+    expect(md).toContain('Buy%20Me%20A%20Coffee');
   });
 
   it('should not show stats section if no username is provided', () => {
