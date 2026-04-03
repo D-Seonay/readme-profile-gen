@@ -5,6 +5,8 @@ import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { useReadmeStore } from '@/store/useReadmeStore';
 import { SkillSelector } from '@/components/SkillSelector';
+import { GithubStatsConfig } from '@/components/GithubStatsConfig';
+import { SocialLinksConfig } from '@/components/SocialLinksConfig';
 import { generateMarkdown } from '@/utils/generateMarkdown';
 
 export default function Home() {
@@ -26,9 +28,19 @@ export default function Home() {
           <p className="text-zinc-500 font-mono text-sm mt-2 italic">// Configuration du profil</p>
         </header>
 
-        <div className="space-y-8">
-          {/* Champs de base */}
-          <div className="space-y-6">
+        <div className="space-y-10">
+          
+          {/* 1. CONFIGURATION STATS GITHUB (Priorité Haute) */}
+          <GithubStatsConfig />
+
+          {/* 2. CHAMPS DE BASE */}
+          <div className="space-y-6 pt-6 border-t border-zinc-800">
+             <header className="flex flex-col gap-1">
+              <label className="text-[10px] font-mono uppercase tracking-[0.2em] text-zinc-500">
+                Informations de base
+              </label>
+            </header>
+            
             <div className="flex flex-col gap-2">
               <label className="text-[10px] font-mono uppercase tracking-[0.2em] text-zinc-500">Nom Complet</label>
               <input
@@ -63,12 +75,17 @@ export default function Home() {
             </div>
           </div>
 
-          {/* SÉLECTEUR DE COMPÉTENCES */}
-          <SkillSelector />
+          {/* 3. SÉLECTEUR DE COMPÉTENCES */}
+          <div className="pt-6 border-t border-zinc-800">
+            <SkillSelector />
+          </div>
+
+          {/* 4. LIENS SOCIAUX */}
+          <SocialLinksConfig />
 
           {/* ESPACE POUR FUTURS MODULES */}
           <div className="mt-8 pt-8 border-t border-zinc-800 opacity-20 pointer-events-none">
-            <p className="text-xs font-mono italic">// Future modules: GitHub Stats, Social Links...</p>
+            <p className="text-xs font-mono italic">// Future modules: Extra Sections, Project Showcases...</p>
           </div>
         </div>
       </section>
