@@ -153,7 +153,9 @@ export const useReadmeStore = create<ReadmeState>()(
             
             detectedSkills = skillsData
               .filter(skill => {
-                const regex = new RegExp(`(logo=|logo:)${skill.slug}|\\b${skill.name}\\b`, 'gi');
+                // Échapper les caractères spéciaux du nom pour la regex
+                const escapedName = skill.name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+                const regex = new RegExp(`(logo=|logo:)${skill.slug}|\\b${escapedName}\\b`, 'gi');
                 return regex.test(readmeContent);
               })
               .map(s => s.slug);
