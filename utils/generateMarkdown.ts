@@ -10,6 +10,7 @@ interface StoreData {
   githubUsername: string;
   wakatimeUsername: string;
   wakatimeBadgeId: string;
+  showWakatimeBadges: boolean;
   featuredRepos: string[];
   showStatsCard: boolean;
   showStreakCard: boolean;
@@ -36,7 +37,7 @@ interface StoreData {
 
 export const generateMarkdown = (data: StoreData): string => {
   const { 
-    name, title, description, skills, githubUsername, wakatimeUsername, wakatimeBadgeId, featuredRepos,
+    name, title, description, skills, githubUsername, wakatimeUsername, wakatimeBadgeId, showWakatimeBadges, featuredRepos,
     showStatsCard, showStreakCard, showTopLanguages, showTrophies, 
     theme, alignment, badgeStyle, statsAlign, sectionTitles, socials, donations, layout 
   } = data;
@@ -75,7 +76,7 @@ export const generateMarkdown = (data: StoreData): string => {
     }
     if (socials.twitter) {
       const handle = socials.twitter.replace('@', '');
-      badges.push(`[![Twitter](https://img.shields.io/badge/Twitter-1DA1F2?style=${badgeStyle}&logo=twitter&logoColor=white)](https://twitter.com/${handle})`);
+      badges.push(`[![Twitter](https://img.shields.io/badge/Twitter-1DA1F2?style=${badgeStyle}_logo=twitter&logoColor=white)](https://twitter.com/${handle})`);
     }
     if (socials.portfolio) {
       const url = socials.portfolio.startsWith('http') ? socials.portfolio : `https://${socials.portfolio}`;
@@ -96,6 +97,7 @@ export const generateMarkdown = (data: StoreData): string => {
     if (!hasActiveStats) return '';
 
     const titleMd = sectionTitles.stats ? `### ${sectionTitles.stats}\n\n` : '';
+    
     let content = isCentered ? '<div align="center">' : '<div>';
     content += '\n\n';
     
@@ -155,7 +157,13 @@ export const generateMarkdown = (data: StoreData): string => {
       content += `[![wakatime](https://wakatime.com/badge/user/${wakatimeBadgeId}.svg)](https://wakatime.com/@${wakatimeBadgeId})\n\n`;
     }
 
-    // 2. Activity Graph (Username)
+    // 2. Extra Stats Badges
+    if (showWakatimeBadges && wakatimeUsername) {
+      content += `![Wakatime Total Time](https://img.shields.io/badge/dynamic/json?style=${badgeStyle}&label=Total%20Coding%20Time&query=$..text&url=https%3A%2F%2Fwakatime.com%2Fapi%2Fv1%2Fusers%2F${wakatimeUsername}%2Fstats%2Flast_7_days%3Fapi_key%3DYOUR_API_KEY) `;
+      content += `![Wakatime Top Language](https://img.shields.io/badge/dynamic/json?style=${badgeStyle}&label=Top%20Language&query=$..languages[0].name&url=https%3A%2F%2Fwakatime.com%2Fapi%2Fv1%2Fusers%2F${wakatimeUsername}%2Fstats%2Flast_7_days%3Fapi_key%3DYOUR_API_KEY)\n\n`;
+    }
+
+    // 3. Activity Graph (Username)
     if (wakatimeUsername) {
       const graphUrl = `https://github-readme-stats.vercel.app/api/wakatime?username=${wakatimeUsername}&theme=${theme}&hide_border=true&layout=compact`;
       content += `![WakaTime Stats](${graphUrl})`;
@@ -163,8 +171,6 @@ export const generateMarkdown = (data: StoreData): string => {
 
     return isCentered ? `<div align="center">\n\n${titleMd}${content}\n\n</div>` : `${titleMd}${content}`;
   };
-
-  // --- Assemblage Final basé sur le Layout ---
 
   const finalSections = layout.map((sectionId) => {
     switch (sectionId) {
