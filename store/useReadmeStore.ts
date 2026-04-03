@@ -17,7 +17,7 @@ interface ReadmeState {
   description: string;
   skills: string[];
   githubUsername: string;
-  featuredRepos: string[]; // List of repo names (e.g., "my-awesome-project")
+  featuredRepos: string[];
   showStatsCard: boolean;
   showStreakCard: boolean;
   showTopLanguages: boolean;
@@ -28,6 +28,7 @@ interface ReadmeState {
   badgeStyle: BadgeStyle;
   statsAlign: 'column' | 'row';
   sectionTitles: Record<SectionId, string>;
+  
   socials: {
     linkedin: string;
     twitter: string;
@@ -92,7 +93,7 @@ const initialState = {
   badgeStyle: 'for-the-badge' as BadgeStyle,
   statsAlign: 'column' as const,
   sectionTitles: {
-    bio: '',
+    bio: '👤 Introduction',
     skills: '🛠️ Tech Stack',
     socials: '📫 Contact Me',
     stats: '📊 GitHub Stats',

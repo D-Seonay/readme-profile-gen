@@ -2,11 +2,18 @@
 
 import React, { useState, useMemo } from 'react';
 import { skillsData, SKILL_CATEGORIES, Skill } from '@/lib/skillsData';
-import { useReadmeStore } from '@/store/useReadmeStore';
+import { useReadmeStore, BadgeStyle } from '@/store/useReadmeStore';
 import { useTranslation } from '@/hooks/useTranslation';
 
+const BADGE_STYLES: { label: string; value: BadgeStyle }[] = [
+  { label: 'For the Badge', value: 'for-the-badge' },
+  { label: 'Flat', value: 'flat' },
+  { label: 'Flat Square', value: 'flat-square' },
+  { label: 'Plastic', value: 'plastic' },
+];
+
 export const SkillSelector = () => {
-  const { skills, toggleSkill, skillsViewMode, setSkillsViewMode } = useReadmeStore();
+  const { skills, toggleSkill, skillsViewMode, setSkillsViewMode, badgeStyle, setBadgeStyle } = useReadmeStore();
   const { t } = useTranslation();
   const [search, setSearch] = useState('');
   const [expandedCategories, setExpandedCategories] = useState<string[]>(['language', 'frontend', 'backend']);
@@ -35,8 +42,22 @@ export const SkillSelector = () => {
 
   return (
     <div className="space-y-6 text-zinc-100">
-      <header className="flex items-center justify-between">
-        <div className="flex items-center gap-1 bg-zinc-900 p-1 rounded-lg border border-zinc-800 text-[10px]">
+      <header className="flex items-center justify-between gap-4">
+        {/* Style des Badges (Déplacé ici) */}
+        <div className="flex-1">
+          <label className="text-[9px] font-mono uppercase text-zinc-500 tracking-wider block mb-2">{t.style.badgeStyle}</label>
+          <select
+            value={badgeStyle}
+            onChange={(e) => setBadgeStyle(e.target.value as BadgeStyle)}
+            className="w-full bg-zinc-900 border border-zinc-800 p-2 rounded-xl font-mono text-zinc-100 text-[10px] uppercase focus:outline-none focus:border-zinc-500 transition-all appearance-none cursor-pointer"
+          >
+            {BADGE_STYLES.map((s) => (
+              <option key={s.value} value={s.value}>{s.label}</option>
+            ))}
+          </select>
+        </div>
+
+        <div className="flex items-center gap-1 bg-zinc-900 p-1 rounded-lg border border-zinc-800 text-[10px] self-end">
           <button
             onClick={() => setSkillsViewMode('grouped')}
             className={`px-3 py-1 font-mono uppercase rounded-md transition-all ${
@@ -62,7 +83,7 @@ export const SkillSelector = () => {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder={t.skills.search}
-          className="w-full bg-zinc-950 border border-zinc-800 p-2.5 rounded-xl font-mono text-zinc-100 text-xs focus:outline-none focus:border-zinc-500 transition-all placeholder:text-zinc-700"
+          className="w-full bg-zinc-950 border border-zinc-800 p-2.5 rounded-xl font-mono text-zinc-100 text-xs focus:outline-none focus:border-indigo-500 transition-all placeholder:text-zinc-700"
         />
       </div>
 

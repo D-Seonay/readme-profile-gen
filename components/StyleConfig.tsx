@@ -1,24 +1,25 @@
 'use client';
 
 import React from 'react';
-import { useReadmeStore, BadgeStyle } from '@/store/useReadmeStore';
+import { useReadmeStore, SectionId } from '@/store/useReadmeStore';
 import { useTranslation } from '@/hooks/useTranslation';
-
-const BADGE_STYLES: { label: string; value: BadgeStyle }[] = [
-  { label: 'For the Badge', value: 'for-the-badge' },
-  { label: 'Flat', value: 'flat' },
-  { label: 'Flat Square', value: 'flat-square' },
-  { label: 'Plastic', value: 'plastic' },
-];
 
 export const StyleConfig = () => {
   const { 
     alignment, setAlignment, 
-    badgeStyle, setBadgeStyle,
     statsAlign, setStatsAlign,
     sectionTitles, setSectionTitle 
   } = useReadmeStore();
   const { t } = useTranslation();
+
+  const sections: { id: SectionId; label: string }[] = [
+    { id: 'bio', label: t.layout.bio },
+    { id: 'skills', label: t.layout.skills },
+    { id: 'projects', label: t.layout.projects },
+    { id: 'stats', label: t.layout.stats },
+    { id: 'socials', label: t.layout.socials },
+    { id: 'donations', label: t.layout.donations },
+  ];
 
   return (
     <div className="space-y-8 text-zinc-100">
@@ -66,51 +67,23 @@ export const StyleConfig = () => {
             </button>
           </div>
         </div>
-
-        <div className="space-y-3">
-          <label className="text-[9px] font-mono uppercase text-zinc-500 tracking-wider">{t.style.badgeStyle}</label>
-          <select
-            value={badgeStyle}
-            onChange={(e) => setBadgeStyle(e.target.value as BadgeStyle)}
-            className="w-full bg-zinc-900 border border-zinc-800 p-2 rounded-xl font-mono text-zinc-100 text-[10px] uppercase focus:outline-none focus:border-zinc-500 transition-all appearance-none cursor-pointer"
-          >
-            {BADGE_STYLES.map((s) => (
-              <option key={s.value} value={s.value}>{s.label}</option>
-            ))}
-          </select>
-        </div>
       </div>
 
       <div className="space-y-4">
         <label className="text-[9px] font-mono uppercase text-zinc-500 tracking-wider">{t.style.sectionTitles}</label>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-          <div className="space-y-1.5">
-            <span className="text-[8px] font-mono text-zinc-600 uppercase ml-1">Skills</span>
-            <input
-              type="text"
-              value={sectionTitles.skills}
-              onChange={(e) => setSectionTitle('skills', e.target.value)}
-              className="w-full bg-zinc-950 border border-zinc-800 p-2 rounded-lg font-mono text-zinc-100 text-[10px] focus:outline-none focus:border-zinc-500 transition-all"
-            />
-          </div>
-          <div className="space-y-1.5">
-            <span className="text-[8px] font-mono text-zinc-600 uppercase ml-1">Socials</span>
-            <input
-              type="text"
-              value={sectionTitles.socials}
-              onChange={(e) => setSectionTitle('socials', e.target.value)}
-              className="w-full bg-zinc-950 border border-zinc-800 p-2 rounded-lg font-mono text-zinc-100 text-[10px] focus:outline-none focus:border-zinc-500 transition-all"
-            />
-          </div>
-          <div className="space-y-1.5">
-            <span className="text-[8px] font-mono text-zinc-600 uppercase ml-1">Stats</span>
-            <input
-              type="text"
-              value={sectionTitles.stats}
-              onChange={(e) => setSectionTitle('stats', e.target.value)}
-              className="w-full bg-zinc-950 border border-zinc-800 p-2 rounded-lg font-mono text-zinc-100 text-[10px] focus:outline-none focus:border-zinc-500 transition-all"
-            />
-          </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          {sections.map((section) => (
+            <div key={section.id} className="space-y-1.5">
+              <span className="text-[8px] font-mono text-zinc-600 uppercase ml-1 truncate block">{section.label}</span>
+              <input
+                type="text"
+                value={sectionTitles[section.id]}
+                onChange={(e) => setSectionTitle(section.id, e.target.value)}
+                className="w-full bg-zinc-950 border border-zinc-800 p-2.5 rounded-xl font-mono text-zinc-100 text-[10px] focus:outline-none focus:border-zinc-500 transition-all"
+                placeholder={section.label}
+              />
+            </div>
+          ))}
         </div>
       </div>
     </div>
