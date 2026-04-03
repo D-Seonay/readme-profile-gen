@@ -1,12 +1,12 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import { arrayMove } from '@dnd-kit/sortable';
+import { skillsData } from '@/lib/skillsData';
 
 export type SectionId = 'bio' | 'skills' | 'socials' | 'stats';
 export type ServiceStatus = 'checking' | 'online' | 'offline';
 
 interface ReadmeState {
-  // --- Données du README ---
   name: string;
   title: string;
   description: string;
@@ -23,18 +23,15 @@ interface ReadmeState {
     portfolio: string;
     email: string;
   };
-  
-  // --- Service Status ---
+  isLoadingGithubData: boolean;
+  githubFetchError: string | null;
   servicesStatus: {
     stats: ServiceStatus;
     streak: ServiceStatus;
     trophies: ServiceStatus;
   };
-  
-  // --- Layout ---
   layout: SectionId[];
   
-  // --- Actions ---
   setName: (name: string) => void;
   setTitle: (title: string) => void;
   setDescription: (description: string) => void;
@@ -48,7 +45,7 @@ interface ReadmeState {
   setSocial: (platform: keyof ReadmeState['socials'], value: string) => void;
   reorderLayout: (activeId: SectionId, overId: SectionId) => void;
   checkServicesHealth: () => Promise<void>;
-  
+  fetchGithubUserData: (username: string) => Promise<void>;
   reset: () => void;
 }
 
@@ -69,6 +66,8 @@ const initialState = {
     portfolio: '',
     email: '',
   },
+  isLoadingGithubData: false,
+  githubFetchError: null,
   servicesStatus: {
     stats: 'checking' as ServiceStatus,
     streak: 'checking' as ServiceStatus,
@@ -79,7 +78,7 @@ const initialState = {
 
 export const useReadmeStore = create<ReadmeState>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       ...initialState,
 
       setName: (name: string) => set({ name }),
@@ -116,12 +115,79 @@ export const useReadmeStore = create<ReadmeState>()(
             return 'offline';
           }
         };
-
         const [stats, streak, trophies] = await Promise.all([
           check('stats'), check('streak'), check('trophies')
         ]);
-
         set({ servicesStatus: { stats, streak, trophies } });
+      },
+
+      fetchGithubUserData: async (username: string) => {
+        if (!username) return;
+        set({ isLoadingGithubData: true, githubFetchError: null });
+        
+        try {
+          // Appel triple : Profil + Social Accounts + README
+          const [userRes, socialsRes, readmeRes] = await Promise.all([
+            fetch(`https://api.github.com/users/${username}`),
+            fetch(`https://api.github.com/users/${username}/social_accounts`),
+            fetch(`https://api.github.com/repos/${username}/${username}/contents/README.md`)
+          ]);
+          
+          if (!userRes.ok) {
+            if (userRes.status === 404) throw new Error('Utilisateur non trouvé');
+            throw new Error('Erreur lors de la récupération du profil');
+          }
+          
+          const userData = await userRes.json();
+          const socialAccounts = await socialsRes.json();
+          
+          // Parsing du README si disponible
+          let detectedSkills: string[] = [];
+          let detectedEmail = '';
+          
+          if (readmeRes.ok) {
+            const readmeData = await readmeRes.json();
+            const readmeContent = decodeURIComponent(escape(atob(readmeData.content)));
+            
+            // 1. Détection intelligente des Skills
+            detectedSkills = skillsData
+              .filter(skill => {
+                const regex = new RegExp(`(logo=|logo:)${skill.slug}|\\b${skill.name}\\b`, 'gi');
+                return regex.test(readmeContent);
+              })
+              .map(s => s.slug);
+
+            // 2. Extraction de l'Email via Regex
+            const emailRegex = /([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})/gi;
+            const emailMatch = readmeContent.match(emailRegex);
+            if (emailMatch) {
+              detectedEmail = emailMatch[0];
+            }
+          }
+
+          const linkedinAccount = socialAccounts.find((acc: any) => 
+            acc.provider === 'linkedin' || acc.url.includes('linkedin.com')
+          );
+
+          set((s) => ({
+            name: !s.name || s.name === initialState.name ? userData.name || s.name : s.name,
+            description: !s.description || s.description === initialState.description ? userData.bio || s.description : s.description,
+            githubUsername: username,
+            skills: s.skills.length === 0 ? detectedSkills : s.skills,
+            socials: {
+              ...s.socials,
+              twitter: !s.socials.twitter ? userData.twitter_username || '' : s.socials.twitter,
+              portfolio: !s.socials.portfolio ? userData.blog || '' : s.socials.portfolio,
+              linkedin: !s.socials.linkedin ? (linkedinAccount?.url || '') : s.socials.linkedin,
+              email: !s.socials.email ? (detectedEmail || userData.email || '') : s.socials.email,
+            }
+          }));
+
+        } catch (error: any) {
+          set({ githubFetchError: error.message });
+        } finally {
+          set({ isLoadingGithubData: false });
+        }
       },
 
       reset: () => set(initialState),
@@ -129,9 +195,8 @@ export const useReadmeStore = create<ReadmeState>()(
     {
       name: 'readme-generator-storage',
       storage: createJSONStorage(() => localStorage),
-      // On ne persiste pas l'état du Health Check pour le relancer à chaque session
       partialize: (state) => {
-        const { servicesStatus, ...rest } = state;
+        const { servicesStatus, isLoadingGithubData, githubFetchError, ...rest } = state;
         return rest;
       },
     }

@@ -8,13 +8,13 @@ import { GithubStatsConfig } from '@/components/GithubStatsConfig';
 import { SocialLinksForm } from '@/components/SocialLinksForm';
 import { LayoutManager } from '@/components/LayoutManager';
 import { PreviewPane } from '@/components/PreviewPane';
+import { GithubProfileFetcher } from '@/components/GithubProfileFetcher';
 
 export default function Home() {
   const store = useReadmeStore();
   const hydrated = useHydration();
   const { name, title, description, setName, setTitle, setDescription, reset } = store;
 
-  // Si on n'est pas encore hydraté côté client, on affiche un loader minimal
   if (!hydrated) {
     return (
       <div className="h-screen w-full bg-zinc-950 flex items-center justify-center">
@@ -50,13 +50,16 @@ export default function Home() {
 
         <div className="space-y-10">
           
-          {/* 0. LAYOUT MANAGER */}
+          {/* 0. GITHUB AUTOFILL (Magie) */}
+          <GithubProfileFetcher />
+
+          {/* 1. LAYOUT MANAGER */}
           <LayoutManager />
 
-          {/* 1. CONFIGURATION STATS GITHUB */}
+          {/* 2. CONFIGURATION STATS GITHUB */}
           <GithubStatsConfig />
 
-          {/* 2. CHAMPS DE BASE */}
+          {/* 3. CHAMPS DE BASE */}
           <div className="space-y-6 pt-6 border-t border-zinc-800">
              <header className="flex flex-col gap-1">
               <label className="text-[10px] font-mono uppercase tracking-[0.2em] text-zinc-500">
@@ -98,12 +101,12 @@ export default function Home() {
             </div>
           </div>
 
-          {/* 3. SÉLECTEUR DE COMPÉTENCES */}
+          {/* 4. SÉLECTEUR DE COMPÉTENCES */}
           <div className="pt-6 border-t border-zinc-800">
             <SkillSelector />
           </div>
 
-          {/* 4. LIENS SOCIAUX & CONTACT */}
+          {/* 5. LIENS SOCIAUX & CONTACT */}
           <SocialLinksForm />
 
           {/* ESPACE POUR FUTURS MODULES */}
