@@ -37,7 +37,8 @@ export const translations = {
       skills: "🛠️ Tech Stack & Skills",
       socials: "📫 Networks & Contact",
       stats: "📊 GitHub Stats",
-      donations: "🎁 Support Me"
+      donations: "🎁 Support Me",
+      projects: "🚀 Featured Projects"
     },
     
     github: {
@@ -82,6 +83,14 @@ export const translations = {
       buymeacoffee: "Buy Me A Coffee",
       kofi: "Ko-fi",
       paypal: "PayPal"
+    },
+
+    projects: {
+      label: "Featured Projects",
+      help: "// Showcase your best repositories",
+      placeholder: "Repo name (ex: my-awesome-app)",
+      add: "Add Project",
+      empty: "No projects added yet."
     },
     
     preview: {
@@ -132,7 +141,8 @@ export const translations = {
       skills: "🛠️ Tech Stack & Compétences",
       socials: "📫 Réseaux & Contact",
       stats: "📊 Stats GitHub",
-      donations: "🎁 Me soutenir"
+      donations: "🎁 Me soutenir",
+      projects: "🚀 Projets Phares"
     },
     
     github: {
@@ -177,6 +187,14 @@ export const translations = {
       buymeacoffee: "Buy Me A Coffee",
       kofi: "Ko-fi",
       paypal: "PayPal"
+    },
+
+    projects: {
+      label: "Projets Phares",
+      help: "// Mettez en avant vos meilleurs dépôts",
+      placeholder: "Nom du dépôt (ex: mon-super-projet)",
+      add: "Ajouter",
+      empty: "Aucun projet ajouté."
     },
     
     preview: {

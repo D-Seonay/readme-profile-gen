@@ -8,6 +8,7 @@ interface StoreData {
   description: string;
   skills: string[];
   githubUsername: string;
+  featuredRepos: string[];
   showStatsCard: boolean;
   showStreakCard: boolean;
   showTopLanguages: boolean;
@@ -33,7 +34,7 @@ interface StoreData {
 
 export const generateMarkdown = (data: StoreData): string => {
   const { 
-    name, title, description, skills, githubUsername, 
+    name, title, description, skills, githubUsername, featuredRepos,
     showStatsCard, showStreakCard, showTopLanguages, showTrophies, 
     theme, alignment, badgeStyle, statsAlign, sectionTitles, socials, donations, layout 
   } = data;
@@ -130,6 +131,23 @@ export const generateMarkdown = (data: StoreData): string => {
     return isCentered ? `<div align="center">\n\n${content}\n\n</div>` : content;
   };
 
+  const getProjectsSection = () => {
+    if (!githubUsername || featuredRepos.length === 0) return '';
+
+    const titleMd = sectionTitles.projects ? `## ${sectionTitles.projects}\n\n` : '';
+    
+    let content = isCentered ? '<div align="center">\n\n' : '<div>\n\n';
+    
+    const projectCards = featuredRepos.map(repo => 
+      `![${repo}](https://github-readme-stats.vercel.app/api/pin/?username=${githubUsername}&repo=${repo}&theme=${theme}&hide_border=true)`
+    );
+
+    content += projectCards.join(isRow ? ' ' : '\n');
+    content += '\n\n</div>';
+
+    return `${titleMd}${content}`;
+  };
+
   // --- Assemblage Final basé sur le Layout ---
 
   const finalSections = layout.map((sectionId) => {
@@ -139,6 +157,7 @@ export const generateMarkdown = (data: StoreData): string => {
       case 'socials': return getSocialsSection();
       case 'stats': return getStatsSection();
       case 'donations': return getDonationsSection();
+      case 'projects': return getProjectsSection();
       default: return '';
     }
   });

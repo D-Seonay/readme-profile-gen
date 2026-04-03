@@ -8,6 +8,7 @@ import { SkillSelector } from '@/components/SkillSelector';
 import { GithubStatsConfig } from '@/components/GithubStatsConfig';
 import { SocialLinksForm } from '@/components/SocialLinksForm';
 import { DonationsForm } from '@/components/DonationsForm';
+import { ProjectShowcase } from '@/components/ProjectShowcase';
 import { LayoutManager } from '@/components/LayoutManager';
 import { StyleConfig } from '@/components/StyleConfig';
 import { PreviewPane } from '@/components/PreviewPane';
@@ -108,12 +109,14 @@ export default function Home() {
             <SkillSelector />
           </div>
 
+          <ProjectShowcase />
+
           <SocialLinksForm />
           
           <DonationsForm />
 
           <div className="mt-8 pt-8 border-t border-zinc-800 opacity-20 pointer-events-none">
-            <p className="text-xs font-mono italic">// Future modules: Project Showcases, Extra Sections...</p>
+            <p className="text-xs font-mono italic">// Future modules: More Integration, Custom sections...</p>
           </div>
         </div>
       </section>
