@@ -30,6 +30,7 @@ export const GithubStatsConfig = () => {
     showStreakCard, toggleStreakCard,
     showTopLanguages, toggleTopLanguages,
     showTrophies, toggleTrophies,
+    showVisitorCounter, toggleVisitorCounter,
     theme, setTheme,
     servicesStatus, checkServicesHealth,
     uiTheme
@@ -81,6 +82,24 @@ export const GithubStatsConfig = () => {
       </div>
 
       <div className="flex flex-col gap-2">
+        {/* Toggle Visitor Counter */}
+        <div className={`p-3 rounded-xl border transition-all ${isDark ? 'bg-zinc-900/50 border-zinc-800 hover:border-zinc-700' : 'bg-white border-zinc-200 hover:border-zinc-300'}`}>
+          <button
+            onClick={toggleVisitorCounter}
+            className="w-full flex items-center justify-between group"
+          >
+            <div className="flex items-center gap-3">
+              <div className={`w-1.5 h-1.5 rounded-full ${showVisitorCounter ? 'bg-indigo-500' : 'bg-zinc-500'}`} />
+              <span className={`text-xs font-mono transition-colors ${isDark ? 'text-zinc-400 group-hover:text-zinc-200' : 'text-zinc-600 group-hover:text-zinc-900'}`}>
+                {t.github.visitorCounter}
+              </span>
+            </div>
+            <div className={`w-8 h-4 rounded-full p-1 transition-colors duration-200 ${showVisitorCounter ? 'bg-emerald-500' : (isDark ? 'bg-zinc-800' : 'bg-zinc-200')}`}>
+              <div className={`w-2 h-2 rounded-full transition-transform duration-200 ${showVisitorCounter ? 'translate-x-4 bg-white' : (isDark ? 'bg-zinc-500' : 'bg-white shadow-sm')}`} />
+            </div>
+          </button>
+        </div>
+
         {/* Trophies */}
         <div className={`p-3 rounded-xl border transition-all ${isOffline('trophies') ? (isDark ? 'bg-zinc-900/30 border-zinc-900 opacity-40' : 'bg-zinc-100 border-zinc-100 opacity-40') : (isDark ? 'bg-zinc-900/50 border-zinc-800 hover:border-zinc-700' : 'bg-white border-zinc-200 hover:border-zinc-300')}`}>
           <button

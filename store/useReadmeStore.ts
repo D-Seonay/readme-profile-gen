@@ -20,7 +20,9 @@ interface ReadmeState {
   skills: string[];
   githubUsername: string;
   wakatimeUsername: string;
-  wakatimeBadgeId: string; // New field for the UUID
+  wakatimeBadgeId: string;
+  showWakatimeBadges: boolean;
+  showVisitorCounter: boolean; // New field
   featuredRepos: string[];
   showStatsCard: boolean;
   showStreakCard: boolean;
@@ -62,7 +64,9 @@ interface ReadmeState {
   toggleSkill: (slug: string) => void;
   setGithubUsername: (username: string) => void;
   setWakatimeUsername: (username: string) => void;
-  setWakatimeBadgeId: (id: string) => void; // New action
+  setWakatimeBadgeId: (id: string) => void;
+  toggleWakatimeBadges: () => void;
+  toggleVisitorCounter: () => void; // New action
   addFeaturedRepo: (repo: string) => void;
   removeFeaturedRepo: (repo: string) => void;
   toggleStatsCard: () => void;
@@ -93,6 +97,8 @@ const initialState = {
   githubUsername: '',
   wakatimeUsername: '',
   wakatimeBadgeId: '',
+  showWakatimeBadges: false,
+  showVisitorCounter: false,
   featuredRepos: [],
   showStatsCard: true,
   showStreakCard: false,
@@ -152,6 +158,8 @@ export const useReadmeStore = create<ReadmeState>()(
       setGithubUsername: (githubUsername: string) => set({ githubUsername }),
       setWakatimeUsername: (wakatimeUsername: string) => set({ wakatimeUsername }),
       setWakatimeBadgeId: (wakatimeBadgeId: string) => set({ wakatimeBadgeId }),
+      toggleWakatimeBadges: () => set((state) => ({ showWakatimeBadges: !state.showWakatimeBadges })),
+      toggleVisitorCounter: () => set((state) => ({ showVisitorCounter: !state.showVisitorCounter })),
       addFeaturedRepo: (repo: string) => set((state) => ({
         featuredRepos: [...state.featuredRepos, repo]
       })),
@@ -182,24 +190,22 @@ export const useReadmeStore = create<ReadmeState>()(
         const newIndex = state.layout.indexOf(overId);
         return { layout: arrayMove(state.layout, oldIndex, newIndex) };
       }),
-checkServicesHealth: async () => {
-  const check = async (service: 'stats' | 'streak' | 'trophies' | 'wakatime') => {
-    try {
-      const res = await fetch(`/api/health?service=${service}`);
-      const data = await res.json();
-      return data.online ? 'online' : 'offline';
-    } catch {
-      return 'offline';
-    }
-  };
 
-  // Exécution en série ou parallèle avec fallback
-  const [stats, streak, trophies, wakatime] = await Promise.all([
-    check('stats'), check('streak'), check('trophies'), check('wakatime')
-  ]);
-
-  set({ servicesStatus: { stats, streak, trophies, wakatime } });
-},
+      checkServicesHealth: async () => {
+        const check = async (service: 'stats' | 'streak' | 'trophies' | 'wakatime') => {
+          try {
+            const res = await fetch(`/api/health?service=${service}`);
+            const data = await res.json();
+            return data.online ? 'online' : 'offline';
+          } catch {
+            return 'offline';
+          }
+        };
+        const [stats, streak, trophies, wakatime] = await Promise.all([
+          check('stats'), check('streak'), check('trophies'), check('wakatime')
+        ]);
+        set({ servicesStatus: { stats, streak, trophies, wakatime } });
+      },
 
       fetchGithubUserData: async (username: string) => {
         if (!username) return;
