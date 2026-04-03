@@ -14,7 +14,8 @@ interface ReadmeState {
   showStatsCard: boolean;
   showStreakCard: boolean;
   showTopLanguages: boolean;
-  theme: string; // Thème global des stats
+  showTrophies: boolean; // Ajout des Trophées
+  theme: string;
   socials: {
     linkedin: string;
     twitter: string;
@@ -34,6 +35,7 @@ interface ReadmeState {
   toggleStatsCard: () => void;
   toggleStreakCard: () => void;
   toggleTopLanguages: () => void;
+  toggleTrophies: () => void; // Action toggle trophies
   setTheme: (theme: string) => void;
   setSocial: (platform: keyof ReadmeState['socials'], value: string) => void;
   reorderLayout: (activeId: SectionId, overId: SectionId) => void;
@@ -51,6 +53,7 @@ const initialState = {
   showStatsCard: true,
   showStreakCard: false,
   showTopLanguages: true,
+  showTrophies: false,
   theme: 'transparent',
   socials: {
     linkedin: '',
@@ -78,6 +81,7 @@ export const useReadmeStore = create<ReadmeState>()(
       toggleStatsCard: () => set((state) => ({ showStatsCard: !state.showStatsCard })),
       toggleStreakCard: () => set((state) => ({ showStreakCard: !state.showStreakCard })),
       toggleTopLanguages: () => set((state) => ({ showTopLanguages: !state.showTopLanguages })),
+      toggleTrophies: () => set((state) => ({ showTrophies: !state.showTrophies })),
       setTheme: (theme: string) => set({ theme }),
       setSocial: (platform, value) => set((state) => ({
         socials: { ...state.socials, [platform]: value }
