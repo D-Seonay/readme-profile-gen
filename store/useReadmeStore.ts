@@ -1,12 +1,12 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import { arrayMove } from '@dnd-kit/sortable';
+import { skillsData } from '@/lib/skillsData';
 
 export type SectionId = 'bio' | 'skills' | 'socials' | 'stats';
 export type ServiceStatus = 'checking' | 'online' | 'offline';
 
 interface ReadmeState {
-  // --- Données du README ---
   name: string;
   title: string;
   description: string;
@@ -23,8 +23,6 @@ interface ReadmeState {
     portfolio: string;
     email: string;
   };
-  
-  // --- UI States ---
   isLoadingGithubData: boolean;
   githubFetchError: string | null;
   servicesStatus: {
@@ -32,11 +30,8 @@ interface ReadmeState {
     streak: ServiceStatus;
     trophies: ServiceStatus;
   };
-  
-  // --- Layout ---
   layout: SectionId[];
   
-  // --- Actions ---
   setName: (name: string) => void;
   setTitle: (title: string) => void;
   setDescription: (description: string) => void;
@@ -50,10 +45,7 @@ interface ReadmeState {
   setSocial: (platform: keyof ReadmeState['socials'], value: string) => void;
   reorderLayout: (activeId: SectionId, overId: SectionId) => void;
   checkServicesHealth: () => Promise<void>;
-  
-  // Autofill Action
   fetchGithubUserData: (username: string) => Promise<void>;
-  
   reset: () => void;
 }
 
@@ -134,21 +126,37 @@ export const useReadmeStore = create<ReadmeState>()(
         set({ isLoadingGithubData: true, githubFetchError: null });
         
         try {
-          // Appel parallèle : Profil de base + Réseaux Sociaux
-          const [userRes, socialsRes] = await Promise.all([
+          // Appel triple : Profil + Social Accounts + README
+          const [userRes, socialsRes, readmeRes] = await Promise.all([
             fetch(`https://api.github.com/users/${username}`),
-            fetch(`https://api.github.com/users/${username}/social_accounts`)
+            fetch(`https://api.github.com/users/${username}/social_accounts`),
+            fetch(`https://api.github.com/repos/${username}/${username}/contents/README.md`)
           ]);
           
           if (!userRes.ok) {
             if (userRes.status === 404) throw new Error('Utilisateur non trouvé');
-            throw new Error('Erreur lors de la récupération');
+            throw new Error('Erreur lors de la récupération du profil');
           }
           
           const userData = await userRes.json();
           const socialAccounts = await socialsRes.json();
+          
+          // Parsing du README si disponible
+          let detectedSkills: string[] = [];
+          if (readmeRes.ok) {
+            const readmeData = await readmeRes.json();
+            // Décodage Base64 vers UTF-8
+            const readmeContent = decodeURIComponent(escape(atob(readmeData.content)));
+            
+            // Détection intelligente des Skills
+            detectedSkills = skillsData
+              .filter(skill => {
+                const regex = new RegExp(`(logo=|logo:)${skill.slug}|\\b${skill.name}\\b`, 'gi');
+                return regex.test(readmeContent);
+              })
+              .map(s => s.slug);
+          }
 
-          // On cherche le lien LinkedIn dans la liste des social_accounts
           const linkedinAccount = socialAccounts.find((acc: any) => 
             acc.provider === 'linkedin' || acc.url.includes('linkedin.com')
           );
@@ -157,6 +165,8 @@ export const useReadmeStore = create<ReadmeState>()(
             name: !s.name || s.name === initialState.name ? userData.name || s.name : s.name,
             description: !s.description || s.description === initialState.description ? userData.bio || s.description : s.description,
             githubUsername: username,
+            // On fusionne les skills détectés sans doublons si la liste actuelle est vide
+            skills: s.skills.length === 0 ? detectedSkills : s.skills,
             socials: {
               ...s.socials,
               twitter: !s.socials.twitter ? userData.twitter_username || '' : s.socials.twitter,
