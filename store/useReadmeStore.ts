@@ -134,25 +134,34 @@ export const useReadmeStore = create<ReadmeState>()(
         set({ isLoadingGithubData: true, githubFetchError: null });
         
         try {
-          const res = await fetch(`https://api.github.com/users/${username}`);
+          // Appel parallèle : Profil de base + Réseaux Sociaux
+          const [userRes, socialsRes] = await Promise.all([
+            fetch(`https://api.github.com/users/${username}`),
+            fetch(`https://api.github.com/users/${username}/social_accounts`)
+          ]);
           
-          if (!res.ok) {
-            if (res.status === 404) throw new Error('Utilisateur non trouvé');
+          if (!userRes.ok) {
+            if (userRes.status === 404) throw new Error('Utilisateur non trouvé');
             throw new Error('Erreur lors de la récupération');
           }
           
-          const data = await res.json();
-          const state = get();
+          const userData = await userRes.json();
+          const socialAccounts = await socialsRes.json();
 
-          // Mise à jour intelligente : Ne remplace que si c'est vide ou valeur par défaut
+          // On cherche le lien LinkedIn dans la liste des social_accounts
+          const linkedinAccount = socialAccounts.find((acc: any) => 
+            acc.provider === 'linkedin' || acc.url.includes('linkedin.com')
+          );
+
           set((s) => ({
-            name: !s.name || s.name === initialState.name ? data.name || s.name : s.name,
-            description: !s.description || s.description === initialState.description ? data.bio || s.description : s.description,
+            name: !s.name || s.name === initialState.name ? userData.name || s.name : s.name,
+            description: !s.description || s.description === initialState.description ? userData.bio || s.description : s.description,
             githubUsername: username,
             socials: {
               ...s.socials,
-              twitter: !s.socials.twitter ? data.twitter_username || '' : s.socials.twitter,
-              portfolio: !s.socials.portfolio ? data.blog || '' : s.socials.portfolio,
+              twitter: !s.socials.twitter ? userData.twitter_username || '' : s.socials.twitter,
+              portfolio: !s.socials.portfolio ? userData.blog || '' : s.socials.portfolio,
+              linkedin: !s.socials.linkedin ? (linkedinAccount?.url || '') : s.socials.linkedin,
             }
           }));
 
