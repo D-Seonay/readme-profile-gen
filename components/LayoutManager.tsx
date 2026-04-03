@@ -69,7 +69,8 @@ export const LayoutManager = () => {
     skills: t.layout.skills,
     socials: t.layout.socials,
     stats: t.layout.stats,
-    donations: t.layout.donations
+    donations: t.layout.donations,
+    projects: t.layout.projects
   };
 
   const handleDragEnd = (event: DragEndEvent) => {

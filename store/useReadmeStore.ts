@@ -3,12 +3,12 @@ import { persist, createJSONStorage } from 'zustand/middleware';
 import { arrayMove } from '@dnd-kit/sortable';
 import { skillsData } from '@/lib/skillsData';
 
-export type SectionId = 'bio' | 'skills' | 'socials' | 'stats' | 'donations';
+export type SectionId = 'bio' | 'skills' | 'socials' | 'stats' | 'donations' | 'projects';
 export type ServiceStatus = 'checking' | 'online' | 'offline';
 export type BadgeStyle = 'for-the-badge' | 'flat' | 'flat-square' | 'plastic' | 'social';
 export type Language = 'en' | 'fr';
 
-const DEFAULT_LAYOUT: SectionId[] = ['bio', 'skills', 'socials', 'stats', 'donations'];
+const DEFAULT_LAYOUT: SectionId[] = ['bio', 'skills', 'socials', 'stats', 'donations', 'projects'];
 
 interface ReadmeState {
   language: Language;
@@ -17,6 +17,7 @@ interface ReadmeState {
   description: string;
   skills: string[];
   githubUsername: string;
+  featuredRepos: string[]; // List of repo names (e.g., "my-awesome-project")
   showStatsCard: boolean;
   showStreakCard: boolean;
   showTopLanguages: boolean;
@@ -53,6 +54,8 @@ interface ReadmeState {
   setDescription: (description: string) => void;
   toggleSkill: (slug: string) => void;
   setGithubUsername: (username: string) => void;
+  addFeaturedRepo: (repo: string) => void;
+  removeFeaturedRepo: (repo: string) => void;
   toggleStatsCard: () => void;
   toggleStreakCard: () => void;
   toggleTopLanguages: () => void;
@@ -78,6 +81,7 @@ const initialState = {
   description: 'Welcome to my profile! I am passionate about Web and Open Source.',
   skills: [],
   githubUsername: '',
+  featuredRepos: [],
   showStatsCard: true,
   showStreakCard: false,
   showTopLanguages: true,
@@ -92,7 +96,8 @@ const initialState = {
     skills: '🛠️ Tech Stack',
     socials: '📫 Contact Me',
     stats: '📊 GitHub Stats',
-    donations: '🎁 Support Me'
+    donations: '🎁 Support Me',
+    projects: '🚀 Featured Projects'
   },
   socials: {
     linkedin: '',
@@ -130,6 +135,12 @@ export const useReadmeStore = create<ReadmeState>()(
           : [...state.skills, slug],
       })),
       setGithubUsername: (githubUsername: string) => set({ githubUsername }),
+      addFeaturedRepo: (repo: string) => set((state) => ({
+        featuredRepos: [...state.featuredRepos, repo]
+      })),
+      removeFeaturedRepo: (repo: string) => set((state) => ({
+        featuredRepos: state.featuredRepos.filter((r) => r !== repo)
+      })),
       toggleStatsCard: () => set((state) => ({ showStatsCard: !state.showStatsCard })),
       toggleStreakCard: () => set((state) => ({ showStreakCard: !state.showStreakCard })),
       toggleTopLanguages: () => set((state) => ({ showTopLanguages: !state.showTopLanguages })),
@@ -242,11 +253,9 @@ export const useReadmeStore = create<ReadmeState>()(
     {
       name: 'readme-generator-storage',
       storage: createJSONStorage(() => localStorage),
-      // MIGRATION : On s'assure que toutes les sections par défaut sont présentes
       onRehydrateStorage: (state) => {
         return (hydratedState, error) => {
           if (hydratedState) {
-            // Si des nouvelles sections manquent dans le layout sauvegardé
             const missingSections = DEFAULT_LAYOUT.filter(
               (section) => !hydratedState.layout.includes(section)
             );
