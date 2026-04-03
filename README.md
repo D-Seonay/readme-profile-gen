@@ -17,7 +17,7 @@
 
 ## ✨ Overview
 
-The **Ultimate README Gen** is more than just a form. It's a high-performance design tool for developers that leverages the GitHub API to provide a "High-Tech Stealth" user experience.
+The **Ultimate README Gen** is more than just a form. It's a high-performance design tool for developers that leverages the GitHub API to provide a "High-Tech Stealth" user experience with real-time feedback and smart automation.
 
 ## 🛠 Key Features
 
@@ -28,18 +28,30 @@ Just enter your GitHub username and let the magic happen:
 - **Deep Scanning:** Textual analysis of your current README to auto-check your Tech Stack.
 - **Email Extraction:** Smart extraction of your contact address using Regex.
 
-### ↕️ Drag & Drop Layout
-Don't be limited by a fixed structure. Reorder your sections (Bio, Skills, Stats, Contact) with a simple drag-and-drop powered by `@dnd-kit`.
+### ↕️ Dynamic Layout & UX
+- **Drag & Drop:** Reorder your sections (Bio, Skills, Stats, Projects, etc.) with a simple drag-and-drop powered by `@dnd-kit`.
+- **Collapsible Editor:** A clean, organized interface with collapsible sections to focus on what matters.
+- **Dark/Light Mode:** Full support for both Dark and Light UI themes.
+- **Multi-language:** Available in both **English** and **French**.
 
 ### 🎨 Total Customization
 - **Themes Gallery:** Choose from 10+ themes for your statistics cards (Dracula, Radical, Tokyonight...).
 - **Global Alignment:** Switch your entire README between Classic (Left) or Modern (Centered) modes.
-- **Badge Factory:** 4 Shields.io badge styles available (Flat, For-the-badge, etc.).
-- **Organized Tech Stack:** 50+ technologies categorized for better readability (Frontend, DevOps, Mobile...).
+- **Badge Factory:** Choose between 4 Shields.io badge styles (Flat, For-the-badge, etc.).
+- **Organized Tech Stack:** 50+ technologies categorized for better readability.
+
+### 📊 Advanced Integrations
+- **GitHub Stats:** Real-time Global Stats, Most Used Languages, and Streak cards.
+- **GitHub Trophies:** Show off your accomplishments visually.
+- **WakaTime:** Display your weekly coding activity and official WakaTime badges.
+- **Project Showcase:** Highlight your best repositories with beautiful pin cards.
+- **Donations:** Support for Buy Me A Coffee, Ko-fi, and PayPal.
+- **Visitor Counter:** Track how many people view your profile.
 
 ### 🛡️ Resilience & Reliability
-- **Service Health Check:** Real-time monitoring of third-party services (GitHub Stats, Trophies) with outage alerts.
+- **Service Health Check:** Real-time monitoring of third-party services with outage alerts.
 - **Local Persistence:** Your data is automatically saved in your browser (LocalStorage).
+- **CI/CD:** Robust GitHub Actions pipeline for automated testing and linting.
 
 ---
 
@@ -51,7 +63,7 @@ Don't be limited by a fixed structure. Reorder your sections (Bio, Skills, Stats
 | **Zustand** | Global state management & persistence |
 | **Tailwind CSS** | Atomic and responsive design system |
 | **@dnd-kit** | Vertical Drag & Drop engine |
-| **React Markdown** | Real-time Markdown rendering with HTML support |
+| **Vitest** | Unit testing for the generation engine |
 | **GitHub REST API** | Data source for the Smart Auto-fill |
 
 ---
@@ -77,14 +89,17 @@ Don't be limited by a fixed structure. Reorder your sections (Bio, Skills, Stats
 
 ---
 
-## 📅 Roadmap
+## 📅 Roadmap Progress
 
 - [x] **P0:** State Persistence (LocalStorage).
 - [x] **P0:** Direct `.md` file download.
 - [x] **P1:** Stats theme selector.
 - [x] **P1:** GitHub Trophies integration.
-- [ ] **P2:** Generation engine unit tests.
-- [ ] **P2:** SEO & Open Graph optimization.
+- [x] **P1:** WakaTime activity tracking.
+- [x] **P1:** Multi-language support (EN/FR).
+- [x] **P2:** Generation engine unit tests.
+- [x] **P2:** SEO & Open Graph optimization.
+- [x] **DevOps:** GitHub Actions CI pipeline.
 
 ---
 
