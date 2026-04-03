@@ -157,7 +157,7 @@ const initialState = {
 
 export const useReadmeStore = create<ReadmeState>()(
   persist(
-    (set, get) => ({
+    (set) => ({
       ...initialState,
 
       setLanguage: (language: Language) => set({ language }),
