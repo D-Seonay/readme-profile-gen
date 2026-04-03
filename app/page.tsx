@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { useReadmeStore } from '@/store/useReadmeStore';
+import { useHydration } from '@/hooks/useHydration';
 import { SkillSelector } from '@/components/SkillSelector';
 import { GithubStatsConfig } from '@/components/GithubStatsConfig';
 import { SocialLinksForm } from '@/components/SocialLinksForm';
@@ -10,23 +11,46 @@ import { PreviewPane } from '@/components/PreviewPane';
 
 export default function Home() {
   const store = useReadmeStore();
-  const { name, title, description, setName, setTitle, setDescription } = store;
+  const hydrated = useHydration();
+  const { name, title, description, setName, setTitle, setDescription, reset } = store;
+
+  // Si on n'est pas encore hydraté côté client, on affiche un loader minimal
+  if (!hydrated) {
+    return (
+      <div className="h-screen w-full bg-zinc-950 flex items-center justify-center">
+        <div className="w-4 h-4 rounded-full bg-zinc-100 animate-pulse" />
+      </div>
+    );
+  }
 
   return (
     <main className="flex h-screen w-full overflow-hidden bg-zinc-950 text-zinc-100 font-sans">
       
       {/* --- CÔTÉ GAUCHE : FORMULAIRE (ÉDITEUR) --- */}
-      <section className="w-1/2 h-full flex flex-col p-8 border-r border-zinc-800 bg-zinc-900/50 backdrop-blur-sm overflow-y-auto">
-        <header className="mb-10">
-          <h1 className="text-3xl font-black italic uppercase tracking-tighter text-zinc-100">
-            Readme <span className="text-zinc-500">Gen</span>
-          </h1>
-          <p className="text-zinc-500 font-mono text-sm mt-2 italic">// Configuration du profil</p>
+      <section className="w-1/2 h-full flex flex-col p-8 border-r border-zinc-800 bg-zinc-900/50 backdrop-blur-sm overflow-y-auto custom-scrollbar">
+        <header className="mb-10 flex items-start justify-between">
+          <div>
+            <h1 className="text-3xl font-black italic uppercase tracking-tighter text-zinc-100">
+              Readme <span className="text-zinc-500">Gen</span>
+            </h1>
+            <p className="text-zinc-500 font-mono text-sm mt-2 italic">// Configuration du profil</p>
+          </div>
+          
+          <button 
+            onClick={() => {
+              if(confirm("Voulez-vous vraiment réinitialiser toutes les données ?")) {
+                reset();
+              }
+            }}
+            className="text-[9px] font-mono border border-zinc-800 px-3 py-1.5 rounded text-zinc-600 hover:text-zinc-100 hover:border-zinc-500 transition-all uppercase tracking-widest"
+          >
+            Reset All
+          </button>
         </header>
 
         <div className="space-y-10">
           
-          {/* 0. LAYOUT MANAGER (Nouveau) */}
+          {/* 0. LAYOUT MANAGER */}
           <LayoutManager />
 
           {/* 1. CONFIGURATION STATS GITHUB */}
