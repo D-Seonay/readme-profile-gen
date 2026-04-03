@@ -74,7 +74,8 @@ export const LayoutManager = () => {
     socials: t.layout.socials,
     stats: t.layout.stats,
     donations: t.layout.donations,
-    projects: t.layout.projects
+    projects: t.layout.projects,
+    wakatime: t.layout.wakatime
   };
 
   const handleDragEnd = (event: DragEndEvent) => {

@@ -9,6 +9,7 @@ import { GithubStatsConfig } from '@/components/GithubStatsConfig';
 import { SocialLinksForm } from '@/components/SocialLinksForm';
 import { DonationsForm } from '@/components/DonationsForm';
 import { ProjectShowcase } from '@/components/ProjectShowcase';
+import { WakatimeConfig } from '@/components/WakatimeConfig';
 import { LayoutManager } from '@/components/LayoutManager';
 import { StyleConfig } from '@/components/StyleConfig';
 import { PreviewPane } from '@/components/PreviewPane';
@@ -89,8 +90,14 @@ export default function Home() {
         );
       case 'stats':
         return (
-          <CollapsibleSection key={id} title={sectionTitles.stats || t.layout.stats} subtitle={t.github.help} defaultOpen>
+          <CollapsibleSection key={id} title={sectionTitles.stats || t.layout.stats} subtitle={t.github.help}>
             <GithubStatsConfig />
+          </CollapsibleSection>
+        );
+      case 'wakatime':
+        return (
+          <CollapsibleSection key={id} title={sectionTitles.wakatime || t.layout.wakatime} subtitle={t.wakatime.help}>
+            <WakatimeConfig />
           </CollapsibleSection>
         );
       case 'socials':
@@ -112,8 +119,6 @@ export default function Home() {
 
   return (
     <main className={`flex h-screen w-full overflow-hidden font-sans transition-colors duration-500 ${isDark ? 'bg-zinc-950 text-zinc-100' : 'bg-zinc-50 text-zinc-900'}`}>
-      
-      {/* --- CÔTÉ GAUCHE : FORMULAIRE --- */}
       <section className={`w-1/2 h-full flex flex-col border-r ${isDark ? 'border-zinc-800 bg-zinc-900/50' : 'border-zinc-200 bg-white/80'} backdrop-blur-sm overflow-y-auto custom-scrollbar`}>
         <header className="p-8 pb-4 flex items-start justify-between">
           <div>
@@ -160,9 +165,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* --- CÔTÉ DROIT : PREVIEW --- */}
       <PreviewPane />
-      
     </main>
   );
 }
