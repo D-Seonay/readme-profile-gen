@@ -6,8 +6,13 @@ import { skillsData } from '@/lib/skillsData';
 export type SectionId = 'bio' | 'skills' | 'socials' | 'stats';
 export type ServiceStatus = 'checking' | 'online' | 'offline';
 export type BadgeStyle = 'for-the-badge' | 'flat' | 'flat-square' | 'plastic' | 'social';
+export type Language = 'en' | 'fr';
 
 interface ReadmeState {
+  // --- UI Config ---
+  language: Language;
+  
+  // --- Données ---
   name: string;
   title: string;
   description: string;
@@ -23,7 +28,7 @@ interface ReadmeState {
   // --- Style & Layout ---
   alignment: 'left' | 'center';
   badgeStyle: BadgeStyle;
-  statsAlign: 'column' | 'row'; // Nouvelle option
+  statsAlign: 'column' | 'row';
   sectionTitles: Record<SectionId, string>;
   
   socials: {
@@ -32,6 +37,8 @@ interface ReadmeState {
     portfolio: string;
     email: string;
   };
+  
+  // --- UI States ---
   isLoadingGithubData: boolean;
   githubFetchError: string | null;
   servicesStatus: {
@@ -41,6 +48,8 @@ interface ReadmeState {
   };
   layout: SectionId[];
   
+  // --- Actions ---
+  setLanguage: (language: Language) => void;
   setName: (name: string) => void;
   setTitle: (title: string) => void;
   setDescription: (description: string) => void;
@@ -64,9 +73,10 @@ interface ReadmeState {
 }
 
 const initialState = {
+  language: 'en' as Language,
   name: 'John Doe',
   title: 'Senior Fullstack Developer',
-  description: 'Bienvenue sur mon profil ! Je suis passionné par le Web et l\'Open Source.',
+  description: 'Welcome to my profile! I am passionate about Web and Open Source.',
   skills: [],
   githubUsername: '',
   showStatsCard: true,
@@ -81,7 +91,7 @@ const initialState = {
   sectionTitles: {
     bio: '',
     skills: '🛠️ Tech Stack',
-    socials: '📫 Me contacter',
+    socials: '📫 Contact Me',
     stats: '📊 GitHub Stats'
   },
   socials: {
@@ -105,6 +115,7 @@ export const useReadmeStore = create<ReadmeState>()(
     (set, get) => ({
       ...initialState,
 
+      setLanguage: (language: Language) => set({ language }),
       setName: (name: string) => set({ name }),
       setTitle: (title: string) => set({ title }),
       setDescription: (description: string) => set({ description }),
@@ -164,8 +175,8 @@ export const useReadmeStore = create<ReadmeState>()(
           ]);
           
           if (!userRes.ok) {
-            if (userRes.status === 404) throw new Error('Utilisateur non trouvé');
-            throw new Error('Erreur lors de la récupération du profil');
+            if (userRes.status === 404) throw new Error('User not found');
+            throw new Error('Error fetching profile');
           }
           
           const userData = await userRes.json();

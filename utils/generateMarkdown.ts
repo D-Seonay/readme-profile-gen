@@ -1,7 +1,8 @@
 import { getSkillBySlug } from '@/lib/skillsData';
-import { SectionId, BadgeStyle } from '@/store/useReadmeStore';
+import { SectionId, BadgeStyle, Language } from '@/store/useReadmeStore';
 
 interface StoreData {
+  language: Language;
   name: string;
   title: string;
   description: string;
@@ -117,5 +118,9 @@ export const generateMarkdown = (data: StoreData): string => {
     }
   });
 
-  return `${finalSections.filter(Boolean).join('\n\n')}\n\n---\n*Généré avec Ultimate GitHub Profile README Generator*`.trim();
+  const footerCredit = data.language === 'fr' 
+    ? '*Généré avec Ultimate GitHub Profile README Generator*'
+    : '*Generated with Ultimate GitHub Profile README Generator*';
+
+  return `${finalSections.filter(Boolean).join('\n\n')}\n\n---\n${footerCredit}`.trim();
 };

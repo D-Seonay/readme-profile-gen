@@ -3,13 +3,14 @@
 import React, { useState, useMemo } from 'react';
 import { skillsData, SKILL_CATEGORIES, Skill } from '@/lib/skillsData';
 import { useReadmeStore } from '@/store/useReadmeStore';
+import { useTranslation } from '@/hooks/useTranslation';
 
 export const SkillSelector = () => {
   const { skills, toggleSkill, skillsViewMode, setSkillsViewMode } = useReadmeStore();
+  const { t } = useTranslation();
   const [search, setSearch] = useState('');
   const [expandedCategories, setExpandedCategories] = useState<string[]>(['language', 'frontend', 'backend']);
 
-  // Filtrage intelligent
   const filteredSkills = useMemo(() => {
     return skillsData.filter(s => 
       s.name.toLowerCase().includes(search.toLowerCase()) || 
@@ -17,7 +18,6 @@ export const SkillSelector = () => {
     );
   }, [search]);
 
-  // Groupement par catégorie
   const groupedSkills = useMemo(() => {
     const groups: Record<string, Skill[]> = {};
     filteredSkills.forEach(skill => {
@@ -34,18 +34,17 @@ export const SkillSelector = () => {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 text-zinc-100">
       <header className="flex items-center justify-between">
         <div className="flex flex-col gap-1">
           <label className="text-[10px] font-mono uppercase tracking-[0.2em] text-zinc-500">
-            Tech Stack & Skills
+            {t.skills.label}
           </label>
           <p className="text-[9px] font-mono text-zinc-600 italic">
-            // Sélectionnez vos technos par catégorie
+            {t.skills.help}
           </p>
         </div>
 
-        {/* Toggle Mode Organisation */}
         <div className="flex items-center gap-1 bg-zinc-900 p-1 rounded-lg border border-zinc-800">
           <button
             onClick={() => setSkillsViewMode('grouped')}
@@ -53,7 +52,7 @@ export const SkillSelector = () => {
               skillsViewMode === 'grouped' ? 'bg-zinc-100 text-zinc-950' : 'text-zinc-500 hover:text-zinc-300'
             }`}
           >
-            Grouped
+            {t.skills.grouped}
           </button>
           <button
             onClick={() => setSkillsViewMode('flat')}
@@ -61,25 +60,23 @@ export const SkillSelector = () => {
               skillsViewMode === 'flat' ? 'bg-zinc-100 text-zinc-950' : 'text-zinc-500 hover:text-zinc-300'
             }`}
           >
-            Flat
+            {t.skills.flat}
           </button>
         </div>
       </header>
 
-      {/* Barre de recherche */}
       <div className="relative">
         <input
           type="text"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          placeholder="Rechercher une techno (ex: React, Docker...)"
+          placeholder={t.skills.search}
           className="w-full bg-zinc-950 border border-zinc-800 p-2.5 rounded-xl font-mono text-zinc-100 text-xs focus:outline-none focus:border-zinc-500 transition-all placeholder:text-zinc-700"
         />
       </div>
 
       <div className="space-y-4">
         {skillsViewMode === 'grouped' ? (
-          /* --- MODE GROUPÉ --- */
           Object.entries(SKILL_CATEGORIES).map(([id, label]) => {
             const categorySkills = groupedSkills[id];
             if (!categorySkills) return null;
@@ -129,7 +126,6 @@ export const SkillSelector = () => {
             );
           })
         ) : (
-          /* --- MODE FLAT --- */
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
             {filteredSkills.map((skill) => {
               const isActive = skills.includes(skill.slug);
