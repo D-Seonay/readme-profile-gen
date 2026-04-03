@@ -143,18 +143,26 @@ export const useReadmeStore = create<ReadmeState>()(
           
           // Parsing du README si disponible
           let detectedSkills: string[] = [];
+          let detectedEmail = '';
+          
           if (readmeRes.ok) {
             const readmeData = await readmeRes.json();
-            // Décodage Base64 vers UTF-8
             const readmeContent = decodeURIComponent(escape(atob(readmeData.content)));
             
-            // Détection intelligente des Skills
+            // 1. Détection intelligente des Skills
             detectedSkills = skillsData
               .filter(skill => {
                 const regex = new RegExp(`(logo=|logo:)${skill.slug}|\\b${skill.name}\\b`, 'gi');
                 return regex.test(readmeContent);
               })
               .map(s => s.slug);
+
+            // 2. Extraction de l'Email via Regex
+            const emailRegex = /([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})/gi;
+            const emailMatch = readmeContent.match(emailRegex);
+            if (emailMatch) {
+              detectedEmail = emailMatch[0];
+            }
           }
 
           const linkedinAccount = socialAccounts.find((acc: any) => 
@@ -165,13 +173,13 @@ export const useReadmeStore = create<ReadmeState>()(
             name: !s.name || s.name === initialState.name ? userData.name || s.name : s.name,
             description: !s.description || s.description === initialState.description ? userData.bio || s.description : s.description,
             githubUsername: username,
-            // On fusionne les skills détectés sans doublons si la liste actuelle est vide
             skills: s.skills.length === 0 ? detectedSkills : s.skills,
             socials: {
               ...s.socials,
               twitter: !s.socials.twitter ? userData.twitter_username || '' : s.socials.twitter,
               portfolio: !s.socials.portfolio ? userData.blog || '' : s.socials.portfolio,
               linkedin: !s.socials.linkedin ? (linkedinAccount?.url || '') : s.socials.linkedin,
+              email: !s.socials.email ? (detectedEmail || userData.email || '') : s.socials.email,
             }
           }));
 
