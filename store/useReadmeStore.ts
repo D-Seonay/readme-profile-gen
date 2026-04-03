@@ -11,11 +11,12 @@ interface ReadmeState {
   showStreakCard: boolean;
   showTopLanguages: boolean;
   socials: {
-    twitter: string;
     linkedin: string;
-    website: string;
+    twitter: string;
+    portfolio: string;
+    email: string;
   };
-
+  
   // --- Actions ---
   setName: (name: string) => void;
   setTitle: (title: string) => void;
@@ -25,8 +26,8 @@ interface ReadmeState {
   toggleStatsCard: () => void;
   toggleStreakCard: () => void;
   toggleTopLanguages: () => void;
-  setSocial: (platform: 'twitter' | 'linkedin' | 'website', value: string) => void;
-
+  setSocial: (platform: keyof ReadmeState['socials'], value: string) => void;
+  
   // Action groupée pour de futurs modules
   reset: () => void;
 }
@@ -41,9 +42,10 @@ const initialState = {
   showStreakCard: false,
   showTopLanguages: true,
   socials: {
-    twitter: '',
     linkedin: '',
-    website: '',
+    twitter: '',
+    portfolio: '',
+    email: '',
   },
 };
 

@@ -10,28 +10,37 @@ interface StoreData {
   showStreakCard: boolean;
   showTopLanguages: boolean;
   socials: {
-    twitter: string;
     linkedin: string;
-    website: string;
+    twitter: string;
+    portfolio: string;
+    email: string;
   };
 }
 
 export const generateMarkdown = (data: StoreData): string => {
   const { name, title, description, skills, githubUsername, showStatsCard, showStreakCard, showTopLanguages, socials } = data;
 
-  // 1. Badges Sociaux
+  // 1. Badges Sociaux / Contact
   const socialBadges = [];
   if (socials.linkedin) {
-    socialBadges.push(`[![LinkedIn](https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white)](https://linkedin.com/in/${socials.linkedin})`);
+    const url = socials.linkedin.startsWith('http') ? socials.linkedin : `https://linkedin.com/in/${socials.linkedin}`;
+    socialBadges.push(`[![LinkedIn](https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white)](${url})`);
   }
   if (socials.twitter) {
-    const twitterHandle = socials.twitter.replace('@', '');
-    socialBadges.push(`[![Twitter](https://img.shields.io/badge/Twitter-1DA1F2?style=for-the-badge&logo=twitter&logoColor=white)](https://twitter.com/${twitterHandle})`);
+    const handle = socials.twitter.replace('@', '');
+    socialBadges.push(`[![Twitter](https://img.shields.io/badge/Twitter-1DA1F2?style=for-the-badge&logo=twitter&logoColor=white)](https://twitter.com/${handle})`);
   }
-  if (socials.website) {
-    socialBadges.push(`[![Website](https://img.shields.io/badge/Website-000000?style=for-the-badge&logo=icloud&logoColor=white)](${socials.website})`);
+  if (socials.portfolio) {
+    const url = socials.portfolio.startsWith('http') ? socials.portfolio : `https://${socials.portfolio}`;
+    socialBadges.push(`[![Portfolio](https://img.shields.io/badge/Portfolio-000000?style=for-the-badge&logo=icloud&logoColor=white)](${url})`);
   }
-  const socialSection = socialBadges.length > 0 ? socialBadges.join(' ') + '\n' : '';
+  if (socials.email) {
+    socialBadges.push(`[![Email](https://img.shields.io/badge/Email-D14836?style=for-the-badge&logo=gmail&logoColor=white)](mailto:${socials.email})`);
+  }
+  
+  const socialSection = socialBadges.length > 0 
+    ? `\n## 📫 Me contacter / Mes réseaux\n\n${socialBadges.join(' ')}\n` 
+    : '';
 
   // 2. Badges Compétences
   const skillsBadges = skills
@@ -69,10 +78,11 @@ export const generateMarkdown = (data: StoreData): string => {
   return `
 # 👋 Hello, I'm ${name}
 
-${socialSection}
 ## 🚀 ${title}
 
 ${description}
+
+${socialSection}
 
 ${skills.length > 0 ? '\n### 🛠️ Tech Stack\n\n' + skillsBadges + '\n' : ''}
 ${statsSection}

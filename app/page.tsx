@@ -4,7 +4,7 @@ import React from 'react';
 import { useReadmeStore } from '@/store/useReadmeStore';
 import { SkillSelector } from '@/components/SkillSelector';
 import { GithubStatsConfig } from '@/components/GithubStatsConfig';
-import { SocialLinksConfig } from '@/components/SocialLinksConfig';
+import { SocialLinksForm } from '@/components/SocialLinksForm';
 import { PreviewPane } from '@/components/PreviewPane';
 
 export default function Home() {
@@ -25,7 +25,7 @@ export default function Home() {
 
         <div className="space-y-10">
           
-          {/* 1. CONFIGURATION STATS GITHUB (Priorité Haute) */}
+          {/* 1. CONFIGURATION STATS GITHUB */}
           <GithubStatsConfig />
 
           {/* 2. CHAMPS DE BASE */}
@@ -75,8 +75,8 @@ export default function Home() {
             <SkillSelector />
           </div>
 
-          {/* 4. LIENS SOCIAUX */}
-          <SocialLinksConfig />
+          {/* 4. LIENS SOCIAUX & CONTACT */}
+          <SocialLinksForm />
 
           {/* ESPACE POUR FUTURS MODULES */}
           <div className="mt-8 pt-8 border-t border-zinc-800 opacity-20 pointer-events-none">
@@ -85,7 +85,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* --- CÔTÉ DROIT : PRÉVISUALISATION (NOUVEAU COMPOSANT) --- */}
+      {/* --- CÔTÉ DROIT : PRÉVISUALISATION --- */}
       <PreviewPane />
       
     </main>
