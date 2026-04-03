@@ -8,11 +8,10 @@ export type ServiceStatus = 'checking' | 'online' | 'offline';
 export type BadgeStyle = 'for-the-badge' | 'flat' | 'flat-square' | 'plastic' | 'social';
 export type Language = 'en' | 'fr';
 
+const DEFAULT_LAYOUT: SectionId[] = ['bio', 'skills', 'socials', 'stats', 'donations'];
+
 interface ReadmeState {
-  // --- UI Config ---
   language: Language;
-  
-  // --- Données ---
   name: string;
   title: string;
   description: string;
@@ -24,27 +23,21 @@ interface ReadmeState {
   showTrophies: boolean;
   theme: string;
   skillsViewMode: 'grouped' | 'flat';
-  
-  // --- Style & Layout ---
   alignment: 'left' | 'center';
   badgeStyle: BadgeStyle;
   statsAlign: 'column' | 'row';
   sectionTitles: Record<SectionId, string>;
-  
   socials: {
     linkedin: string;
     twitter: string;
     portfolio: string;
     email: string;
   };
-
   donations: {
     buymeacoffee: string;
     kofi: string;
     paypal: string;
   };
-  
-  // --- UI States ---
   isLoadingGithubData: boolean;
   githubFetchError: string | null;
   servicesStatus: {
@@ -54,7 +47,6 @@ interface ReadmeState {
   };
   layout: SectionId[];
   
-  // --- Actions ---
   setLanguage: (language: Language) => void;
   setName: (name: string) => void;
   setTitle: (title: string) => void;
@@ -120,7 +112,7 @@ const initialState = {
     streak: 'checking' as ServiceStatus,
     trophies: 'checking' as ServiceStatus,
   },
-  layout: ['bio', 'skills', 'socials', 'stats', 'donations'] as SectionId[],
+  layout: DEFAULT_LAYOUT,
 };
 
 export const useReadmeStore = create<ReadmeState>()(
@@ -250,6 +242,20 @@ export const useReadmeStore = create<ReadmeState>()(
     {
       name: 'readme-generator-storage',
       storage: createJSONStorage(() => localStorage),
+      // MIGRATION : On s'assure que toutes les sections par défaut sont présentes
+      onRehydrateStorage: (state) => {
+        return (hydratedState, error) => {
+          if (hydratedState) {
+            // Si des nouvelles sections manquent dans le layout sauvegardé
+            const missingSections = DEFAULT_LAYOUT.filter(
+              (section) => !hydratedState.layout.includes(section)
+            );
+            if (missingSections.length > 0) {
+              hydratedState.layout = [...hydratedState.layout, ...missingSections];
+            }
+          }
+        };
+      },
       partialize: (state) => {
         const { servicesStatus, isLoadingGithubData, githubFetchError, ...rest } = state;
         return rest;
