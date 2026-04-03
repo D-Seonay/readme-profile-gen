@@ -17,6 +17,7 @@ interface ReadmeState {
   showTopLanguages: boolean;
   showTrophies: boolean;
   theme: string;
+  skillsViewMode: 'grouped' | 'flat';
   socials: {
     linkedin: string;
     twitter: string;
@@ -42,6 +43,7 @@ interface ReadmeState {
   toggleTopLanguages: () => void;
   toggleTrophies: () => void;
   setTheme: (theme: string) => void;
+  setSkillsViewMode: (mode: 'grouped' | 'flat') => void;
   setSocial: (platform: keyof ReadmeState['socials'], value: string) => void;
   reorderLayout: (activeId: SectionId, overId: SectionId) => void;
   checkServicesHealth: () => Promise<void>;
@@ -60,6 +62,7 @@ const initialState = {
   showTopLanguages: true,
   showTrophies: false,
   theme: 'transparent',
+  skillsViewMode: 'grouped' as const,
   socials: {
     linkedin: '',
     twitter: '',
@@ -95,6 +98,7 @@ export const useReadmeStore = create<ReadmeState>()(
       toggleTopLanguages: () => set((state) => ({ showTopLanguages: !state.showTopLanguages })),
       toggleTrophies: () => set((state) => ({ showTrophies: !state.showTrophies })),
       setTheme: (theme: string) => set({ theme }),
+      setSkillsViewMode: (skillsViewMode: 'grouped' | 'flat') => set({ skillsViewMode }),
       setSocial: (platform, value) => set((state) => ({
         socials: { ...state.socials, [platform]: value }
       })),
@@ -126,7 +130,6 @@ export const useReadmeStore = create<ReadmeState>()(
         set({ isLoadingGithubData: true, githubFetchError: null });
         
         try {
-          // Appel triple : Profil + Social Accounts + README
           const [userRes, socialsRes, readmeRes] = await Promise.all([
             fetch(`https://api.github.com/users/${username}`),
             fetch(`https://api.github.com/users/${username}/social_accounts`),
@@ -141,7 +144,6 @@ export const useReadmeStore = create<ReadmeState>()(
           const userData = await userRes.json();
           const socialAccounts = await socialsRes.json();
           
-          // Parsing du README si disponible
           let detectedSkills: string[] = [];
           let detectedEmail = '';
           
@@ -149,7 +151,6 @@ export const useReadmeStore = create<ReadmeState>()(
             const readmeData = await readmeRes.json();
             const readmeContent = decodeURIComponent(escape(atob(readmeData.content)));
             
-            // 1. Détection intelligente des Skills
             detectedSkills = skillsData
               .filter(skill => {
                 const regex = new RegExp(`(logo=|logo:)${skill.slug}|\\b${skill.name}\\b`, 'gi');
@@ -157,7 +158,6 @@ export const useReadmeStore = create<ReadmeState>()(
               })
               .map(s => s.slug);
 
-            // 2. Extraction de l'Email via Regex
             const emailRegex = /([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})/gi;
             const emailMatch = readmeContent.match(emailRegex);
             if (emailMatch) {
