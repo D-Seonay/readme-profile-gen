@@ -10,6 +10,9 @@ import { SocialLinksForm } from '@/components/SocialLinksForm';
 import { DonationsForm } from '@/components/DonationsForm';
 import { ProjectShowcase } from '@/components/ProjectShowcase';
 import { WakatimeConfig } from '@/components/WakatimeConfig';
+import { BannerConfig } from '@/components/BannerConfig';
+import { SpotifyConfig } from '@/components/SpotifyConfig';
+import { RssConfig } from '@/components/RssConfig';
 import { LayoutManager } from '@/components/LayoutManager';
 import { StyleConfig } from '@/components/StyleConfig';
 import { PreviewPane } from '@/components/PreviewPane';
@@ -39,6 +42,12 @@ export default function Home() {
 
   const renderSection = (id: SectionId) => {
     switch (id) {
+      case 'banner':
+        return (
+          <CollapsibleSection key={id} title={sectionTitles.banner || t.layout.banner} subtitle={t.banner.help}>
+            <BannerConfig />
+          </CollapsibleSection>
+        );
       case 'bio':
         return (
           <CollapsibleSection key={id} title={sectionTitles.bio || t.layout.bio}>
@@ -98,6 +107,18 @@ export default function Home() {
         return (
           <CollapsibleSection key={id} title={sectionTitles.wakatime || t.layout.wakatime} subtitle={t.wakatime.help}>
             <WakatimeConfig />
+          </CollapsibleSection>
+        );
+      case 'spotify':
+        return (
+          <CollapsibleSection key={id} title={sectionTitles.spotify || t.layout.spotify} subtitle={t.spotify.help}>
+            <SpotifyConfig />
+          </CollapsibleSection>
+        );
+      case 'rss':
+        return (
+          <CollapsibleSection key={id} title={sectionTitles.rss || t.layout.rss} subtitle={t.rss.help}>
+            <RssConfig />
           </CollapsibleSection>
         );
       case 'socials':
@@ -160,7 +181,7 @@ export default function Home() {
           {layout.map((sectionId) => renderSection(sectionId))}
 
           <div className={`mt-8 mx-8 pt-8 border-t ${isDark ? 'border-zinc-800' : 'border-zinc-200'} opacity-20 pointer-events-none text-center`}>
-            <p className="text-xs font-mono italic">{"// End of Editor"}</p>
+            <p className="text-xs font-mono italic">// End of Editor</p>
           </div>
         </div>
       </section>

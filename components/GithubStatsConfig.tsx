@@ -31,6 +31,7 @@ export const GithubStatsConfig = () => {
     showTopLanguages, toggleTopLanguages,
     showTrophies, toggleTrophies,
     showVisitorCounter, toggleVisitorCounter,
+    showSnake, toggleSnake,
     theme, setTheme,
     servicesStatus, checkServicesHealth,
     uiTheme
@@ -173,6 +174,24 @@ export const GithubStatsConfig = () => {
             </div>
             <div className={`w-8 h-4 rounded-full p-1 transition-colors duration-200 ${showTopLanguages && !isOffline('stats') ? 'bg-emerald-500' : (isDark ? 'bg-zinc-800' : 'bg-zinc-200')}`}>
               <div className={`w-2 h-2 rounded-full transition-transform duration-200 ${showTopLanguages && !isOffline('stats') ? 'translate-x-4 bg-white' : (isDark ? 'bg-zinc-500' : 'bg-white shadow-sm')}`} />
+            </div>
+          </button>
+        </div>
+
+        {/* Snake Animation */}
+        <div className={`p-3 rounded-xl border transition-all ${isDark ? 'bg-zinc-900/50 border-zinc-800 hover:border-zinc-700' : 'bg-white border-zinc-200 hover:border-zinc-300'}`}>
+          <button
+            onClick={toggleSnake}
+            className="w-full flex items-center justify-between group"
+          >
+            <div className="flex items-center gap-3">
+              <div className={`w-1.5 h-1.5 rounded-full ${showSnake ? 'bg-indigo-500' : 'bg-zinc-500'}`} />
+              <span className={`text-xs font-mono transition-colors ${isDark ? 'text-zinc-400 group-hover:text-zinc-200' : 'text-zinc-600 group-hover:text-zinc-900'}`}>
+                {t.github.snake}
+              </span>
+            </div>
+            <div className={`w-8 h-4 rounded-full p-1 transition-colors duration-200 ${showSnake ? 'bg-emerald-500' : (isDark ? 'bg-zinc-800' : 'bg-zinc-200')}`}>
+              <div className={`w-2 h-2 rounded-full transition-transform duration-200 ${showSnake ? 'translate-x-4 bg-white' : (isDark ? 'bg-zinc-500' : 'bg-white shadow-sm')}`} />
             </div>
           </button>
         </div>

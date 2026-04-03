@@ -3,13 +3,13 @@ import { persist, createJSONStorage } from 'zustand/middleware';
 import { arrayMove } from '@dnd-kit/sortable';
 import { skillsData } from '@/lib/skillsData';
 
-export type SectionId = 'bio' | 'skills' | 'socials' | 'stats' | 'donations' | 'projects' | 'wakatime';
+export type SectionId = 'banner' | 'bio' | 'skills' | 'socials' | 'stats' | 'donations' | 'projects' | 'wakatime' | 'spotify' | 'rss';
 export type ServiceStatus = 'checking' | 'online' | 'offline';
 export type BadgeStyle = 'for-the-badge' | 'flat' | 'flat-square' | 'plastic' | 'social';
 export type Language = 'en' | 'fr';
 export type UITheme = 'dark' | 'light';
 
-const DEFAULT_LAYOUT: SectionId[] = ['bio', 'skills', 'socials', 'stats', 'donations', 'projects', 'wakatime'];
+const DEFAULT_LAYOUT: SectionId[] = ['banner', 'bio', 'skills', 'socials', 'stats', 'donations', 'projects', 'wakatime', 'spotify', 'rss'];
 
 interface ReadmeState {
   language: Language;
@@ -21,6 +21,9 @@ interface ReadmeState {
   githubUsername: string;
   wakatimeUsername: string;
   wakatimeBadgeId: string;
+  bannerUrl: string;
+  spotifyUrl: string;
+  rssUrl: string;
   showWakatimeBadges: boolean;
   showVisitorCounter: boolean;
   featuredRepos: string[];
@@ -28,6 +31,7 @@ interface ReadmeState {
   showStreakCard: boolean;
   showTopLanguages: boolean;
   showTrophies: boolean;
+  showSnake: boolean; // 🐍 Snake
   theme: string;
   skillsViewMode: 'grouped' | 'flat';
   alignment: 'left' | 'center';
@@ -65,6 +69,9 @@ interface ReadmeState {
   setGithubUsername: (username: string) => void;
   setWakatimeUsername: (username: string) => void;
   setWakatimeBadgeId: (id: string) => void;
+  setBannerUrl: (url: string) => void;
+  setSpotifyUrl: (url: string) => void;
+  setRssUrl: (url: string) => void;
   toggleWakatimeBadges: () => void;
   toggleVisitorCounter: () => void;
   addFeaturedRepo: (repo: string) => void;
@@ -73,6 +80,7 @@ interface ReadmeState {
   toggleStreakCard: () => void;
   toggleTopLanguages: () => void;
   toggleTrophies: () => void;
+  toggleSnake: () => void; // 🐍 Snake Toggle
   setTheme: (theme: string) => void;
   setSkillsViewMode: (mode: 'grouped' | 'flat') => void;
   setAlignment: (alignment: 'left' | 'center') => void;
@@ -97,6 +105,9 @@ const initialState = {
   githubUsername: '',
   wakatimeUsername: '',
   wakatimeBadgeId: '',
+  bannerUrl: '',
+  spotifyUrl: '',
+  rssUrl: '',
   showWakatimeBadges: false,
   showVisitorCounter: false,
   featuredRepos: [],
@@ -104,19 +115,23 @@ const initialState = {
   showStreakCard: false,
   showTopLanguages: true,
   showTrophies: false,
+  showSnake: false, // 🐍 Snake
   theme: 'transparent',
   skillsViewMode: 'grouped' as const,
   alignment: 'left' as const,
   badgeStyle: 'for-the-badge' as BadgeStyle,
   statsAlign: 'column' as const,
   sectionTitles: {
+    banner: '',
     bio: '👤 Introduction',
     skills: '🛠️ Tech Stack',
     socials: '📫 Contact Me',
     stats: '📊 GitHub Stats',
     donations: '🎁 Support Me',
     projects: '🚀 Featured Projects',
-    wakatime: '⏱️ Coding Activity'
+    wakatime: '⏱️ Coding Activity',
+    spotify: '🎵 Now Playing',
+    rss: '📰 Latest Blog Posts'
   },
   socials: {
     linkedin: '',
@@ -142,7 +157,7 @@ const initialState = {
 
 export const useReadmeStore = create<ReadmeState>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       ...initialState,
 
       setLanguage: (language: Language) => set({ language }),
@@ -158,6 +173,9 @@ export const useReadmeStore = create<ReadmeState>()(
       setGithubUsername: (githubUsername: string) => set({ githubUsername }),
       setWakatimeUsername: (wakatimeUsername: string) => set({ wakatimeUsername }),
       setWakatimeBadgeId: (wakatimeBadgeId: string) => set({ wakatimeBadgeId }),
+      setBannerUrl: (bannerUrl: string) => set({ bannerUrl }),
+      setSpotifyUrl: (spotifyUrl: string) => set({ spotifyUrl }),
+      setRssUrl: (rssUrl: string) => set({ rssUrl }),
       toggleWakatimeBadges: () => set((state) => ({ showWakatimeBadges: !state.showWakatimeBadges })),
       toggleVisitorCounter: () => set((state) => ({ showVisitorCounter: !state.showVisitorCounter })),
       addFeaturedRepo: (repo: string) => set((state) => ({
@@ -170,6 +188,7 @@ export const useReadmeStore = create<ReadmeState>()(
       toggleStreakCard: () => set((state) => ({ showStreakCard: !state.showStreakCard })),
       toggleTopLanguages: () => set((state) => ({ showTopLanguages: !state.showTopLanguages })),
       toggleTrophies: () => set((state) => ({ showTrophies: !state.showTrophies })),
+      toggleSnake: () => set((state) => ({ showSnake: !state.showSnake })), // 🐍 Snake
       setTheme: (theme: string) => set({ theme }),
       setSkillsViewMode: (skillsViewMode: 'grouped' | 'flat') => set({ skillsViewMode }),
       setAlignment: (alignment: 'left' | 'center') => set({ alignment }),
@@ -292,7 +311,6 @@ export const useReadmeStore = create<ReadmeState>()(
         };
       },
       partialize: (state) => {
-        // Omitting internal UI/Service states from persistence safely
         const { ...persistedState } = state;
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore

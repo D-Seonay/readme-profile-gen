@@ -10,6 +10,9 @@ interface StoreData {
   githubUsername: string;
   wakatimeUsername: string;
   wakatimeBadgeId: string;
+  bannerUrl: string;
+  spotifyUrl: string;
+  rssUrl: string;
   showWakatimeBadges: boolean;
   showVisitorCounter: boolean;
   featuredRepos: string[];
@@ -17,6 +20,7 @@ interface StoreData {
   showStreakCard: boolean;
   showTopLanguages: boolean;
   showTrophies: boolean;
+  showSnake: boolean;
   theme: string;
   alignment: 'left' | 'center';
   badgeStyle: BadgeStyle;
@@ -39,17 +43,21 @@ interface StoreData {
 export const generateMarkdown = (data: StoreData): string => {
   const { 
     name, title, description, skills, githubUsername, wakatimeUsername, wakatimeBadgeId, showWakatimeBadges, showVisitorCounter, featuredRepos,
-    showStatsCard, showStreakCard, showTopLanguages, showTrophies, 
+    showStatsCard, showStreakCard, showTopLanguages, showTrophies, showSnake, bannerUrl, spotifyUrl, rssUrl,
     theme, alignment, badgeStyle, statsAlign, sectionTitles, socials, donations, layout 
   } = data;
 
   const isCentered = alignment === 'center';
   const isRow = statsAlign === 'row';
 
-  // --- Préparateurs de Sections ---
+  const getBannerSection = () => {
+    if (!bannerUrl) return '';
+    const content = `![Profile Banner](${bannerUrl})`;
+    return isCentered ? `<div align="center">\n\n${content}\n\n</div>` : content;
+  };
 
   const getBioSection = () => {
-    const md = `# 👋 Hello, I'm ${name}\n\n## 🚀 ${title}\n\n${description}`;
+    let md = `# 👋 Hello, I'm ${name}\n\n## 🚀 ${title}\n\n${description}`;
     return isCentered ? `<div align="center">\n\n${md}\n\n</div>` : md;
   };
 
@@ -77,7 +85,7 @@ export const generateMarkdown = (data: StoreData): string => {
     }
     if (socials.twitter) {
       const handle = socials.twitter.replace('@', '');
-      badges.push(`[![Twitter](https://img.shields.io/badge/Twitter-1DA1F2?style=${badgeStyle}_logo=twitter&logoColor=white)](https://twitter.com/${handle})`);
+      badges.push(`[![Twitter](https://img.shields.io/badge/Twitter-1DA1F2?style=${badgeStyle}&logo=twitter&logoColor=white)](https://twitter.com/${handle})`);
     }
     if (socials.portfolio) {
       const url = socials.portfolio.startsWith('http') ? socials.portfolio : `https://${socials.portfolio}`;
@@ -94,14 +102,13 @@ export const generateMarkdown = (data: StoreData): string => {
   };
 
   const getStatsSection = () => {
-    const hasActiveStats = (githubUsername && (showStatsCard || showStreakCard || showTopLanguages || showTrophies)) || (githubUsername && showVisitorCounter);
+    const hasActiveStats = (githubUsername && (showStatsCard || showStreakCard || showTopLanguages || showTrophies || showSnake)) || (githubUsername && showVisitorCounter);
     if (!hasActiveStats) return '';
 
     const titleMd = sectionTitles.stats ? `### ${sectionTitles.stats}\n\n` : '';
     let content = isCentered ? '<div align="center">' : '<div>';
     content += '\n\n';
     
-    // Visitor Counter (at the top of stats)
     if (showVisitorCounter && githubUsername) {
       content += `![Visitors](https://komarev.com/ghpvc/?username=${githubUsername}&label=Profile%20views&color=0e7afe&style=${badgeStyle})\n\n`;
     }
@@ -116,6 +123,11 @@ export const generateMarkdown = (data: StoreData): string => {
     if (showStreakCard) statsImages.push(`![GitHub Streak](https://streak-stats.demolab.com/?user=${githubUsername}&theme=${theme}&hide_border=true)`);
 
     content += statsImages.join(isRow ? ' ' : '\n');
+
+    if (showSnake && githubUsername) {
+      content += `\n\n![Snake animation](https://github.com/${githubUsername}/${githubUsername}/blob/output/github-contribution-grid-snake.svg)`;
+    }
+
     content += '\n\n</div>';
     
     return `${titleMd}${content}`;
@@ -169,8 +181,23 @@ export const generateMarkdown = (data: StoreData): string => {
     return isCentered ? `<div align="center">\n\n${titleMd}${content}\n\n</div>` : `${titleMd}${content}`;
   };
 
+  const getSpotifySection = () => {
+    if (!spotifyUrl) return '';
+    const titleMd = sectionTitles.spotify ? `## ${sectionTitles.spotify}\n\n` : '';
+    const content = `[![Spotify](${spotifyUrl})](${spotifyUrl})`;
+    return isCentered ? `<div align="center">\n\n${titleMd}${content}\n\n</div>` : `${titleMd}${content}`;
+  };
+
+  const getRssSection = () => {
+    if (!rssUrl) return '';
+    const titleMd = sectionTitles.rss ? `## ${sectionTitles.rss}\n\n` : '';
+    const content = `<!-- BEGIN: BLOG-POST-LIST -->\n<!-- END: BLOG-POST-LIST -->`;
+    return isCentered ? `<div align="center">\n\n${titleMd}${content}\n\n</div>` : `${titleMd}${content}`;
+  };
+
   const finalSections = layout.map((sectionId) => {
     switch (sectionId) {
+      case 'banner': return getBannerSection();
       case 'bio': return getBioSection();
       case 'skills': return getSkillsSection();
       case 'socials': return getSocialsSection();
@@ -178,6 +205,8 @@ export const generateMarkdown = (data: StoreData): string => {
       case 'donations': return getDonationsSection();
       case 'projects': return getProjectsSection();
       case 'wakatime': return getWakatimeSection();
+      case 'spotify': return getSpotifySection();
+      case 'rss': return getRssSection();
       default: return '';
     }
   });

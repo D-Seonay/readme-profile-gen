@@ -11,6 +11,9 @@ interface StoreData {
   githubUsername: string;
   wakatimeUsername: string;
   wakatimeBadgeId: string;
+  bannerUrl: string;
+  spotifyUrl: string;
+  rssUrl: string;
   showWakatimeBadges: boolean;
   showVisitorCounter: boolean;
   featuredRepos: string[];
@@ -18,6 +21,7 @@ interface StoreData {
   showStreakCard: boolean;
   showTopLanguages: boolean;
   showTrophies: boolean;
+  showSnake: boolean;
   theme: string;
   alignment: 'left' | 'center';
   badgeStyle: BadgeStyle;
@@ -47,6 +51,9 @@ describe('generateMarkdown', () => {
     githubUsername: 'johndoe',
     wakatimeUsername: '',
     wakatimeBadgeId: '',
+    bannerUrl: '',
+    spotifyUrl: '',
+    rssUrl: '',
     showWakatimeBadges: false,
     showVisitorCounter: false,
     featuredRepos: [],
@@ -54,18 +61,22 @@ describe('generateMarkdown', () => {
     showStreakCard: false,
     showTopLanguages: false,
     showTrophies: false,
+    showSnake: false,
     theme: 'transparent',
     alignment: 'left',
     badgeStyle: 'for-the-badge' as BadgeStyle,
     statsAlign: 'column',
     sectionTitles: {
+      banner: '',
       bio: '👤 Introduction',
       skills: '🛠️ Tech Stack',
       socials: '📫 Me contacter',
       stats: '📊 GitHub Stats',
       donations: '🎁 Support Me',
       projects: '🚀 Projects',
-      wakatime: '⏱️ Coding Activity'
+      wakatime: '⏱️ Coding Activity',
+      spotify: '🎵 Now Playing',
+      rss: '📰 Latest Blog Posts'
     },
     socials: {
       linkedin: 'johndoe',

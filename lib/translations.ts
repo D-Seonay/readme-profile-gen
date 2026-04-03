@@ -36,13 +36,35 @@ export const translations = {
     layout: {
       label: "Layout Manager",
       help: "// Reorder your README sections",
+      banner: "🖼️ Header Banner",
       bio: "👤 Introduction / Bio",
       skills: "🛠️ Tech Stack & Skills",
       socials: "📫 Networks & Contact",
       stats: "📊 GitHub Stats",
       donations: "🎁 Support Me",
       projects: "🚀 Featured Projects",
-      wakatime: "⏱️ WakaTime Activity"
+      wakatime: "⏱️ WakaTime Activity",
+      spotify: "🎵 Spotify Activity",
+      rss: "📰 Latest Blog Posts"
+    },
+
+    banner: {
+      label: "Header Banner",
+      help: "// Add a visual banner at the top of your profile",
+      placeholder: "Image URL (ex: https://.../banner.png)"
+    },
+
+    spotify: {
+      label: "Spotify Integration",
+      help: "// Display what you're currently listening to (Requires novatorem/spotify-github-profile setup on GitHub)",
+      placeholder: "Your Spotify Profile URL or Novatorem Link"
+    },
+
+    rss: {
+      label: "Latest Blog Posts (RSS)",
+      help: "// Automatically show your latest articles (Requires gautamkrishnar/blog-post-workflow GitHub Action)",
+      placeholder: "RSS Feed URL (ex: https://medium.com/feed/@username)",
+      actionHelp: "⚠️ Needs a GitHub Action to fetch dynamically. The placeholder will be generated."
     },
     
     github: {
@@ -54,7 +76,8 @@ export const translations = {
       stats: "Global Statistics",
       streak: "GitHub Streak",
       langs: "Top Languages",
-      visitorCounter: "Visitor Counter"
+      visitorCounter: "Visitor Counter",
+      snake: "Snake Animation (Grid)"
     },
 
     wakatime: {
@@ -152,13 +175,35 @@ export const translations = {
     layout: {
       label: "Gestion du Layout",
       help: "// Réorganisez l'ordre de votre README",
+      banner: "🖼️ Bannière d'en-tête",
       bio: "👤 Introduction / Bio",
       skills: "🛠️ Tech Stack & Compétences",
       socials: "📫 Réseaux & Contact",
       stats: "📊 Stats GitHub",
       donations: "🎁 Me soutenir",
       projects: "🚀 Projets Phares",
-      wakatime: "⏱️ Activité WakaTime"
+      wakatime: "⏱️ Activité WakaTime",
+      spotify: "🎵 Musique Spotify",
+      rss: "📰 Derniers Articles"
+    },
+
+    banner: {
+      label: "Bannière d'en-tête",
+      help: "// Ajoutez une image forte au sommet de votre profil",
+      placeholder: "URL de l'image (ex: https://.../banner.png)"
+    },
+
+    spotify: {
+      label: "Intégration Spotify",
+      help: "// Affiche votre écoute en cours (Requiert le service novatorem/spotify-github-profile sur votre compte)",
+      placeholder: "Lien de base Spotify Novatorem (ex: https://spotify-github-profile.vercel.app/api/view?uid=...)"
+    },
+
+    rss: {
+      label: "Derniers Articles (RSS)",
+      help: "// Affiche vos articles (Requiert la GitHub Action gautamkrishnar/blog-post-workflow)",
+      placeholder: "URL de votre flux RSS (ex: https://medium.com/feed/@username)",
+      actionHelp: "⚠️ Nécessite une GitHub Action pour la mise à jour dynamique. Le code généré inclura les balises nécessaires."
     },
     
     github: {
@@ -170,7 +215,8 @@ export const translations = {
       stats: "Statistiques Globales",
       streak: "Séquence (Streak) GitHub",
       langs: "Top Langages",
-      visitorCounter: "Compteur de Visites"
+      visitorCounter: "Compteur de Visites",
+      snake: "Animation Serpent (Grille)"
     },
 
     wakatime: {
