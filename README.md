@@ -7,102 +7,102 @@
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white)
 ![Zustand](https://img.shields.io/badge/Zustand-443E38?style=for-the-badge&logo=react&logoColor=white)
 
-**Créez un profil GitHub exceptionnel en quelques secondes via une interface moderne, fluide et intelligente.**
+**Build an exceptional GitHub profile in seconds with a modern, fluid, and intelligent interface.**
 
-[Découvrir l'App](#-aperçu) • [Fonctionnalités](#-fonctions-clés) • [Installation](#-démarrage-rapide) • [Contribuer](#-contribution)
+[Explore the App](#-overview) • [Key Features](#-key-features) • [Quick Start](#-quick-start) • [Contributing](#-contributing)
 
 </div>
 
 ---
 
-## ✨ Aperçu
+## ✨ Overview
 
-L'**Ultimate README Gen** n'est pas juste un formulaire. C'est un véritable outil de design pour développeurs qui combine la puissance de l'API GitHub avec une expérience utilisateur "High-Tech Stealth".
+The **Ultimate README Gen** is more than just a form. It's a high-performance design tool for developers that leverages the GitHub API to provide a "High-Tech Stealth" user experience.
 
-## 🛠 Fonctions Clés
+## 🛠 Key Features
 
-### 🪄 Smart Auto-fill (Intelligence Embarquée)
-Entrez simplement votre pseudo GitHub et laissez la magie opérer :
-- **Profil & Bio :** Récupération automatique de vos informations de base.
-- **Réseaux Sociaux :** Détection de votre LinkedIn, Twitter et Portfolio via vos comptes publics.
-- **Deep Scanning :** Analyse textuelle de votre README actuel pour cocher automatiquement votre Tech Stack.
-- **Email Extraction :** Extraction intelligente de votre adresse contact par Regex.
+### 🪄 Smart Auto-fill (Embedded Intelligence)
+Just enter your GitHub username and let the magic happen:
+- **Profile & Bio:** Automatically fetch your basic information.
+- **Social Networks:** Detect your LinkedIn, Twitter, and Portfolio from your public accounts.
+- **Deep Scanning:** Textual analysis of your current README to auto-check your Tech Stack.
+- **Email Extraction:** Smart extraction of your contact address using Regex.
 
 ### ↕️ Drag & Drop Layout
-Ne soyez plus limité par une structure figée. Réorganisez l'ordre de vos sections (Bio, Skills, Stats, Contact) par simple glisser-déposer grâce à l'intégration de `@dnd-kit`.
+Don't be limited by a fixed structure. Reorder your sections (Bio, Skills, Stats, Contact) with a simple drag-and-drop powered by `@dnd-kit`.
 
-### 🎨 Personnalisation Totale
-- **Themes Gallery :** Choisissez parmi +10 thèmes pour vos cartes de statistiques (Dracula, Radical, Tokyonight...).
-- **Global Alignment :** Basculez tout votre README entre un mode classique (Gauche) ou moderne (Centré).
-- **Badge Factory :** 4 styles de badges Shields.io disponibles (Flat, For-the-badge, etc.).
-- **Tech Stack Organisée :** Plus de 50 technologies classées par catégories (Frontend, DevOps, Mobile...).
+### 🎨 Total Customization
+- **Themes Gallery:** Choose from 10+ themes for your statistics cards (Dracula, Radical, Tokyonight...).
+- **Global Alignment:** Switch your entire README between Classic (Left) or Modern (Centered) modes.
+- **Badge Factory:** 4 Shields.io badge styles available (Flat, For-the-badge, etc.).
+- **Organized Tech Stack:** 50+ technologies categorized for better readability (Frontend, DevOps, Mobile...).
 
-### 🛡️ Résilience & Fiabilité
-- **Service Health Check :** L'application vérifie en temps réel la disponibilité des services tiers (GitHub Stats, Trophies) et vous alerte en cas de panne.
-- **Local Persistence :** Vos données sont sauvegardées automatiquement dans votre navigateur.
+### 🛡️ Resilience & Reliability
+- **Service Health Check:** Real-time monitoring of third-party services (GitHub Stats, Trophies) with outage alerts.
+- **Local Persistence:** Your data is automatically saved in your browser (LocalStorage).
 
 ---
 
-## 💻 Stack Technique
+## 💻 Tech Stack
 
-| Technologie | Usage |
+| Technology | Usage |
 | :--- | :--- |
-| **Next.js 16 (App Router)** | Framework React haute performance |
-| **Zustand** | Gestion d'état globale et persistance |
-| **Tailwind CSS** | Design system atomique et responsive |
-| **@dnd-kit** | Moteur de Drag & Drop vertical |
-| **React Markdown** | Rendu Markdown temps réel avec support HTML |
-| **GitHub REST API** | Source de données pour l'Auto-fill |
+| **Next.js 16 (App Router)** | High-performance React framework |
+| **Zustand** | Global state management & persistence |
+| **Tailwind CSS** | Atomic and responsive design system |
+| **@dnd-kit** | Vertical Drag & Drop engine |
+| **React Markdown** | Real-time Markdown rendering with HTML support |
+| **GitHub REST API** | Data source for the Smart Auto-fill |
 
 ---
 
-## 🚀 Démarrage Rapide
+## 🚀 Quick Start
 
-1. **Cloner le projet**
+1. **Clone the project**
    ```bash
    git clone https://github.com/D-Seonay/readme-profile-gen.git
    cd ultimate-readme-gen
    ```
 
-2. **Installer les dépendances**
+2. **Install dependencies**
    ```bash
    npm install
    ```
 
-3. **Lancer le serveur de développement**
+3. **Start the development server**
    ```bash
    npm run dev
    ```
-   Rendez-vous sur `http://localhost:3000` !
+   Open `http://localhost:3000` in your browser!
 
 ---
 
-## 📅 Roadmap (Issues en cours)
+## 📅 Roadmap
 
-- [x] **P0 :** Persistance de l'état (LocalStorage).
-- [x] **P0 :** Téléchargement direct du fichier `.md`.
-- [x] **P1 :** Sélecteur de thèmes pour les stats.
-- [x] **P1 :** Intégration des GitHub Trophies.
-- [ ] **P2 :** Tests unitaires du moteur de génération.
-- [ ] **P2 :** Optimisation SEO & Open Graph.
+- [x] **P0:** State Persistence (LocalStorage).
+- [x] **P0:** Direct `.md` file download.
+- [x] **P1:** Stats theme selector.
+- [x] **P1:** GitHub Trophies integration.
+- [ ] **P2:** Generation engine unit tests.
+- [ ] **P2:** SEO & Open Graph optimization.
 
 ---
 
-## 🤝 Contribution
+## 🤝 Contributing
 
-Les contributions sont les bienvenues ! 
-1. Forkez le projet.
-2. Créez votre branche de fonctionnalité (`git checkout -b feature/AmazingFeature`).
-3. Commitez vos changements (`git commit -m 'feat: Add some AmazingFeature'`).
-4. Poussez la branche (`git push origin feature/AmazingFeature`).
-5. Ouvrez une Pull Request.
+Contributions are welcome! 
+1. Fork the project.
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`).
+3. Commit your changes (`git commit -m 'feat: Add some AmazingFeature'`).
+4. Push the branch (`git push origin feature/AmazingFeature`).
+5. Open a Pull Request.
 
 ---
 
 <div align="center">
 
-Développé avec ❤️ par [D-Seonay](https://github.com/D-Seonay)
+Developed with ❤️ by [D-Seonay](https://github.com/D-Seonay)
 
-*Généré avec Ultimate GitHub Profile README Generator*
+*Generated with Ultimate GitHub Profile README Generator*
 
 </div>
