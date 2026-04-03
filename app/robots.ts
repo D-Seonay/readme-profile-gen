@@ -6,6 +6,6 @@ export default function robots(): MetadataRoute.Robots {
       userAgent: '*',
       allow: '/',
     },
-    sitemap: 'https://readme-profile-gen.vercel.app/sitemap.xml',
+    sitemap: 'https://readme-profile-gen.matheodelaunay.studio/sitemap.xml',
   };
 }
