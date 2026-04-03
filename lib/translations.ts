@@ -5,6 +5,9 @@ export const translations = {
     tagline: "// Profile Configuration",
     resetBtn: "Reset All",
     resetConfirm: "Do you really want to reset all data?",
+    themeLabel: "Theme",
+    dark: "Dark",
+    light: "Light",
     
     autofill: {
       label: "Smart Onboarding",
@@ -109,6 +112,9 @@ export const translations = {
     tagline: "// Configuration du profil",
     resetBtn: "Réinitialiser",
     resetConfirm: "Voulez-vous vraiment réinitialiser toutes les données ?",
+    themeLabel: "Thème",
+    dark: "Sombre",
+    light: "Clair",
     
     autofill: {
       label: "Onboarding Intelligent",

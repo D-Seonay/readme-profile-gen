@@ -7,11 +7,13 @@ export type SectionId = 'bio' | 'skills' | 'socials' | 'stats' | 'donations' | '
 export type ServiceStatus = 'checking' | 'online' | 'offline';
 export type BadgeStyle = 'for-the-badge' | 'flat' | 'flat-square' | 'plastic' | 'social';
 export type Language = 'en' | 'fr';
+export type UITheme = 'dark' | 'light';
 
 const DEFAULT_LAYOUT: SectionId[] = ['bio', 'skills', 'socials', 'stats', 'donations', 'projects'];
 
 interface ReadmeState {
   language: Language;
+  uiTheme: UITheme; // Thème de l'interface
   name: string;
   title: string;
   description: string;
@@ -50,6 +52,7 @@ interface ReadmeState {
   layout: SectionId[];
   
   setLanguage: (language: Language) => void;
+  setUITheme: (theme: UITheme) => void;
   setName: (name: string) => void;
   setTitle: (title: string) => void;
   setDescription: (description: string) => void;
@@ -77,6 +80,7 @@ interface ReadmeState {
 
 const initialState = {
   language: 'en' as Language,
+  uiTheme: 'dark' as UITheme,
   name: 'John Doe',
   title: 'Senior Fullstack Developer',
   description: 'Welcome to my profile! I am passionate about Web and Open Source.',
@@ -127,6 +131,7 @@ export const useReadmeStore = create<ReadmeState>()(
       ...initialState,
 
       setLanguage: (language: Language) => set({ language }),
+      setUITheme: (uiTheme: UITheme) => set({ uiTheme }),
       setName: (name: string) => set({ name }),
       setTitle: (title: string) => set({ title }),
       setDescription: (description: string) => set({ description }),
