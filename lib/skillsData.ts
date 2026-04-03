@@ -45,7 +45,7 @@ export const skillsData: Skill[] = [
   { name: 'Supabase', slug: 'supabase', color: '3ECF8E', category: 'database' },
 
   // --- Mobile ---
-  { name: 'React Native', slug: 'react', color: '61DAFB', category: 'mobile' },
+  { name: 'React Native', slug: 'reactnative', color: '61DAFB', category: 'mobile' },
   { name: 'Flutter', slug: 'flutter', color: '02569B', category: 'mobile' },
   { name: 'Swift', slug: 'swift', color: 'F05138', category: 'mobile' },
   { name: 'Kotlin', slug: 'kotlin', color: '7F52FF', category: 'mobile' },
