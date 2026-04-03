@@ -32,7 +32,7 @@ export async function GET(request: Request) {
     return NextResponse.json({ 
       online: res.status < 500 
     });
-  } catch (error) {
+  } catch {
     return NextResponse.json({ online: false, error: 'Service Unreachable' });
   }
 }

@@ -58,13 +58,13 @@ export const WakatimeConfig = () => {
             placeholder="e.g. 018e9f6e-3f6e-41ca-8923-c1d7110b6f50"
           />
           <p className={`text-[8px] font-mono italic px-1 ${isDark ? 'text-zinc-600' : 'text-zinc-400'}`}>
-            // Found in WakaTime profile settings under "Embeddable Badges"
+            {"// Found in WakaTime profile settings under &quot;Embeddable Badges&quot;"}
           </p>
         </div>
 
         {isOffline && wakatimeUsername && (
           <p className="text-[10px] font-mono text-red-500 italic px-1 bg-red-500/5 p-2 rounded-lg border border-red-500/20">
-            // WakaTime statistics service is currently unreachable.
+            {"// WakaTime statistics service is currently unreachable."}
           </p>
         )}
       </div>

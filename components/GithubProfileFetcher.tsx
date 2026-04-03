@@ -39,7 +39,7 @@ export const GithubProfileFetcher = () => {
           />
           {githubFetchError && (
             <p className="absolute -bottom-5 left-1 text-[9px] font-mono text-red-500 italic">
-              // {githubFetchError === 'User not found' ? t.autofill.errorNotFound : t.autofill.errorGeneric}
+              {"// "}{githubFetchError === 'User not found' ? t.autofill.errorNotFound : t.autofill.errorGeneric}
             </p>
           )}
         </div>
@@ -67,7 +67,7 @@ export const GithubProfileFetcher = () => {
       </div>
       
       <p className={`text-[9px] font-mono italic ${isDark ? 'text-zinc-600' : 'text-zinc-400'}`}>
-        {t.autofill.help}
+        {"* Automatically fetches your name, bio, and public links."}
       </p>
     </div>
   );

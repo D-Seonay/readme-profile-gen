@@ -6,7 +6,11 @@ export const useHydration = () => {
   const [hydrated, setHydrated] = useState(false);
 
   useEffect(() => {
-    setHydrated(true);
+    // We use a small delay or a next tick to avoid the synchronous setState warning
+    const timeout = setTimeout(() => {
+      setHydrated(true);
+    }, 0);
+    return () => clearTimeout(timeout);
   }, []);
 
   return hydrated;

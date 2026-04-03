@@ -117,7 +117,7 @@ export const GithubStatsConfig = () => {
               <div className={`w-2 h-2 rounded-full transition-transform duration-200 ${showTrophies && !isOffline('trophies') ? 'translate-x-4 bg-white' : (isDark ? 'bg-zinc-500' : 'bg-white shadow-sm')}`} />
             </div>
           </button>
-          {isOffline('trophies') && <p className="text-[8px] font-mono text-red-500 mt-2 italic leading-tight">// Service Offline</p>}
+          {isOffline('trophies') && <p className="text-[8px] font-mono text-red-500 mt-2 italic leading-tight">{"// Service Offline"}</p>}
         </div>
 
         {/* Global Stats */}

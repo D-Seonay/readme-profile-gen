@@ -49,7 +49,7 @@ export const generateMarkdown = (data: StoreData): string => {
   // --- Préparateurs de Sections ---
 
   const getBioSection = () => {
-    let md = `# 👋 Hello, I'm ${name}\n\n## 🚀 ${title}\n\n${description}`;
+    const md = `# 👋 Hello, I'm ${name}\n\n## 🚀 ${title}\n\n${description}`;
     return isCentered ? `<div align="center">\n\n${md}\n\n</div>` : md;
   };
 

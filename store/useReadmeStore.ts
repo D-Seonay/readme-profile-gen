@@ -22,7 +22,7 @@ interface ReadmeState {
   wakatimeUsername: string;
   wakatimeBadgeId: string;
   showWakatimeBadges: boolean;
-  showVisitorCounter: boolean; // New field
+  showVisitorCounter: boolean;
   featuredRepos: string[];
   showStatsCard: boolean;
   showStreakCard: boolean;
@@ -66,7 +66,7 @@ interface ReadmeState {
   setWakatimeUsername: (username: string) => void;
   setWakatimeBadgeId: (id: string) => void;
   toggleWakatimeBadges: () => void;
-  toggleVisitorCounter: () => void; // New action
+  toggleVisitorCounter: () => void;
   addFeaturedRepo: (repo: string) => void;
   removeFeaturedRepo: (repo: string) => void;
   toggleStatsCard: () => void;
@@ -142,7 +142,7 @@ const initialState = {
 
 export const useReadmeStore = create<ReadmeState>()(
   persist(
-    (set, get) => ({
+    (set) => ({
       ...initialState,
 
       setLanguage: (language: Language) => set({ language }),
@@ -248,7 +248,7 @@ export const useReadmeStore = create<ReadmeState>()(
             }
           }
 
-          const linkedinAccount = socialAccounts.find((acc: any) => 
+          const linkedinAccount = socialAccounts.find((acc: { provider: string; url: string }) => 
             acc.provider === 'linkedin' || acc.url.includes('linkedin.com')
           );
 
@@ -266,8 +266,9 @@ export const useReadmeStore = create<ReadmeState>()(
             }
           }));
 
-        } catch (error: any) {
-          set({ githubFetchError: error.message });
+        } catch (error) {
+          const message = error instanceof Error ? error.message : 'Error fetching data';
+          set({ githubFetchError: message });
         } finally {
           set({ isLoadingGithubData: false });
         }
@@ -278,8 +279,8 @@ export const useReadmeStore = create<ReadmeState>()(
     {
       name: 'readme-generator-storage',
       storage: createJSONStorage(() => localStorage),
-      onRehydrateStorage: (state) => {
-        return (hydratedState, error) => {
+      onRehydrateStorage: () => {
+        return (hydratedState) => {
           if (hydratedState) {
             const missingSections = DEFAULT_LAYOUT.filter(
               (section) => !hydratedState.layout.includes(section)
@@ -291,8 +292,18 @@ export const useReadmeStore = create<ReadmeState>()(
         };
       },
       partialize: (state) => {
-        const { servicesStatus, isLoadingGithubData, githubFetchError, ...rest } = state;
-        return rest;
+        // Omitting internal UI/Service states from persistence safely
+        const { ...persistedState } = state;
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        delete persistedState.servicesStatus;
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        delete persistedState.isLoadingGithubData;
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        delete persistedState.githubFetchError;
+        return persistedState;
       },
     }
   )

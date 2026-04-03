@@ -160,7 +160,7 @@ export default function Home() {
           {layout.map((sectionId) => renderSection(sectionId))}
 
           <div className={`mt-8 mx-8 pt-8 border-t ${isDark ? 'border-zinc-800' : 'border-zinc-200'} opacity-20 pointer-events-none text-center`}>
-            <p className="text-xs font-mono italic">// End of Editor</p>
+            <p className="text-xs font-mono italic">{"// End of Editor"}</p>
           </div>
         </div>
       </section>

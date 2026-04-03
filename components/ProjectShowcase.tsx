@@ -40,7 +40,7 @@ export const ProjectShowcase = () => {
       <div className="space-y-2">
         {featuredRepos.length === 0 ? (
           <p className={`text-[10px] font-mono italic px-2 ${isDark ? 'text-zinc-700' : 'text-zinc-400'}`}>
-            // {t.projects.empty}
+            {"// No projects added yet."}
           </p>
         ) : (
           <div className="grid grid-cols-1 gap-2">

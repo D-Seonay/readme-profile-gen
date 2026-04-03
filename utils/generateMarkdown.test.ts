@@ -2,14 +2,54 @@ import { describe, it, expect } from 'vitest';
 import { generateMarkdown } from './generateMarkdown';
 import { SectionId, BadgeStyle, Language } from '@/store/useReadmeStore';
 
+interface StoreData {
+  language: Language;
+  name: string;
+  title: string;
+  description: string;
+  skills: string[];
+  githubUsername: string;
+  wakatimeUsername: string;
+  wakatimeBadgeId: string;
+  showWakatimeBadges: boolean;
+  showVisitorCounter: boolean;
+  featuredRepos: string[];
+  showStatsCard: boolean;
+  showStreakCard: boolean;
+  showTopLanguages: boolean;
+  showTrophies: boolean;
+  theme: string;
+  alignment: 'left' | 'center';
+  badgeStyle: BadgeStyle;
+  statsAlign: 'column' | 'row';
+  sectionTitles: Record<SectionId, string>;
+  socials: {
+    linkedin: string;
+    twitter: string;
+    portfolio: string;
+    email: string;
+  };
+  donations: {
+    buymeacoffee: string;
+    kofi: string;
+    paypal: string;
+  };
+  layout: SectionId[];
+}
+
 describe('generateMarkdown', () => {
-  const mockData: any = {
+  const mockData: StoreData = {
     language: 'en' as Language,
     name: 'John Doe',
     title: 'Developer',
     description: 'Test Bio',
     skills: ['react', 'typescript'],
     githubUsername: 'johndoe',
+    wakatimeUsername: '',
+    wakatimeBadgeId: '',
+    showWakatimeBadges: false,
+    showVisitorCounter: false,
+    featuredRepos: [],
     showStatsCard: true,
     showStreakCard: false,
     showTopLanguages: false,
@@ -19,11 +59,13 @@ describe('generateMarkdown', () => {
     badgeStyle: 'for-the-badge' as BadgeStyle,
     statsAlign: 'column',
     sectionTitles: {
-      bio: '',
+      bio: '👤 Introduction',
       skills: '🛠️ Tech Stack',
       socials: '📫 Me contacter',
       stats: '📊 GitHub Stats',
-      donations: '🎁 Support Me'
+      donations: '🎁 Support Me',
+      projects: '🚀 Projects',
+      wakatime: '⏱️ Coding Activity'
     },
     socials: {
       linkedin: 'johndoe',
@@ -54,13 +96,13 @@ describe('generateMarkdown', () => {
   });
 
   it('should handle centered alignment', () => {
-    const centeredData = { ...mockData, alignment: 'center' };
+    const centeredData: StoreData = { ...mockData, alignment: 'center' };
     const md = generateMarkdown(centeredData);
     expect(md).toContain('<div align="center">');
   });
 
   it('should respect the layout order', () => {
-    const reorderedData = { 
+    const reorderedData: StoreData = { 
       ...mockData, 
       layout: ['stats', 'bio'] as SectionId[] 
     };
@@ -84,7 +126,7 @@ describe('generateMarkdown', () => {
   });
 
   it('should not show stats section if no username is provided', () => {
-    const noUser = { ...mockData, githubUsername: '' };
+    const noUser: StoreData = { ...mockData, githubUsername: '' };
     const md = generateMarkdown(noUser);
     expect(md).not.toContain('### 📊 GitHub Stats');
   });

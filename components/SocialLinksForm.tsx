@@ -40,7 +40,7 @@ export const SocialLinksForm = () => {
             <input
               type="text"
               value={socials[item.id as keyof typeof socials]}
-              onChange={(e) => setSocial(item.id as any, e.target.value)}
+              onChange={(e) => setSocial(item.id as keyof typeof socials, e.target.value)}
               className={`border p-2.5 rounded font-mono text-xs focus:outline-none focus:border-indigo-500 transition-all ${isDark ? 'bg-zinc-950 border-zinc-800 text-zinc-100 placeholder:text-zinc-700' : 'bg-white border-zinc-200 text-zinc-900 placeholder:text-zinc-300'}`}
               placeholder={item.placeholder}
             />
