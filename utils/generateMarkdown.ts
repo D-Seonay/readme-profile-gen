@@ -23,6 +23,11 @@ interface StoreData {
     portfolio: string;
     email: string;
   };
+  donations: {
+    buymeacoffee: string;
+    kofi: string;
+    paypal: string;
+  };
   layout: SectionId[];
 }
 
@@ -30,11 +35,13 @@ export const generateMarkdown = (data: StoreData): string => {
   const { 
     name, title, description, skills, githubUsername, 
     showStatsCard, showStreakCard, showTopLanguages, showTrophies, 
-    theme, alignment, badgeStyle, statsAlign, sectionTitles, socials, layout 
+    theme, alignment, badgeStyle, statsAlign, sectionTitles, socials, donations, layout 
   } = data;
 
   const isCentered = alignment === 'center';
   const isRow = statsAlign === 'row';
+
+  // --- Préparateurs de Sections ---
 
   const getBioSection = () => {
     let md = `# 👋 Hello, I'm ${name}\n\n## 🚀 ${title}\n\n${description}`;
@@ -87,7 +94,6 @@ export const generateMarkdown = (data: StoreData): string => {
 
     const titleMd = sectionTitles.stats ? `### ${sectionTitles.stats}\n\n` : '';
     
-    // On utilise une structure HTML très propre pour forcer l'alignement
     let content = isCentered ? '<div align="center">' : '<div>';
     content += '\n\n';
     
@@ -100,13 +106,31 @@ export const generateMarkdown = (data: StoreData): string => {
     if (showTopLanguages) statsImages.push(`![Top Langs](https://github-readme-stats.vercel.app/api/top-langs/?username=${githubUsername}&theme=${theme}&hide_border=true&layout=compact)`);
     if (showStreakCard) statsImages.push(`![GitHub Streak](https://streak-stats.demolab.com/?user=${githubUsername}&theme=${theme}&hide_border=true)`);
 
-    // En mode row, on ne met AUCUN retour à la ligne entre les badges, juste des espaces HTML
     content += statsImages.join(isRow ? ' ' : '\n');
-    
     content += '\n\n</div>';
     
     return `${titleMd}${content}`;
   };
+
+  const getDonationsSection = () => {
+    const badges = [];
+    if (donations.buymeacoffee) {
+      badges.push(`[![Buy Me A Coffee](https://img.shields.io/badge/Buy%20Me%20A%20Coffee-FFDD00?style=${badgeStyle}&logo=buy-me-a-coffee&logoColor=black)](https://www.buymeacoffee.com/${donations.buymeacoffee})`);
+    }
+    if (donations.kofi) {
+      badges.push(`[![Ko-fi](https://img.shields.io/badge/Ko--fi-F16061?style=${badgeStyle}&logo=ko-fi&logoColor=white)](https://ko-fi.com/${donations.kofi})`);
+    }
+    if (donations.paypal) {
+      badges.push(`[![PayPal](https://img.shields.io/badge/PayPal-00457C?style=${badgeStyle}&logo=paypal&logoColor=white)](https://www.paypal.me/${donations.paypal})`);
+    }
+
+    if (badges.length === 0) return '';
+    const titleMd = sectionTitles.donations ? `## ${sectionTitles.donations}\n\n` : '';
+    const content = `${titleMd}${badges.join(' ')}`;
+    return isCentered ? `<div align="center">\n\n${content}\n\n</div>` : content;
+  };
+
+  // --- Assemblage Final basé sur le Layout ---
 
   const finalSections = layout.map((sectionId) => {
     switch (sectionId) {
@@ -114,6 +138,7 @@ export const generateMarkdown = (data: StoreData): string => {
       case 'skills': return getSkillsSection();
       case 'socials': return getSocialsSection();
       case 'stats': return getStatsSection();
+      case 'donations': return getDonationsSection();
       default: return '';
     }
   });

@@ -36,7 +36,8 @@ export const translations = {
       bio: "👤 Introduction / Bio",
       skills: "🛠️ Tech Stack & Skills",
       socials: "📫 Networks & Contact",
-      stats: "📊 GitHub Stats"
+      stats: "📊 GitHub Stats",
+      donations: "🎁 Support Me"
     },
     
     github: {
@@ -73,6 +74,14 @@ export const translations = {
       twitter: "Twitter / X",
       portfolio: "Portfolio",
       email: "Email"
+    },
+
+    donations: {
+      label: "Donations & Support",
+      help: "// Show some love and support for your work",
+      buymeacoffee: "Buy Me A Coffee",
+      kofi: "Ko-fi",
+      paypal: "PayPal"
     },
     
     preview: {
@@ -122,7 +131,8 @@ export const translations = {
       bio: "👤 Introduction / Bio",
       skills: "🛠️ Tech Stack & Compétences",
       socials: "📫 Réseaux & Contact",
-      stats: "📊 Stats GitHub"
+      stats: "📊 Stats GitHub",
+      donations: "🎁 Me soutenir"
     },
     
     github: {
@@ -159,6 +169,14 @@ export const translations = {
       twitter: "Twitter / X",
       portfolio: "Portfolio",
       email: "Email"
+    },
+
+    donations: {
+      label: "Dons & Soutien",
+      help: "// Permettez aux gens de soutenir votre travail",
+      buymeacoffee: "Buy Me A Coffee",
+      kofi: "Ko-fi",
+      paypal: "PayPal"
     },
     
     preview: {
