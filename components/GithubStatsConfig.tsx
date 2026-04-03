@@ -1,7 +1,7 @@
 'use client';
 
-import React from 'react';
-import { useReadmeStore } from '@/store/useReadmeStore';
+import React, { useEffect } from 'react';
+import { useReadmeStore, ServiceStatus } from '@/store/useReadmeStore';
 
 const THEMES = [
   { name: 'Default', value: 'default' },
@@ -16,6 +16,12 @@ const THEMES = [
   { name: 'Dracula', value: 'dracula' },
 ];
 
+const StatusDot = ({ status }: { status: ServiceStatus }) => {
+  if (status === 'checking') return <div className="w-1.5 h-1.5 rounded-full bg-zinc-500 animate-pulse" />;
+  if (status === 'online') return <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]" />;
+  return <div className="w-1.5 h-1.5 rounded-full bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.5)]" />;
+};
+
 export const GithubStatsConfig = () => {
   const { 
     githubUsername, setGithubUsername, 
@@ -23,8 +29,16 @@ export const GithubStatsConfig = () => {
     showStreakCard, toggleStreakCard,
     showTopLanguages, toggleTopLanguages,
     showTrophies, toggleTrophies,
-    theme, setTheme
+    theme, setTheme,
+    servicesStatus, checkServicesHealth
   } = useReadmeStore();
+
+  // On vérifie la santé des services au chargement
+  useEffect(() => {
+    checkServicesHealth();
+  }, [checkServicesHealth]);
+
+  const isOffline = (service: 'stats' | 'streak' | 'trophies') => servicesStatus[service] === 'offline';
 
   return (
     <div className="space-y-6">
@@ -78,53 +92,69 @@ export const GithubStatsConfig = () => {
       <div className="flex flex-col gap-3">
         {/* Toggle Trophies */}
         <button
-          onClick={toggleTrophies}
-          className="flex items-center justify-between group"
+          onClick={!isOffline('trophies') ? toggleTrophies : undefined}
+          disabled={isOffline('trophies')}
+          className={`flex items-center justify-between group ${isOffline('trophies') ? 'opacity-50 cursor-not-allowed' : ''}`}
         >
-          <span className="text-xs font-mono text-zinc-400 group-hover:text-zinc-200 transition-colors">
-            GitHub Trophies
-          </span>
-          <div className={`w-8 h-4 rounded-full p-1 transition-colors duration-200 ${showTrophies ? 'bg-zinc-100' : 'bg-zinc-800'}`}>
-            <div className={`w-2 h-2 rounded-full transition-transform duration-200 ${showTrophies ? 'translate-x-4 bg-zinc-950' : 'bg-zinc-500'}`} />
+          <div className="flex items-center gap-3">
+            <StatusDot status={servicesStatus.trophies} />
+            <span className="text-xs font-mono text-zinc-400 group-hover:text-zinc-200 transition-colors">
+              GitHub Trophies {isOffline('trophies') && <span className="text-[9px] text-red-500 ml-2 italic">// Offline</span>}
+            </span>
+          </div>
+          <div className={`w-8 h-4 rounded-full p-1 transition-colors duration-200 ${showTrophies && !isOffline('trophies') ? 'bg-zinc-100' : 'bg-zinc-800'}`}>
+            <div className={`w-2 h-2 rounded-full transition-transform duration-200 ${showTrophies && !isOffline('trophies') ? 'translate-x-4 bg-zinc-950' : 'bg-zinc-500'}`} />
           </div>
         </button>
 
         {/* Toggle Stats Card */}
         <button
-          onClick={toggleStatsCard}
-          className="flex items-center justify-between group"
+          onClick={!isOffline('stats') ? toggleStatsCard : undefined}
+          disabled={isOffline('stats')}
+          className={`flex items-center justify-between group ${isOffline('stats') ? 'opacity-50 cursor-not-allowed' : ''}`}
         >
-          <span className="text-xs font-mono text-zinc-400 group-hover:text-zinc-200 transition-colors">
-            Global Statistics Card
-          </span>
-          <div className={`w-8 h-4 rounded-full p-1 transition-colors duration-200 ${showStatsCard ? 'bg-zinc-100' : 'bg-zinc-800'}`}>
-            <div className={`w-2 h-2 rounded-full transition-transform duration-200 ${showStatsCard ? 'translate-x-4 bg-zinc-950' : 'bg-zinc-500'}`} />
+          <div className="flex items-center gap-3">
+            <StatusDot status={servicesStatus.stats} />
+            <span className="text-xs font-mono text-zinc-400 group-hover:text-zinc-200 transition-colors">
+              Global Statistics {isOffline('stats') && <span className="text-[9px] text-red-500 ml-2 italic">// Offline</span>}
+            </span>
+          </div>
+          <div className={`w-8 h-4 rounded-full p-1 transition-colors duration-200 ${showStatsCard && !isOffline('stats') ? 'bg-zinc-100' : 'bg-zinc-800'}`}>
+            <div className={`w-2 h-2 rounded-full transition-transform duration-200 ${showStatsCard && !isOffline('stats') ? 'translate-x-4 bg-zinc-950' : 'bg-zinc-500'}`} />
           </div>
         </button>
 
         {/* Toggle Streak Card */}
         <button
-          onClick={toggleStreakCard}
-          className="flex items-center justify-between group"
+          onClick={!isOffline('streak') ? toggleStreakCard : undefined}
+          disabled={isOffline('streak')}
+          className={`flex items-center justify-between group ${isOffline('streak') ? 'opacity-50 cursor-not-allowed' : ''}`}
         >
-          <span className="text-xs font-mono text-zinc-400 group-hover:text-zinc-200 transition-colors">
-            GitHub Streak Card
-          </span>
-          <div className={`w-8 h-4 rounded-full p-1 transition-colors duration-200 ${showStreakCard ? 'bg-zinc-100' : 'bg-zinc-800'}`}>
-            <div className={`w-2 h-2 rounded-full transition-transform duration-200 ${showStreakCard ? 'translate-x-4 bg-zinc-950' : 'bg-zinc-500'}`} />
+          <div className="flex items-center gap-3">
+            <StatusDot status={servicesStatus.streak} />
+            <span className="text-xs font-mono text-zinc-400 group-hover:text-zinc-200 transition-colors">
+              GitHub Streak {isOffline('streak') && <span className="text-[9px] text-red-500 ml-2 italic">// Offline</span>}
+            </span>
+          </div>
+          <div className={`w-8 h-4 rounded-full p-1 transition-colors duration-200 ${showStreakCard && !isOffline('streak') ? 'bg-zinc-100' : 'bg-zinc-800'}`}>
+            <div className={`w-2 h-2 rounded-full transition-transform duration-200 ${showStreakCard && !isOffline('streak') ? 'translate-x-4 bg-zinc-950' : 'bg-zinc-500'}`} />
           </div>
         </button>
 
         {/* Toggle Top Languages */}
         <button
-          onClick={toggleTopLanguages}
-          className="flex items-center justify-between group"
+          onClick={!isOffline('stats') ? toggleTopLanguages : undefined}
+          disabled={isOffline('stats')}
+          className={`flex items-center justify-between group ${isOffline('stats') ? 'opacity-50 cursor-not-allowed' : ''}`}
         >
-          <span className="text-xs font-mono text-zinc-400 group-hover:text-zinc-200 transition-colors">
-            Top Languages Card
-          </span>
-          <div className={`w-8 h-4 rounded-full p-1 transition-colors duration-200 ${showTopLanguages ? 'bg-zinc-100' : 'bg-zinc-800'}`}>
-            <div className={`w-2 h-2 rounded-full transition-transform duration-200 ${showTopLanguages ? 'translate-x-4 bg-zinc-950' : 'bg-zinc-500'}`} />
+          <div className="flex items-center gap-3">
+            <StatusDot status={servicesStatus.stats} />
+            <span className="text-xs font-mono text-zinc-400 group-hover:text-zinc-200 transition-colors">
+              Top Languages {isOffline('stats') && <span className="text-[9px] text-red-500 ml-2 italic">// Offline</span>}
+            </span>
+          </div>
+          <div className={`w-8 h-4 rounded-full p-1 transition-colors duration-200 ${showTopLanguages && !isOffline('stats') ? 'bg-zinc-100' : 'bg-zinc-800'}`}>
+            <div className={`w-2 h-2 rounded-full transition-transform duration-200 ${showTopLanguages && !isOffline('stats') ? 'translate-x-4 bg-zinc-950' : 'bg-zinc-500'}`} />
           </div>
         </button>
       </div>

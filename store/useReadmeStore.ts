@@ -3,6 +3,7 @@ import { persist, createJSONStorage } from 'zustand/middleware';
 import { arrayMove } from '@dnd-kit/sortable';
 
 export type SectionId = 'bio' | 'skills' | 'socials' | 'stats';
+export type ServiceStatus = 'checking' | 'online' | 'offline';
 
 interface ReadmeState {
   // --- Données du README ---
@@ -14,7 +15,7 @@ interface ReadmeState {
   showStatsCard: boolean;
   showStreakCard: boolean;
   showTopLanguages: boolean;
-  showTrophies: boolean; // Ajout des Trophées
+  showTrophies: boolean;
   theme: string;
   socials: {
     linkedin: string;
@@ -23,7 +24,14 @@ interface ReadmeState {
     email: string;
   };
   
-  // --- Layout (Ordre des sections) ---
+  // --- Service Status ---
+  servicesStatus: {
+    stats: ServiceStatus;
+    streak: ServiceStatus;
+    trophies: ServiceStatus;
+  };
+  
+  // --- Layout ---
   layout: SectionId[];
   
   // --- Actions ---
@@ -35,12 +43,12 @@ interface ReadmeState {
   toggleStatsCard: () => void;
   toggleStreakCard: () => void;
   toggleTopLanguages: () => void;
-  toggleTrophies: () => void; // Action toggle trophies
+  toggleTrophies: () => void;
   setTheme: (theme: string) => void;
   setSocial: (platform: keyof ReadmeState['socials'], value: string) => void;
   reorderLayout: (activeId: SectionId, overId: SectionId) => void;
+  checkServicesHealth: () => Promise<void>;
   
-  // Action de remise à zéro
   reset: () => void;
 }
 
@@ -60,6 +68,11 @@ const initialState = {
     twitter: '',
     portfolio: '',
     email: '',
+  },
+  servicesStatus: {
+    stats: 'checking' as ServiceStatus,
+    streak: 'checking' as ServiceStatus,
+    trophies: 'checking' as ServiceStatus,
   },
   layout: ['bio', 'skills', 'socials', 'stats'] as SectionId[],
 };
@@ -93,11 +106,34 @@ export const useReadmeStore = create<ReadmeState>()(
         return { layout: arrayMove(state.layout, oldIndex, newIndex) };
       }),
 
+      checkServicesHealth: async () => {
+        const check = async (service: 'stats' | 'streak' | 'trophies') => {
+          try {
+            const res = await fetch(`/api/health?service=${service}`);
+            const data = await res.json();
+            return data.online ? 'online' : 'offline';
+          } catch {
+            return 'offline';
+          }
+        };
+
+        const [stats, streak, trophies] = await Promise.all([
+          check('stats'), check('streak'), check('trophies')
+        ]);
+
+        set({ servicesStatus: { stats, streak, trophies } });
+      },
+
       reset: () => set(initialState),
     }),
     {
       name: 'readme-generator-storage',
       storage: createJSONStorage(() => localStorage),
+      // On ne persiste pas l'état du Health Check pour le relancer à chaque session
+      partialize: (state) => {
+        const { servicesStatus, ...rest } = state;
+        return rest;
+      },
     }
   )
 );
