@@ -18,14 +18,7 @@ import {
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { useReadmeStore, SectionId } from '@/store/useReadmeStore';
-
-// Libellés pour l'interface
-const labels: Record<SectionId, string> = {
-  bio: '👤 Introduction / Bio',
-  skills: '🛠️ Tech Stack & Skills',
-  socials: '📫 Networks & Contact',
-  stats: '📊 GitHub Stats'
-};
+import { useTranslation } from '@/hooks/useTranslation';
 
 const SortableItem = ({ id, label }: { id: string, label: string }) => {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id });
@@ -45,7 +38,6 @@ const SortableItem = ({ id, label }: { id: string, label: string }) => {
         ${isDragging ? 'opacity-50 border-zinc-500 bg-zinc-800' : 'hover:border-zinc-700'}
       `}
     >
-      {/* Grip Handle */}
       <div 
         {...attributes} 
         {...listeners} 
@@ -65,11 +57,19 @@ const SortableItem = ({ id, label }: { id: string, label: string }) => {
 
 export const LayoutManager = () => {
   const { layout, reorderLayout } = useReadmeStore();
+  const { t } = useTranslation();
   
   const sensors = useSensors(
     useSensor(PointerSensor),
     useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
   );
+
+  const labels: Record<SectionId, string> = {
+    bio: t.layout.bio,
+    skills: t.layout.skills,
+    socials: t.layout.socials,
+    stats: t.layout.stats
+  };
 
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
@@ -79,13 +79,13 @@ export const LayoutManager = () => {
   };
 
   return (
-    <div className="space-y-4 pt-6 border-t border-zinc-800">
+    <div className="space-y-4 pt-6 border-t border-zinc-800 text-zinc-100">
       <header className="flex flex-col gap-1">
         <label className="text-[10px] font-mono uppercase tracking-[0.2em] text-zinc-500">
-          Layout Manager
+          {t.layout.label}
         </label>
         <p className="text-[9px] font-mono text-zinc-600 italic">
-          // Réorganisez l'ordre de votre README
+          {t.layout.help}
         </p>
       </header>
 

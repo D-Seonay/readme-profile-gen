@@ -2,6 +2,7 @@
 
 import React, { useEffect } from 'react';
 import { useReadmeStore, ServiceStatus } from '@/store/useReadmeStore';
+import { useTranslation } from '@/hooks/useTranslation';
 
 const THEMES = [
   { name: 'Default', value: 'default' },
@@ -32,8 +33,8 @@ export const GithubStatsConfig = () => {
     theme, setTheme,
     servicesStatus, checkServicesHealth
   } = useReadmeStore();
+  const { t } = useTranslation();
 
-  // On vérifie la santé des services au chargement
   useEffect(() => {
     checkServicesHealth();
   }, [checkServicesHealth]);
@@ -41,32 +42,30 @@ export const GithubStatsConfig = () => {
   const isOffline = (service: 'stats' | 'streak' | 'trophies') => servicesStatus[service] === 'offline';
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 text-zinc-100">
       <header className="flex flex-col gap-1">
         <label className="text-[10px] font-mono uppercase tracking-[0.2em] text-zinc-500">
-          GitHub Integration
+          {t.github.label}
         </label>
         <p className="text-[9px] font-mono text-zinc-600 italic">
-          // Entrez votre pseudo et choisissez un style
+          {t.github.help}
         </p>
       </header>
       
       <div className="space-y-4">
-        {/* Input Pseudo */}
         <div className="flex flex-col gap-2">
           <input
             type="text"
             value={githubUsername}
             onChange={(e) => setGithubUsername(e.target.value)}
             className="bg-zinc-950 border border-zinc-800 p-3 rounded font-mono text-zinc-100 text-sm focus:outline-none focus:border-zinc-500 transition-colors"
-            placeholder="GitHub Username"
+            placeholder={t.github.placeholder}
           />
         </div>
 
-        {/* Thèmes Selector */}
         <div className="space-y-3">
           <label className="text-[9px] font-mono uppercase text-zinc-500 tracking-wider">
-            Card Theme
+            {t.github.theme}
           </label>
           <div className="grid grid-cols-2 sm:grid-cols-5 gap-1.5">
             {THEMES.map((t) => (
@@ -88,7 +87,6 @@ export const GithubStatsConfig = () => {
         </div>
       </div>
 
-      {/* Toggles Stat Cards */}
       <div className="flex flex-col gap-3">
         {/* Toggle Trophies */}
         <button
@@ -99,7 +97,7 @@ export const GithubStatsConfig = () => {
           <div className="flex items-center gap-3">
             <StatusDot status={servicesStatus.trophies} />
             <span className="text-xs font-mono text-zinc-400 group-hover:text-zinc-200 transition-colors">
-              GitHub Trophies {isOffline('trophies') && <span className="text-[9px] text-red-500 ml-2 italic">// Offline</span>}
+              {t.github.trophies} {isOffline('trophies') && <span className="text-[9px] text-red-500 ml-2 italic">// Offline</span>}
             </span>
           </div>
           <div className={`w-8 h-4 rounded-full p-1 transition-colors duration-200 ${showTrophies && !isOffline('trophies') ? 'bg-zinc-100' : 'bg-zinc-800'}`}>
@@ -116,7 +114,7 @@ export const GithubStatsConfig = () => {
           <div className="flex items-center gap-3">
             <StatusDot status={servicesStatus.stats} />
             <span className="text-xs font-mono text-zinc-400 group-hover:text-zinc-200 transition-colors">
-              Global Statistics {isOffline('stats') && <span className="text-[9px] text-red-500 ml-2 italic">// Offline</span>}
+              {t.github.stats} {isOffline('stats') && <span className="text-[9px] text-red-500 ml-2 italic">// Offline</span>}
             </span>
           </div>
           <div className={`w-8 h-4 rounded-full p-1 transition-colors duration-200 ${showStatsCard && !isOffline('stats') ? 'bg-zinc-100' : 'bg-zinc-800'}`}>
@@ -133,7 +131,7 @@ export const GithubStatsConfig = () => {
           <div className="flex items-center gap-3">
             <StatusDot status={servicesStatus.streak} />
             <span className="text-xs font-mono text-zinc-400 group-hover:text-zinc-200 transition-colors">
-              GitHub Streak {isOffline('streak') && <span className="text-[9px] text-red-500 ml-2 italic">// Offline</span>}
+              {t.github.streak} {isOffline('streak') && <span className="text-[9px] text-red-500 ml-2 italic">// Offline</span>}
             </span>
           </div>
           <div className={`w-8 h-4 rounded-full p-1 transition-colors duration-200 ${showStreakCard && !isOffline('streak') ? 'bg-zinc-100' : 'bg-zinc-800'}`}>
@@ -150,7 +148,7 @@ export const GithubStatsConfig = () => {
           <div className="flex items-center gap-3">
             <StatusDot status={servicesStatus.stats} />
             <span className="text-xs font-mono text-zinc-400 group-hover:text-zinc-200 transition-colors">
-              Top Languages {isOffline('stats') && <span className="text-[9px] text-red-500 ml-2 italic">// Offline</span>}
+              {t.github.langs} {isOffline('stats') && <span className="text-[9px] text-red-500 ml-2 italic">// Offline</span>}
             </span>
           </div>
           <div className={`w-8 h-4 rounded-full p-1 transition-colors duration-200 ${showTopLanguages && !isOffline('stats') ? 'bg-zinc-100' : 'bg-zinc-800'}`}>

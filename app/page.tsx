@@ -3,6 +3,7 @@
 import React from 'react';
 import { useReadmeStore } from '@/store/useReadmeStore';
 import { useHydration } from '@/hooks/useHydration';
+import { useTranslation } from '@/hooks/useTranslation';
 import { SkillSelector } from '@/components/SkillSelector';
 import { GithubStatsConfig } from '@/components/GithubStatsConfig';
 import { SocialLinksForm } from '@/components/SocialLinksForm';
@@ -10,10 +11,12 @@ import { LayoutManager } from '@/components/LayoutManager';
 import { StyleConfig } from '@/components/StyleConfig';
 import { PreviewPane } from '@/components/PreviewPane';
 import { GithubProfileFetcher } from '@/components/GithubProfileFetcher';
+import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 
 export default function Home() {
   const store = useReadmeStore();
   const hydrated = useHydration();
+  const { t } = useTranslation();
   const { name, title, description, setName, setTitle, setDescription, reset } = store;
 
   if (!hydrated) {
@@ -25,54 +28,49 @@ export default function Home() {
   }
 
   return (
-    <main className="flex h-screen w-full overflow-hidden bg-zinc-950 text-zinc-100 font-sans">
+    <main className="flex h-screen w-full overflow-hidden bg-zinc-950 text-zinc-100 font-sans text-zinc-100">
       
-      {/* --- CÔTÉ GAUCHE : FORMULAIRE (ÉDITEUR) --- */}
-      <section className="w-1/2 h-full flex flex-col p-8 border-r border-zinc-800 bg-zinc-900/50 backdrop-blur-sm overflow-y-auto custom-scrollbar text-zinc-100">
+      {/* --- CÔTÉ GAUCHE : FORMULAIRE --- */}
+      <section className="w-1/2 h-full flex flex-col p-8 border-r border-zinc-800 bg-zinc-900/50 backdrop-blur-sm overflow-y-auto custom-scrollbar">
         <header className="mb-10 flex items-start justify-between">
           <div>
-            <h1 className="text-3xl font-black italic uppercase tracking-tighter text-zinc-100">
-              Readme <span className="text-zinc-500">Gen</span>
+            <h1 className="text-3xl font-black italic uppercase tracking-tighter">
+              {t.title} <span className="text-zinc-500">{t.subtitle}</span>
             </h1>
-            <p className="text-zinc-500 font-mono text-sm mt-2 italic">// Configuration du profil</p>
+            <p className="text-zinc-500 font-mono text-sm mt-2 italic">{t.tagline}</p>
           </div>
           
-          <button 
-            onClick={() => {
-              if(confirm("Voulez-vous vraiment réinitialiser toutes les données ?")) {
-                reset();
-              }
-            }}
-            className="text-[9px] font-mono border border-zinc-800 px-3 py-1.5 rounded text-zinc-600 hover:text-zinc-100 hover:border-zinc-500 transition-all uppercase tracking-widest"
-          >
-            Reset All
-          </button>
+          <div className="flex items-center gap-4">
+            <LanguageSwitcher />
+            <button 
+              onClick={() => {
+                if(confirm(t.resetConfirm)) {
+                  reset();
+                }
+              }}
+              className="text-[9px] font-mono border border-zinc-800 px-3 py-1.5 rounded text-zinc-600 hover:text-zinc-100 hover:border-zinc-500 transition-all uppercase tracking-widest"
+            >
+              {t.resetBtn}
+            </button>
+          </div>
         </header>
 
         <div className="space-y-10">
-          
-          {/* 0. GITHUB AUTOFILL (Magie) */}
           <GithubProfileFetcher />
-
-          {/* 1. DESIGN & STYLE (Nouveau) */}
           <StyleConfig />
-
-          {/* 2. LAYOUT MANAGER */}
           <LayoutManager />
-
-          {/* 3. CONFIGURATION STATS GITHUB */}
           <GithubStatsConfig />
 
-          {/* 4. CHAMPS DE BASE */}
+          {/* BASE INFO */}
           <div className="space-y-6 pt-6 border-t border-zinc-800">
              <header className="flex flex-col gap-1">
               <label className="text-[10px] font-mono uppercase tracking-[0.2em] text-zinc-500">
-                Informations de base
+                {t.baseInfo.label}
               </label>
             </header>
             
             <div className="flex flex-col gap-2">
-              <label className="text-[10px] font-mono uppercase tracking-[0.2em] text-zinc-500">Nom Complet</label>
+              <label className="text-[10px] font-mono uppercase tracking-[0.2em] text-zinc-500">{t.baseInfo.name}</label>
               <input
                 type="text"
                 value={name}
@@ -83,7 +81,7 @@ export default function Home() {
             </div>
 
             <div className="flex flex-col gap-2">
-              <label className="text-[10px] font-mono uppercase tracking-[0.2em] text-zinc-500">Job Title</label>
+              <label className="text-[10px] font-mono uppercase tracking-[0.2em] text-zinc-500">{t.baseInfo.job}</label>
               <input
                 type="text"
                 value={title}
@@ -94,33 +92,29 @@ export default function Home() {
             </div>
 
             <div className="flex flex-col gap-2">
-              <label className="text-[10px] font-mono uppercase tracking-[0.2em] text-zinc-500">Bio / Description</label>
+              <label className="text-[10px] font-mono uppercase tracking-[0.2em] text-zinc-500">{t.baseInfo.bio}</label>
               <textarea
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 rows={4}
                 className="bg-zinc-950 border border-zinc-800 p-3 rounded font-mono text-zinc-100 focus:outline-none focus:border-zinc-500 transition-all resize-none"
-                placeholder="Parlez de vous..."
+                placeholder={t.baseInfo.placeholderBio}
               />
             </div>
           </div>
 
-          {/* 5. SÉLECTEUR DE COMPÉTENCES */}
           <div className="pt-6 border-t border-zinc-800">
             <SkillSelector />
           </div>
 
-          {/* 6. LIENS SOCIAUX & CONTACT */}
           <SocialLinksForm />
 
-          {/* ESPACE POUR FUTURS MODULES */}
           <div className="mt-8 pt-8 border-t border-zinc-800 opacity-20 pointer-events-none">
             <p className="text-xs font-mono italic">// Future modules: Project Showcases, Extra Sections...</p>
           </div>
         </div>
       </section>
 
-      {/* --- CÔTÉ DROIT : PRÉVISUALISATION --- */}
       <PreviewPane />
       
     </main>
