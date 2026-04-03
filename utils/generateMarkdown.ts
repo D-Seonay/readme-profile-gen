@@ -9,6 +9,7 @@ interface StoreData {
   skills: string[];
   githubUsername: string;
   wakatimeUsername: string;
+  wakatimeBadgeId: string;
   featuredRepos: string[];
   showStatsCard: boolean;
   showStreakCard: boolean;
@@ -35,7 +36,7 @@ interface StoreData {
 
 export const generateMarkdown = (data: StoreData): string => {
   const { 
-    name, title, description, skills, githubUsername, wakatimeUsername, featuredRepos,
+    name, title, description, skills, githubUsername, wakatimeUsername, wakatimeBadgeId, featuredRepos,
     showStatsCard, showStreakCard, showTopLanguages, showTrophies, 
     theme, alignment, badgeStyle, statsAlign, sectionTitles, socials, donations, layout 
   } = data;
@@ -95,7 +96,6 @@ export const generateMarkdown = (data: StoreData): string => {
     if (!hasActiveStats) return '';
 
     const titleMd = sectionTitles.stats ? `### ${sectionTitles.stats}\n\n` : '';
-    
     let content = isCentered ? '<div align="center">' : '<div>';
     content += '\n\n';
     
@@ -145,10 +145,22 @@ export const generateMarkdown = (data: StoreData): string => {
   };
 
   const getWakatimeSection = () => {
-    if (!wakatimeUsername) return '';
+    if (!wakatimeUsername && !wakatimeBadgeId) return '';
     const titleMd = sectionTitles.wakatime ? `## ${sectionTitles.wakatime}\n\n` : '';
-    const graphUrl = `https://github-readme-stats.vercel.app/api/wakatime?username=${wakatimeUsername}&theme=${theme}&hide_border=true&layout=compact`;
-    const content = `![WakaTime Stats](${graphUrl})`;
+    
+    let content = '';
+    
+    // 1. Official Badge (UUID)
+    if (wakatimeBadgeId) {
+      content += `[![wakatime](https://wakatime.com/badge/user/${wakatimeBadgeId}.svg)](https://wakatime.com/@${wakatimeBadgeId})\n\n`;
+    }
+
+    // 2. Activity Graph (Username)
+    if (wakatimeUsername) {
+      const graphUrl = `https://github-readme-stats.vercel.app/api/wakatime?username=${wakatimeUsername}&theme=${theme}&hide_border=true&layout=compact`;
+      content += `![WakaTime Stats](${graphUrl})`;
+    }
+
     return isCentered ? `<div align="center">\n\n${titleMd}${content}\n\n</div>` : `${titleMd}${content}`;
   };
 
