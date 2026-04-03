@@ -27,11 +27,30 @@ export const PreviewPane = () => {
     }
   };
 
+  // Fonction de téléchargement direct du fichier .md
+  const handleDownload = () => {
+    try {
+      const blob = new Blob([markdown], { type: 'text/markdown' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = 'README.md';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error('Failed to download!', err);
+    }
+  };
+
   return (
     <section className="w-1/2 h-full flex flex-col bg-zinc-950 border-l border-zinc-900 overflow-hidden">
       
       {/* --- TOOLBAR --- */}
       <header className="flex items-center justify-between px-6 py-4 bg-zinc-950/80 backdrop-blur-md border-b border-zinc-900 z-10">
+        
+        {/* Toggle Mode (Preview / Raw) */}
         <div className="flex items-center gap-1 bg-zinc-900 p-1 rounded-lg border border-zinc-800">
           <button
             onClick={() => setViewMode('preview')}
@@ -55,26 +74,42 @@ export const PreviewPane = () => {
           </button>
         </div>
 
-        <button
-          onClick={handleCopy}
-          className={`group flex items-center gap-2 px-4 py-1.5 border rounded-md font-mono text-[10px] uppercase tracking-tighter transition-all duration-300 ${
-            isCopied 
-              ? 'bg-emerald-500/10 border-emerald-500/50 text-emerald-400' 
-              : 'bg-zinc-900 border-zinc-800 text-zinc-400 hover:border-zinc-500 hover:text-zinc-100'
-          }`}
-        >
-          {isCopied ? (
-            <>
-              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-              Copié !
-            </>
-          ) : (
-            <>
-              <span className="w-2 h-2 rounded-full bg-zinc-700 group-hover:bg-zinc-500 transition-colors" />
-              Copier le code
-            </>
-          )}
-        </button>
+        {/* Actions (Download / Copy) */}
+        <div className="flex items-center gap-2">
+          {/* Bouton Download */}
+          <button
+            onClick={handleDownload}
+            title="Download README.md"
+            className="flex items-center gap-2 px-3 py-1.5 bg-zinc-900 border border-zinc-800 rounded-md font-mono text-[10px] uppercase tracking-tighter text-zinc-400 hover:border-zinc-500 hover:text-zinc-100 transition-all active:scale-95"
+          >
+            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a2 2 0 002 2h12a2 2 0 002-2v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+            </svg>
+            Download .md
+          </button>
+
+          {/* Bouton Copy */}
+          <button
+            onClick={handleCopy}
+            className={`group flex items-center gap-2 px-4 py-1.5 border rounded-md font-mono text-[10px] uppercase tracking-tighter transition-all duration-300 ${
+              isCopied 
+                ? 'bg-emerald-500/10 border-emerald-500/50 text-emerald-400' 
+                : 'bg-zinc-900 border-zinc-800 text-zinc-400 hover:border-zinc-500 hover:text-zinc-100'
+            }`}
+          >
+            {isCopied ? (
+              <>
+                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                Copié !
+              </>
+            ) : (
+              <>
+                <span className="w-2.5 h-2.5 rounded-full bg-zinc-700 group-hover:bg-zinc-500 transition-colors" />
+                Copier
+              </>
+            )}
+          </button>
+        </div>
       </header>
 
       {/* --- CONTENU --- */}
@@ -82,7 +117,6 @@ export const PreviewPane = () => {
         <div className="max-w-3xl mx-auto w-full">
           
           {viewMode === 'preview' ? (
-            /* MODE VISUEL : RENDU MARKDOWN */
             <article className="prose prose-invert prose-zinc max-w-none 
               prose-h1:tracking-tighter prose-h1:italic prose-h1:font-black
               prose-h2:border-b prose-h2:border-zinc-900 prose-h2:pb-2
@@ -94,7 +128,6 @@ export const PreviewPane = () => {
               </ReactMarkdown>
             </article>
           ) : (
-            /* MODE RAW : CODE BRUT STYLE TERMINAL */
             <div className="relative animate-in fade-in zoom-in-95 duration-300">
               <div className="absolute -top-6 left-0 text-[9px] font-mono text-zinc-700 uppercase tracking-[0.3em]">
                 // README.md source
@@ -110,7 +143,6 @@ export const PreviewPane = () => {
         </div>
       </div>
       
-      {/* Footer informatif discret */}
       <footer className="px-8 py-4 border-t border-zinc-900 bg-zinc-950 text-center">
         <p className="text-[9px] font-mono text-zinc-700 italic uppercase tracking-widest">
           {viewMode === 'preview' ? 'Live Rendering Engine v1.0' : 'Markdown Source View'}
