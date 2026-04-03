@@ -36,19 +36,10 @@ export const SkillSelector = () => {
   return (
     <div className="space-y-6 text-zinc-100">
       <header className="flex items-center justify-between">
-        <div className="flex flex-col gap-1">
-          <label className="text-[10px] font-mono uppercase tracking-[0.2em] text-zinc-500">
-            {t.skills.label}
-          </label>
-          <p className="text-[9px] font-mono text-zinc-600 italic">
-            {t.skills.help}
-          </p>
-        </div>
-
-        <div className="flex items-center gap-1 bg-zinc-900 p-1 rounded-lg border border-zinc-800">
+        <div className="flex items-center gap-1 bg-zinc-900 p-1 rounded-lg border border-zinc-800 text-[10px]">
           <button
             onClick={() => setSkillsViewMode('grouped')}
-            className={`px-3 py-1 text-[9px] font-mono uppercase rounded-md transition-all ${
+            className={`px-3 py-1 font-mono uppercase rounded-md transition-all ${
               skillsViewMode === 'grouped' ? 'bg-zinc-100 text-zinc-950' : 'text-zinc-500 hover:text-zinc-300'
             }`}
           >
@@ -56,7 +47,7 @@ export const SkillSelector = () => {
           </button>
           <button
             onClick={() => setSkillsViewMode('flat')}
-            className={`px-3 py-1 text-[9px] font-mono uppercase rounded-md transition-all ${
+            className={`px-3 py-1 font-mono uppercase rounded-md transition-all ${
               skillsViewMode === 'flat' ? 'bg-zinc-100 text-zinc-950' : 'text-zinc-500 hover:text-zinc-300'
             }`}
           >

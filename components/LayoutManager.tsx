@@ -81,16 +81,7 @@ export const LayoutManager = () => {
   };
 
   return (
-    <div className="space-y-4 pt-6 border-t border-zinc-800 text-zinc-100">
-      <header className="flex flex-col gap-1">
-        <label className="text-[10px] font-mono uppercase tracking-[0.2em] text-zinc-500">
-          {t.layout.label}
-        </label>
-        <p className="text-[9px] font-mono text-zinc-600 italic">
-          {t.layout.help}
-        </p>
-      </header>
-
+    <div className="text-zinc-100">
       <DndContext 
         sensors={sensors} 
         collisionDetection={closestCenter} 

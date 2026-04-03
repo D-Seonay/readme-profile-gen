@@ -43,15 +43,6 @@ export const GithubStatsConfig = () => {
 
   return (
     <div className="space-y-6 text-zinc-100">
-      <header className="flex flex-col gap-1">
-        <label className="text-[10px] font-mono uppercase tracking-[0.2em] text-zinc-500">
-          {t.github.label}
-        </label>
-        <p className="text-[9px] font-mono text-zinc-600 italic">
-          {t.github.help}
-        </p>
-      </header>
-      
       <div className="space-y-4">
         <div className="flex flex-col gap-2">
           <input
@@ -87,10 +78,7 @@ export const GithubStatsConfig = () => {
         </div>
       </div>
 
-      {/* Liste des interrupteurs avec indication de santé */}
       <div className="flex flex-col gap-2">
-        
-        {/* Toggle Trophies */}
         <div className={`p-3 rounded-xl border transition-all ${isOffline('trophies') ? 'bg-zinc-900/30 border-zinc-900 opacity-40' : 'bg-zinc-900/50 border-zinc-800 hover:border-zinc-700'}`}>
           <button
             onClick={!isOffline('trophies') ? toggleTrophies : undefined}
@@ -108,13 +96,10 @@ export const GithubStatsConfig = () => {
             </div>
           </button>
           {isOffline('trophies') && (
-            <p className="text-[8px] font-mono text-red-500 mt-2 italic leading-tight">
-              // Service temporarily unreachable. This section will be hidden in the final README.
-            </p>
+            <p className="text-[8px] font-mono text-red-500 mt-2 italic leading-tight">// Service Offline</p>
           )}
         </div>
 
-        {/* Toggle Stats Card */}
         <div className={`p-3 rounded-xl border transition-all ${isOffline('stats') ? 'bg-zinc-900/30 border-zinc-900 opacity-40' : 'bg-zinc-900/50 border-zinc-800 hover:border-zinc-700'}`}>
           <button
             onClick={!isOffline('stats') ? toggleStatsCard : undefined}
@@ -131,14 +116,8 @@ export const GithubStatsConfig = () => {
               <div className={`w-2 h-2 rounded-full transition-transform duration-200 ${showStatsCard && !isOffline('stats') ? 'translate-x-4 bg-white' : 'bg-zinc-500'}`} />
             </div>
           </button>
-          {isOffline('stats') && (
-            <p className="text-[8px] font-mono text-red-500 mt-2 italic leading-tight">
-              // Service temporarily unreachable.
-            </p>
-          )}
         </div>
 
-        {/* Toggle Streak Card */}
         <div className={`p-3 rounded-xl border transition-all ${isOffline('streak') ? 'bg-zinc-900/30 border-zinc-900 opacity-40' : 'bg-zinc-900/50 border-zinc-800 hover:border-zinc-700'}`}>
           <button
             onClick={!isOffline('streak') ? toggleStreakCard : undefined}
@@ -155,14 +134,8 @@ export const GithubStatsConfig = () => {
               <div className={`w-2 h-2 rounded-full transition-transform duration-200 ${showStreakCard && !isOffline('streak') ? 'translate-x-4 bg-white' : 'bg-zinc-500'}`} />
             </div>
           </button>
-          {isOffline('streak') && (
-            <p className="text-[8px] font-mono text-red-500 mt-2 italic leading-tight">
-              // Service temporarily unreachable.
-            </p>
-          )}
         </div>
 
-        {/* Toggle Top Languages */}
         <div className={`p-3 rounded-xl border transition-all ${isOffline('stats') ? 'bg-zinc-900/30 border-zinc-900 opacity-40' : 'bg-zinc-900/50 border-zinc-800 hover:border-zinc-700'}`}>
           <button
             onClick={!isOffline('stats') ? toggleTopLanguages : undefined}
@@ -179,11 +152,6 @@ export const GithubStatsConfig = () => {
               <div className={`w-2 h-2 rounded-full transition-transform duration-200 ${showTopLanguages && !isOffline('stats') ? 'translate-x-4 bg-white' : 'bg-zinc-500'}`} />
             </div>
           </button>
-          {isOffline('stats') && (
-            <p className="text-[8px] font-mono text-red-500 mt-2 italic leading-tight">
-              // Service temporarily unreachable.
-            </p>
-          )}
         </div>
       </div>
     </div>

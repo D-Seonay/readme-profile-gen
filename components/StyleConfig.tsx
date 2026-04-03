@@ -21,18 +21,8 @@ export const StyleConfig = () => {
   const { t } = useTranslation();
 
   return (
-    <div className="space-y-8 pt-6 border-t border-zinc-800 text-zinc-100">
-      <header className="flex flex-col gap-1">
-        <label className="text-[10px] font-mono uppercase tracking-[0.2em] text-zinc-500">
-          {t.style.label}
-        </label>
-        <p className="text-[9px] font-mono text-zinc-600 italic">
-          {t.style.help}
-        </p>
-      </header>
-
+    <div className="space-y-8 text-zinc-100">
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-        {/* Alignement Global */}
         <div className="space-y-3">
           <label className="text-[9px] font-mono uppercase text-zinc-500 tracking-wider">{t.style.alignment}</label>
           <div className="flex bg-zinc-900 p-1 rounded-xl border border-zinc-800">
@@ -55,7 +45,6 @@ export const StyleConfig = () => {
           </div>
         </div>
 
-        {/* Orientation des Stats */}
         <div className="space-y-3">
           <label className="text-[9px] font-mono uppercase text-zinc-500 tracking-wider">{t.style.orientation}</label>
           <div className="flex bg-zinc-900 p-1 rounded-xl border border-zinc-800">
@@ -78,7 +67,6 @@ export const StyleConfig = () => {
           </div>
         </div>
 
-        {/* Style des Badges */}
         <div className="space-y-3">
           <label className="text-[9px] font-mono uppercase text-zinc-500 tracking-wider">{t.style.badgeStyle}</label>
           <select
@@ -93,7 +81,6 @@ export const StyleConfig = () => {
         </div>
       </div>
 
-      {/* Section Titles */}
       <div className="space-y-4">
         <label className="text-[9px] font-mono uppercase text-zinc-500 tracking-wider">{t.style.sectionTitles}</label>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">

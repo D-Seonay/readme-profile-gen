@@ -17,16 +17,7 @@ export const ProjectShowcase = () => {
   };
 
   return (
-    <div className="space-y-6 pt-6 border-t border-zinc-800 text-zinc-100">
-      <header className="flex flex-col gap-1">
-        <label className="text-[10px] font-mono uppercase tracking-[0.2em] text-zinc-500">
-          {t.projects.label}
-        </label>
-        <p className="text-[9px] font-mono text-zinc-600 italic">
-          {t.projects.help}
-        </p>
-      </header>
-
+    <div className="space-y-6 text-zinc-100">
       <div className="flex gap-2">
         <input
           type="text"

@@ -15,16 +15,7 @@ export const DonationsForm = () => {
   ] as const;
 
   return (
-    <div className="space-y-6 pt-6 border-t border-zinc-800 text-zinc-100">
-      <header className="flex flex-col gap-1">
-        <label className="text-[10px] font-mono uppercase tracking-[0.2em] text-zinc-500">
-          {t.donations.label}
-        </label>
-        <p className="text-[9px] font-mono text-zinc-600 italic">
-          {t.donations.help}
-        </p>
-      </header>
-      
+    <div className="space-y-4 text-zinc-100">
       <div className="space-y-4">
         {config.map((item) => (
           <div key={item.id} className="flex flex-col gap-2 group">
