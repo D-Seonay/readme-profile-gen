@@ -146,7 +146,18 @@ export default function Home() {
             <h1 className="text-3xl font-black italic uppercase tracking-tighter">
               {t.title} <span className={isDark ? 'text-zinc-500' : 'text-zinc-400'}>{t.subtitle}</span>
             </h1>
-            <p className={`${isDark ? 'text-zinc-500' : 'text-zinc-400'} font-mono text-sm mt-2 italic`}>{t.tagline}</p>
+            <div className="flex items-center gap-2 mt-1">
+              <p className={`${isDark ? 'text-zinc-500' : 'text-zinc-400'} font-mono text-sm italic`}>{t.tagline}</p>
+              <span className="text-zinc-700">•</span>
+              <a 
+                href="https://matheodelaunay.studio" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className={`text-[10px] font-mono uppercase tracking-widest transition-colors ${isDark ? 'text-zinc-600 hover:text-indigo-400' : 'text-zinc-400 hover:text-indigo-600'}`}
+              >
+                by Seonay
+              </a>
+            </div>
           </div>
           
           <div className="flex items-center gap-4">
