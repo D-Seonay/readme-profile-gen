@@ -204,7 +204,7 @@ export const useReadmeStore = create<ReadmeState>()(
             socials: {
               ...s.socials,
               twitter: !s.socials.twitter ? userData.twitter_username || '' : s.socials.twitter,
-              portfolio: !s.socials.portfolio ? data.blog || '' : s.socials.portfolio,
+              portfolio: !s.socials.portfolio ? userData.blog || '' : s.socials.portfolio,
               linkedin: !s.socials.linkedin ? (linkedinAccount?.url || '') : s.socials.linkedin,
               email: !s.socials.email ? (detectedEmail || userData.email || '') : s.socials.email,
             }
