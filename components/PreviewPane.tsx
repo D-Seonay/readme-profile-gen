@@ -52,16 +52,16 @@ export const PreviewPane = () => {
         <div className="flex items-center gap-1 bg-zinc-900 p-1 rounded-lg border border-zinc-800">
           <button
             onClick={() => setViewMode('preview')}
-            className={`px-4 py-1.5 text-[10px] font-mono uppercase tracking-widest rounded-md transition-all ${
-              viewMode === 'preview' ? 'bg-zinc-100 text-zinc-950 shadow-sm' : 'text-zinc-500 hover:text-zinc-300'
+            className={`px-4 py-1.5 text-[10px] font-mono uppercase rounded-md transition-all ${
+              viewMode === 'preview' ? 'bg-zinc-100 text-zinc-950' : 'text-zinc-500 hover:text-zinc-300'
             }`}
           >
             Preview
           </button>
           <button
             onClick={() => setViewMode('raw')}
-            className={`px-4 py-1.5 text-[10px] font-mono uppercase tracking-widest rounded-md transition-all ${
-              viewMode === 'raw' ? 'bg-zinc-100 text-zinc-950 shadow-sm' : 'text-zinc-500 hover:text-zinc-300'
+            className={`px-4 py-1.5 text-[10px] font-mono uppercase rounded-md transition-all ${
+              viewMode === 'raw' ? 'bg-zinc-100 text-zinc-950' : 'text-zinc-500 hover:text-zinc-300'
             }`}
           >
             Raw Code
@@ -71,14 +71,13 @@ export const PreviewPane = () => {
         <div className="flex items-center gap-2">
           <button
             onClick={handleDownload}
-            className="flex items-center gap-2 px-3 py-1.5 bg-zinc-900 border border-zinc-800 rounded-md font-mono text-[10px] uppercase tracking-tighter text-zinc-400 hover:border-zinc-500 hover:text-zinc-100 transition-all"
+            className="flex items-center gap-2 px-3 py-1.5 bg-zinc-900 border border-zinc-800 rounded-md font-mono text-[10px] uppercase text-zinc-400 hover:text-zinc-100"
           >
-            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M4 16v1a2 2 0 002 2h12a2 2 0 002-2v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
-            .md
+            Download
           </button>
           <button
             onClick={handleCopy}
-            className={`flex items-center gap-2 px-4 py-1.5 border rounded-md font-mono text-[10px] uppercase tracking-tighter transition-all ${
+            className={`px-4 py-1.5 border rounded-md font-mono text-[10px] uppercase transition-all ${
               isCopied ? 'bg-emerald-500/10 border-emerald-500/50 text-emerald-400' : 'bg-zinc-900 border-zinc-800 text-zinc-400'
             }`}
           >
@@ -93,10 +92,8 @@ export const PreviewPane = () => {
           
           {viewMode === 'preview' ? (
             <article className={`prose prose-invert prose-zinc max-w-none 
-              prose-h1:tracking-tighter prose-h1:italic prose-h1:font-black
-              prose-h2:border-b prose-h2:border-zinc-900 prose-h2:pb-2
-              prose-img:inline prose-img:m-0 prose-img:mr-1
-              ${statsAlign === 'row' ? 'overflow-x-auto whitespace-nowrap' : ''}
+              prose-img:inline-block prose-img:m-0 prose-img:mr-2
+              ${statsAlign === 'row' ? '[&_img]:inline-block [&_p]:overflow-x-auto [&_p]:whitespace-nowrap [&_div]:overflow-x-auto [&_div]:whitespace-nowrap' : ''}
               animate-in fade-in slide-in-from-bottom-2 duration-500`}
             >
               <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeRaw]}>
@@ -104,7 +101,7 @@ export const PreviewPane = () => {
               </ReactMarkdown>
             </article>
           ) : (
-            <pre className="bg-zinc-900/50 border border-zinc-800 p-6 rounded-xl font-mono text-sm text-zinc-400 leading-relaxed overflow-x-auto shadow-2xl">
+            <pre className="bg-zinc-900/50 border border-zinc-800 p-6 rounded-xl font-mono text-sm text-zinc-400 leading-relaxed overflow-x-auto">
               <code>{markdown}</code>
             </pre>
           )}

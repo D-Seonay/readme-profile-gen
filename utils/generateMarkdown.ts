@@ -35,8 +35,6 @@ export const generateMarkdown = (data: StoreData): string => {
   const isCentered = alignment === 'center';
   const isRow = statsAlign === 'row';
 
-  // --- Préparateurs de Sections ---
-
   const getBioSection = () => {
     let md = `# 👋 Hello, I'm ${name}\n\n## 🚀 ${title}\n\n${description}`;
     return isCentered ? `<div align="center">\n\n${md}\n\n</div>` : md;
@@ -88,27 +86,26 @@ export const generateMarkdown = (data: StoreData): string => {
 
     const titleMd = sectionTitles.stats ? `### ${sectionTitles.stats}\n\n` : '';
     
-    // Début du bloc d'alignement
-    let content = isCentered ? '<div align="center">\n\n' : '<div>\n\n';
+    // On utilise une structure HTML très propre pour forcer l'alignement
+    let content = isCentered ? '<div align="center">' : '<div>';
+    content += '\n\n';
     
     if (showTrophies) {
       content += `![GitHub Trophies](https://github-profile-trophy.vercel.app/?username=${githubUsername}&theme=${theme === 'transparent' ? 'flat' : theme}&no-frame=true&margin-w=15)\n\n`;
     }
 
-    // IMPORTANT : En mode row, on met TOUTES les images sur une seule ligne physique sans espaces superflus
     const statsImages = [];
     if (showStatsCard) statsImages.push(`![GitHub Stats](https://github-readme-stats.vercel.app/api?username=${githubUsername}&theme=${theme}&hide_border=true&show_icons=true)`);
     if (showTopLanguages) statsImages.push(`![Top Langs](https://github-readme-stats.vercel.app/api/top-langs/?username=${githubUsername}&theme=${theme}&hide_border=true&layout=compact)`);
     if (showStreakCard) statsImages.push(`![GitHub Streak](https://streak-stats.demolab.com/?user=${githubUsername}&theme=${theme}&hide_border=true)`);
 
+    // En mode row, on ne met AUCUN retour à la ligne entre les badges, juste des espaces HTML
     content += statsImages.join(isRow ? ' ' : '\n');
     
     content += '\n\n</div>';
     
     return `${titleMd}${content}`;
   };
-
-  // --- Assemblage Final basé sur le Layout ---
 
   const finalSections = layout.map((sectionId) => {
     switch (sectionId) {
