@@ -53,7 +53,8 @@ export const translations = {
       trophies: "GitHub Trophies",
       stats: "Global Statistics",
       streak: "GitHub Streak",
-      langs: "Top Languages"
+      langs: "Top Languages",
+      visitorCounter: "Visitor Counter"
     },
 
     wakatime: {
@@ -168,7 +169,8 @@ export const translations = {
       trophies: "Trophées GitHub",
       stats: "Statistiques Globales",
       streak: "Séquence (Streak) GitHub",
-      langs: "Top Langages"
+      langs: "Top Langages",
+      visitorCounter: "Compteur de Visites"
     },
 
     wakatime: {
