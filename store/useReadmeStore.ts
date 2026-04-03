@@ -182,22 +182,24 @@ export const useReadmeStore = create<ReadmeState>()(
         const newIndex = state.layout.indexOf(overId);
         return { layout: arrayMove(state.layout, oldIndex, newIndex) };
       }),
+checkServicesHealth: async () => {
+  const check = async (service: 'stats' | 'streak' | 'trophies' | 'wakatime') => {
+    try {
+      const res = await fetch(`/api/health?service=${service}`);
+      const data = await res.json();
+      return data.online ? 'online' : 'offline';
+    } catch {
+      return 'offline';
+    }
+  };
 
-      checkServicesHealth: async () => {
-        const check = async (service: 'stats' | 'streak' | 'trophies' | 'wakatime') => {
-          try {
-            const res = await fetch(`/api/health?service=${service}`);
-            const data = await res.json();
-            return data.online ? 'online' : 'offline';
-          } catch {
-            return 'offline';
-          }
-        };
-        const [stats, streak, trophies, wakatime] = await Promise.all([
-          check('stats'), check('streak'), check('trophies'), check('wakatime')
-        ]);
-        set({ servicesStatus: { stats, streak, trophies, wakatime } });
-      },
+  // Exécution en série ou parallèle avec fallback
+  const [stats, streak, trophies, wakatime] = await Promise.all([
+    check('stats'), check('streak'), check('trophies'), check('wakatime')
+  ]);
+
+  set({ servicesStatus: { stats, streak, trophies, wakatime } });
+},
 
       fetchGithubUserData: async (username: string) => {
         if (!username) return;

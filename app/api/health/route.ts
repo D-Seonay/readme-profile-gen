@@ -6,7 +6,7 @@ const SERVICES = {
   stats: 'https://github-readme-stats.vercel.app/api',
   streak: 'https://streak-stats.demolab.com/',
   trophies: 'https://github-profile-trophy.vercel.app/',
-  wakatime: 'https://github-readme-stats.vercel.app/api/wakatime',
+  wakatime: 'https://wakatime.com/static/img/wakatime.png', // Test d'une ressource statique stable
 };
 
 export async function GET(request: Request) {
@@ -19,10 +19,10 @@ export async function GET(request: Request) {
 
   try {
     const controller = new AbortController();
-    const id = setTimeout(() => controller.abort(), 4000);
+    const id = setTimeout(() => controller.abort(), 5000); // Augmentation du timeout à 5s
 
     const res = await fetch(SERVICES[serviceId], { 
-      method: 'HEAD', 
+      method: 'GET', // Changement HEAD -> GET pour certains services capricieux
       signal: controller.signal,
       cache: 'no-store'
     });
