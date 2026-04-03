@@ -8,6 +8,7 @@ interface StoreData {
   description: string;
   skills: string[];
   githubUsername: string;
+  wakatimeUsername: string;
   featuredRepos: string[];
   showStatsCard: boolean;
   showStreakCard: boolean;
@@ -34,7 +35,7 @@ interface StoreData {
 
 export const generateMarkdown = (data: StoreData): string => {
   const { 
-    name, title, description, skills, githubUsername, featuredRepos,
+    name, title, description, skills, githubUsername, wakatimeUsername, featuredRepos,
     showStatsCard, showStreakCard, showTopLanguages, showTrophies, 
     theme, alignment, badgeStyle, statsAlign, sectionTitles, socials, donations, layout 
   } = data;
@@ -133,19 +134,22 @@ export const generateMarkdown = (data: StoreData): string => {
 
   const getProjectsSection = () => {
     if (!githubUsername || featuredRepos.length === 0) return '';
-
     const titleMd = sectionTitles.projects ? `## ${sectionTitles.projects}\n\n` : '';
-    
     let content = isCentered ? '<div align="center">\n\n' : '<div>\n\n';
-    
     const projectCards = featuredRepos.map(repo => 
       `![${repo}](https://github-readme-stats.vercel.app/api/pin/?username=${githubUsername}&repo=${repo}&theme=${theme}&hide_border=true)`
     );
-
     content += projectCards.join(isRow ? ' ' : '\n');
     content += '\n\n</div>';
-
     return `${titleMd}${content}`;
+  };
+
+  const getWakatimeSection = () => {
+    if (!wakatimeUsername) return '';
+    const titleMd = sectionTitles.wakatime ? `## ${sectionTitles.wakatime}\n\n` : '';
+    const graphUrl = `https://github-readme-stats.vercel.app/api/wakatime?username=${wakatimeUsername}&theme=${theme}&hide_border=true&layout=compact`;
+    const content = `![WakaTime Stats](${graphUrl})`;
+    return isCentered ? `<div align="center">\n\n${titleMd}${content}\n\n</div>` : `${titleMd}${content}`;
   };
 
   // --- Assemblage Final basé sur le Layout ---
@@ -158,6 +162,7 @@ export const generateMarkdown = (data: StoreData): string => {
       case 'stats': return getStatsSection();
       case 'donations': return getDonationsSection();
       case 'projects': return getProjectsSection();
+      case 'wakatime': return getWakatimeSection();
       default: return '';
     }
   });

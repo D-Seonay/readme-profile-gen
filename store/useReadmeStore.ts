@@ -3,22 +3,23 @@ import { persist, createJSONStorage } from 'zustand/middleware';
 import { arrayMove } from '@dnd-kit/sortable';
 import { skillsData } from '@/lib/skillsData';
 
-export type SectionId = 'bio' | 'skills' | 'socials' | 'stats' | 'donations' | 'projects';
+export type SectionId = 'bio' | 'skills' | 'socials' | 'stats' | 'donations' | 'projects' | 'wakatime';
 export type ServiceStatus = 'checking' | 'online' | 'offline';
 export type BadgeStyle = 'for-the-badge' | 'flat' | 'flat-square' | 'plastic' | 'social';
 export type Language = 'en' | 'fr';
 export type UITheme = 'dark' | 'light';
 
-const DEFAULT_LAYOUT: SectionId[] = ['bio', 'skills', 'socials', 'stats', 'donations', 'projects'];
+const DEFAULT_LAYOUT: SectionId[] = ['bio', 'skills', 'socials', 'stats', 'donations', 'projects', 'wakatime'];
 
 interface ReadmeState {
   language: Language;
-  uiTheme: UITheme; // Thème de l'interface
+  uiTheme: UITheme;
   name: string;
   title: string;
   description: string;
   skills: string[];
   githubUsername: string;
+  wakatimeUsername: string; // Nouveau champ
   featuredRepos: string[];
   showStatsCard: boolean;
   showStreakCard: boolean;
@@ -48,6 +49,7 @@ interface ReadmeState {
     stats: ServiceStatus;
     streak: ServiceStatus;
     trophies: ServiceStatus;
+    wakatime: ServiceStatus; // Nouveau status
   };
   layout: SectionId[];
   
@@ -58,6 +60,7 @@ interface ReadmeState {
   setDescription: (description: string) => void;
   toggleSkill: (slug: string) => void;
   setGithubUsername: (username: string) => void;
+  setWakatimeUsername: (username: string) => void; // Nouvelle action
   addFeaturedRepo: (repo: string) => void;
   removeFeaturedRepo: (repo: string) => void;
   toggleStatsCard: () => void;
@@ -86,6 +89,7 @@ const initialState = {
   description: 'Welcome to my profile! I am passionate about Web and Open Source.',
   skills: [],
   githubUsername: '',
+  wakatimeUsername: '',
   featuredRepos: [],
   showStatsCard: true,
   showStreakCard: false,
@@ -102,7 +106,8 @@ const initialState = {
     socials: '📫 Contact Me',
     stats: '📊 GitHub Stats',
     donations: '🎁 Support Me',
-    projects: '🚀 Featured Projects'
+    projects: '🚀 Featured Projects',
+    wakatime: '⏱️ Coding Activity'
   },
   socials: {
     linkedin: '',
@@ -121,6 +126,7 @@ const initialState = {
     stats: 'checking' as ServiceStatus,
     streak: 'checking' as ServiceStatus,
     trophies: 'checking' as ServiceStatus,
+    wakatime: 'checking' as ServiceStatus,
   },
   layout: DEFAULT_LAYOUT,
 };
@@ -141,6 +147,7 @@ export const useReadmeStore = create<ReadmeState>()(
           : [...state.skills, slug],
       })),
       setGithubUsername: (githubUsername: string) => set({ githubUsername }),
+      setWakatimeUsername: (wakatimeUsername: string) => set({ wakatimeUsername }),
       addFeaturedRepo: (repo: string) => set((state) => ({
         featuredRepos: [...state.featuredRepos, repo]
       })),
@@ -173,8 +180,9 @@ export const useReadmeStore = create<ReadmeState>()(
       }),
 
       checkServicesHealth: async () => {
-        const check = async (service: 'stats' | 'streak' | 'trophies') => {
+        const check = async (service: 'stats' | 'streak' | 'trophies' | 'wakatime') => {
           try {
+            // Pour Wakatime on check l'endpoint stats public
             const res = await fetch(`/api/health?service=${service}`);
             const data = await res.json();
             return data.online ? 'online' : 'offline';
@@ -182,10 +190,10 @@ export const useReadmeStore = create<ReadmeState>()(
             return 'offline';
           }
         };
-        const [stats, streak, trophies] = await Promise.all([
-          check('stats'), check('streak'), check('trophies')
+        const [stats, streak, trophies, wakatime] = await Promise.all([
+          check('stats'), check('streak'), check('trophies'), check('wakatime')
         ]);
-        set({ servicesStatus: { stats, streak, trophies } });
+        set({ servicesStatus: { stats, streak, trophies, wakatime } });
       },
 
       fetchGithubUserData: async (username: string) => {

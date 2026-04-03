@@ -1,11 +1,12 @@
 import { NextResponse } from 'next/server';
 
-export const runtime = 'edge'; // Pour une réponse ultra-rapide
+export const runtime = 'edge';
 
 const SERVICES = {
   stats: 'https://github-readme-stats.vercel.app/api',
   streak: 'https://streak-stats.demolab.com/',
   trophies: 'https://github-profile-trophy.vercel.app/',
+  wakatime: 'https://github-readme-stats.vercel.app/api/wakatime',
 };
 
 export async function GET(request: Request) {
@@ -17,9 +18,8 @@ export async function GET(request: Request) {
   }
 
   try {
-    // On fait un HEAD pour ne pas charger tout le contenu, juste vérifier la réponse
     const controller = new AbortController();
-    const id = setTimeout(() => controller.abort(), 4000); // Timeout de 4s
+    const id = setTimeout(() => controller.abort(), 4000);
 
     const res = await fetch(SERVICES[serviceId], { 
       method: 'HEAD', 
@@ -29,8 +29,6 @@ export async function GET(request: Request) {
     
     clearTimeout(id);
 
-    // Si le service répond avec un statut < 500, on le considère "vivant"
-    // (Note: Les 404/403 sont considérés comme vivants car l'endpoint existe)
     return NextResponse.json({ 
       online: res.status < 500 
     });

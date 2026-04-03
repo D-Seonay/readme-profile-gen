@@ -41,7 +41,8 @@ export const translations = {
       socials: "📫 Networks & Contact",
       stats: "📊 GitHub Stats",
       donations: "🎁 Support Me",
-      projects: "🚀 Featured Projects"
+      projects: "🚀 Featured Projects",
+      wakatime: "⏱️ WakaTime Activity"
     },
     
     github: {
@@ -53,6 +54,13 @@ export const translations = {
       stats: "Global Statistics",
       streak: "GitHub Streak",
       langs: "Top Languages"
+    },
+
+    wakatime: {
+      label: "WakaTime Integration",
+      help: "// Show your weekly coding activity",
+      placeholder: "WakaTime Username",
+      stats: "Coding Stats (Weekly)"
     },
     
     baseInfo: {
@@ -148,7 +156,8 @@ export const translations = {
       socials: "📫 Réseaux & Contact",
       stats: "📊 Stats GitHub",
       donations: "🎁 Me soutenir",
-      projects: "🚀 Projets Phares"
+      projects: "🚀 Projets Phares",
+      wakatime: "⏱️ Activité WakaTime"
     },
     
     github: {
@@ -160,6 +169,13 @@ export const translations = {
       stats: "Statistiques Globales",
       streak: "Séquence (Streak) GitHub",
       langs: "Top Langages"
+    },
+
+    wakatime: {
+      label: "Intégration WakaTime",
+      help: "// Affiche ton activité de code hebdomadaire",
+      placeholder: "Pseudo WakaTime",
+      stats: "Stats de Code (Semaine)"
     },
     
     baseInfo: {
