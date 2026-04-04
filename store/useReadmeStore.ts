@@ -24,7 +24,11 @@ interface ReadmeState {
   bannerUrl: string;
   spotifyUrl: string;
   rssUrl: string;
-  typingText: string; // Nouveau: Texte pour Typing SVG
+  typingText: string;
+  typingColor: string; // New: Custom color
+  typingSize: number; // New: Font size
+  typingDuration: number; // New: Speed
+  typingPause: number; // New: Pause between lines
   showWakatimeBadges: boolean;
   showVisitorCounter: boolean;
   featuredRepos: string[];
@@ -73,7 +77,11 @@ interface ReadmeState {
   setBannerUrl: (url: string) => void;
   setSpotifyUrl: (url: string) => void;
   setRssUrl: (url: string) => void;
-  setTypingText: (text: string) => void; // Nouvelle action
+  setTypingText: (text: string) => void;
+  setTypingColor: (color: string) => void; // New action
+  setTypingSize: (size: number) => void; // New action
+  setTypingDuration: (duration: number) => void; // New action
+  setTypingPause: (pause: number) => void; // New action
   toggleWakatimeBadges: () => void;
   toggleVisitorCounter: () => void;
   addFeaturedRepo: (repo: string) => void;
@@ -111,6 +119,10 @@ const initialState = {
   spotifyUrl: '',
   rssUrl: '',
   typingText: '',
+  typingColor: '', // Default to theme
+  typingSize: 20,
+  typingDuration: 5000,
+  typingPause: 1000,
   showWakatimeBadges: false,
   showVisitorCounter: false,
   featuredRepos: [],
@@ -181,6 +193,10 @@ export const useReadmeStore = create<ReadmeState>()(
       setSpotifyUrl: (spotifyUrl: string) => set({ spotifyUrl }),
       setRssUrl: (rssUrl: string) => set({ rssUrl }),
       setTypingText: (typingText: string) => set({ typingText }),
+      setTypingColor: (typingColor: string) => set({ typingColor }),
+      setTypingSize: (typingSize: number) => set({ typingSize }),
+      setTypingDuration: (typingDuration: number) => set({ typingDuration }),
+      setTypingPause: (typingPause: number) => set({ typingPause }),
       toggleWakatimeBadges: () => set((state) => ({ showWakatimeBadges: !state.showWakatimeBadges })),
       toggleVisitorCounter: () => set((state) => ({ showVisitorCounter: !state.showVisitorCounter })),
       addFeaturedRepo: (repo: string) => set((state) => ({

@@ -52,8 +52,12 @@ export const translations = {
     typing: {
       label: "Typing SVG Integration",
       help: "// Add a dynamic animated text to your profile",
-      placeholder: "I'm a Fullstack Developer...",
-      textLabel: "Animated Text"
+      placeholder: "Line 1\nLine 2\nLine 3...",
+      textLabel: "Animated Text (One per line)",
+      size: "Font Size",
+      color: "Text Color (Hex)",
+      duration: "Typing Speed (ms)",
+      pause: "Pause between lines (ms)"
     },
 
     banner: {
@@ -199,8 +203,12 @@ export const translations = {
     typing: {
       label: "Intégration Typing SVG",
       help: "// Ajoutez un texte animé dynamique à votre profil",
-      placeholder: "Je suis développeur Fullstack...",
-      textLabel: "Texte à animer"
+      placeholder: "Ligne 1\nLigne 2\nLigne 3...",
+      textLabel: "Texte à animer (Une phrase par ligne)",
+      size: "Taille de la police",
+      color: "Couleur (Hex)",
+      duration: "Vitesse de frappe (ms)",
+      pause: "Pause entre lignes (ms)"
     },
 
     banner: {

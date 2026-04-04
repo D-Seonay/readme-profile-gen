@@ -15,6 +15,10 @@ interface StoreData {
   spotifyUrl: string;
   rssUrl: string;
   typingText: string;
+  typingColor: string;
+  typingSize: number;
+  typingDuration: number;
+  typingPause: number;
   showWakatimeBadges: boolean;
   showVisitorCounter: boolean;
   featuredRepos: string[];
@@ -56,6 +60,10 @@ describe('generateMarkdown', () => {
     spotifyUrl: '',
     rssUrl: '',
     typingText: 'Hello World',
+    typingColor: '',
+    typingSize: 20,
+    typingDuration: 5000,
+    typingPause: 1000,
     showWakatimeBadges: false,
     showVisitorCounter: false,
     featuredRepos: [],
@@ -142,6 +150,7 @@ describe('generateMarkdown', () => {
   it('should not show stats section if no username is provided', () => {
     const noUser: StoreData = { ...mockData, githubUsername: '' };
     const md = generateMarkdown(noUser);
+    expect(noUser.githubUsername).toBe('');
     expect(md).not.toContain('### 📊 GitHub Stats');
   });
 });
