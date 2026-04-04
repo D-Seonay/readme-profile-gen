@@ -3,13 +3,13 @@ import { persist, createJSONStorage } from 'zustand/middleware';
 import { arrayMove } from '@dnd-kit/sortable';
 import { skillsData } from '@/lib/skillsData';
 
-export type SectionId = 'banner' | 'bio' | 'skills' | 'socials' | 'stats' | 'donations' | 'projects' | 'wakatime' | 'spotify' | 'rss';
+export type SectionId = 'banner' | 'bio' | 'skills' | 'socials' | 'stats' | 'donations' | 'projects' | 'wakatime' | 'spotify' | 'rss' | 'typing';
 export type ServiceStatus = 'checking' | 'online' | 'offline';
 export type BadgeStyle = 'for-the-badge' | 'flat' | 'flat-square' | 'plastic' | 'social';
 export type Language = 'en' | 'fr';
 export type UITheme = 'dark' | 'light';
 
-const DEFAULT_LAYOUT: SectionId[] = ['banner', 'bio', 'skills', 'socials', 'stats', 'donations', 'projects', 'wakatime', 'spotify', 'rss'];
+const DEFAULT_LAYOUT: SectionId[] = ['banner', 'bio', 'skills', 'socials', 'stats', 'donations', 'projects', 'wakatime', 'spotify', 'rss', 'typing'];
 
 interface ReadmeState {
   language: Language;
@@ -24,6 +24,11 @@ interface ReadmeState {
   bannerUrl: string;
   spotifyUrl: string;
   rssUrl: string;
+  typingText: string;
+  typingColor: string; // New: Custom color
+  typingSize: number; // New: Font size
+  typingDuration: number; // New: Speed
+  typingPause: number; // New: Pause between lines
   showWakatimeBadges: boolean;
   showVisitorCounter: boolean;
   featuredRepos: string[];
@@ -31,7 +36,7 @@ interface ReadmeState {
   showStreakCard: boolean;
   showTopLanguages: boolean;
   showTrophies: boolean;
-  showSnake: boolean; // 🐍 Snake
+  showSnake: boolean;
   theme: string;
   skillsViewMode: 'grouped' | 'flat';
   alignment: 'left' | 'center';
@@ -72,6 +77,11 @@ interface ReadmeState {
   setBannerUrl: (url: string) => void;
   setSpotifyUrl: (url: string) => void;
   setRssUrl: (url: string) => void;
+  setTypingText: (text: string) => void;
+  setTypingColor: (color: string) => void; // New action
+  setTypingSize: (size: number) => void; // New action
+  setTypingDuration: (duration: number) => void; // New action
+  setTypingPause: (pause: number) => void; // New action
   toggleWakatimeBadges: () => void;
   toggleVisitorCounter: () => void;
   addFeaturedRepo: (repo: string) => void;
@@ -80,7 +90,7 @@ interface ReadmeState {
   toggleStreakCard: () => void;
   toggleTopLanguages: () => void;
   toggleTrophies: () => void;
-  toggleSnake: () => void; // 🐍 Snake Toggle
+  toggleSnake: () => void;
   setTheme: (theme: string) => void;
   setSkillsViewMode: (mode: 'grouped' | 'flat') => void;
   setAlignment: (alignment: 'left' | 'center') => void;
@@ -108,6 +118,11 @@ const initialState = {
   bannerUrl: '',
   spotifyUrl: '',
   rssUrl: '',
+  typingText: '',
+  typingColor: '', // Default to theme
+  typingSize: 20,
+  typingDuration: 5000,
+  typingPause: 1000,
   showWakatimeBadges: false,
   showVisitorCounter: false,
   featuredRepos: [],
@@ -115,7 +130,7 @@ const initialState = {
   showStreakCard: false,
   showTopLanguages: true,
   showTrophies: false,
-  showSnake: false, // 🐍 Snake
+  showSnake: false,
   theme: 'transparent',
   skillsViewMode: 'grouped' as const,
   alignment: 'left' as const,
@@ -131,7 +146,8 @@ const initialState = {
     projects: '🚀 Featured Projects',
     wakatime: '⏱️ Coding Activity',
     spotify: '🎵 Now Playing',
-    rss: '📰 Latest Blog Posts'
+    rss: '📰 Latest Blog Posts',
+    typing: '⌨️ Dynamic Text'
   },
   socials: {
     linkedin: '',
@@ -176,6 +192,11 @@ export const useReadmeStore = create<ReadmeState>()(
       setBannerUrl: (bannerUrl: string) => set({ bannerUrl }),
       setSpotifyUrl: (spotifyUrl: string) => set({ spotifyUrl }),
       setRssUrl: (rssUrl: string) => set({ rssUrl }),
+      setTypingText: (typingText: string) => set({ typingText }),
+      setTypingColor: (typingColor: string) => set({ typingColor }),
+      setTypingSize: (typingSize: number) => set({ typingSize }),
+      setTypingDuration: (typingDuration: number) => set({ typingDuration }),
+      setTypingPause: (typingPause: number) => set({ typingPause }),
       toggleWakatimeBadges: () => set((state) => ({ showWakatimeBadges: !state.showWakatimeBadges })),
       toggleVisitorCounter: () => set((state) => ({ showVisitorCounter: !state.showVisitorCounter })),
       addFeaturedRepo: (repo: string) => set((state) => ({
@@ -188,7 +209,7 @@ export const useReadmeStore = create<ReadmeState>()(
       toggleStreakCard: () => set((state) => ({ showStreakCard: !state.showStreakCard })),
       toggleTopLanguages: () => set((state) => ({ showTopLanguages: !state.showTopLanguages })),
       toggleTrophies: () => set((state) => ({ showTrophies: !state.showTrophies })),
-      toggleSnake: () => set((state) => ({ showSnake: !state.showSnake })), // 🐍 Snake
+      toggleSnake: () => set((state) => ({ showSnake: !state.showSnake })),
       setTheme: (theme: string) => set({ theme }),
       setSkillsViewMode: (skillsViewMode: 'grouped' | 'flat') => set({ skillsViewMode }),
       setAlignment: (alignment: 'left' | 'center') => set({ alignment }),

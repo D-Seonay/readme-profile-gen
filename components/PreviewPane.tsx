@@ -7,6 +7,7 @@ import rehypeRaw from 'rehype-raw';
 import { useReadmeStore } from '@/store/useReadmeStore';
 import { generateMarkdown } from '@/utils/generateMarkdown';
 import { useTranslation } from '@/hooks/useTranslation';
+import { toast } from 'sonner';
 
 type ViewMode = 'preview' | 'raw';
 
@@ -26,8 +27,10 @@ export const PreviewPane = () => {
     try {
       await navigator.clipboard.writeText(markdown);
       setIsCopied(true);
+      toast.success(t.preview.copied);
       setTimeout(() => setIsCopied(false), 2000);
     } catch (err) {
+      toast.error('Failed to copy to clipboard');
       console.error('Failed to copy!', err);
     }
   };
@@ -43,7 +46,9 @@ export const PreviewPane = () => {
       link.click();
       document.body.removeChild(link);
       URL.revokeObjectURL(url);
+      toast.success('README.md downloaded successfully');
     } catch (err) {
+      toast.error('Failed to download file');
       console.error('Failed to download!', err);
     }
   };

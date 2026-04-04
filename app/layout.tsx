@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { BMCWidget } from "@/components/BMCWidget";
+import { Toaster } from "sonner";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -43,7 +44,7 @@ export const metadata: Metadata = {
     siteName: "Ultimate README Gen",
     images: [
       {
-        url: "/og-image.png", // Idéalement, crée cette image dans /public
+        url: "/og-image.png",
         width: 1200,
         height: 630,
         alt: "Ultimate GitHub Profile README Generator Preview",
@@ -112,6 +113,7 @@ export default function RootLayout({
       <body className="min-h-full flex flex-col bg-zinc-950">
         {children}
         <BMCWidget />
+        <Toaster richColors closeButton position="bottom-right" />
       </body>
     </html>
   );

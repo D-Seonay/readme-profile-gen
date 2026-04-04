@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import { useReadmeStore, SectionId } from '@/store/useReadmeStore';
 import { useHydration } from '@/hooks/useHydration';
 import { useTranslation } from '@/hooks/useTranslation';
@@ -11,6 +11,7 @@ import { DonationsForm } from '@/components/DonationsForm';
 import { ProjectShowcase } from '@/components/ProjectShowcase';
 import { WakatimeConfig } from '@/components/WakatimeConfig';
 import { BannerConfig } from '@/components/BannerConfig';
+import { TypingConfig } from '@/components/TypingConfig';
 import { SpotifyConfig } from '@/components/SpotifyConfig';
 import { RssConfig } from '@/components/RssConfig';
 import { LayoutManager } from '@/components/LayoutManager';
@@ -20,15 +21,19 @@ import { GithubProfileFetcher } from '@/components/GithubProfileFetcher';
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 import { ThemeSwitcher } from '@/components/ThemeSwitcher';
 import { CollapsibleSection } from '@/components/CollapsibleSection';
+import { ConfirmModal } from '@/components/ConfirmModal';
+import { toast } from 'sonner';
 
 export default function Home() {
   const store = useReadmeStore();
   const hydrated = useHydration();
-  const { t } = useTranslation();
+  const { t, language } = useTranslation();
   const { 
     name, title, description, setName, setTitle, setDescription, reset, 
     layout, sectionTitles, uiTheme 
   } = store;
+
+  const [isResetModalOpen, setIsResetModalOpen] = useState(false);
 
   if (!hydrated) {
     return (
@@ -40,12 +45,23 @@ export default function Home() {
 
   const isDark = uiTheme === 'dark';
 
+  const handleConfirmReset = () => {
+    reset();
+    toast.success(language === 'fr' ? 'Toutes les données ont été réinitialisées' : 'All data has been reset');
+  };
+
   const renderSection = (id: SectionId) => {
     switch (id) {
       case 'banner':
         return (
           <CollapsibleSection key={id} title={sectionTitles.banner || t.layout.banner} subtitle={t.banner.help}>
             <BannerConfig />
+          </CollapsibleSection>
+        );
+      case 'typing':
+        return (
+          <CollapsibleSection key={id} title={sectionTitles.typing || t.layout.typing} subtitle={t.typing.help}>
+            <TypingConfig />
           </CollapsibleSection>
         );
       case 'bio':
@@ -140,24 +156,40 @@ export default function Home() {
 
   return (
     <main className={`flex h-screen w-full overflow-hidden font-sans transition-colors duration-500 ${isDark ? 'bg-zinc-950 text-zinc-100' : 'bg-zinc-50 text-zinc-900'}`}>
+      <ConfirmModal
+        isOpen={isResetModalOpen}
+        onClose={() => setIsResetModalOpen(false)}
+        onConfirm={handleConfirmReset}
+        title={t.resetBtn}
+        description={t.resetConfirm}
+        confirmText={t.resetBtn}
+        cancelText={language === 'fr' ? "Annuler" : "Cancel"}
+      />
       <section className={`w-1/2 h-full flex flex-col border-r ${isDark ? 'border-zinc-800 bg-zinc-900/50' : 'border-zinc-200 bg-white/80'} backdrop-blur-sm overflow-y-auto custom-scrollbar`}>
         <header className="p-8 pb-4 flex items-start justify-between">
           <div>
             <h1 className="text-3xl font-black italic uppercase tracking-tighter">
               {t.title} <span className={isDark ? 'text-zinc-500' : 'text-zinc-400'}>{t.subtitle}</span>
             </h1>
-            <p className={`${isDark ? 'text-zinc-500' : 'text-zinc-400'} font-mono text-sm mt-2 italic`}>{t.tagline}</p>
+            <div className="flex items-center gap-2 mt-1">
+              <p className={`${isDark ? 'text-zinc-500' : 'text-zinc-400'} font-mono text-sm italic`}>{t.tagline}</p>
+              <span className="text-zinc-700">•</span>
+              <a 
+                href="https://matheodelaunay.studio" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className={`text-[10px] font-mono uppercase tracking-widest transition-colors ${isDark ? 'text-zinc-600 hover:text-indigo-400' : 'text-zinc-400 hover:text-indigo-600'}`}
+              >
+                by Seonay
+              </a>
+            </div>
           </div>
           
           <div className="flex items-center gap-4">
             <ThemeSwitcher />
             <LanguageSwitcher />
             <button 
-              onClick={() => {
-                if(confirm(t.resetConfirm)) {
-                  reset();
-                }
-              }}
+              onClick={() => setIsResetModalOpen(true)}
               className={`text-[9px] font-mono border ${isDark ? 'border-zinc-800 text-zinc-600 hover:text-zinc-100 hover:border-zinc-500' : 'border-zinc-200 text-zinc-400 hover:text-zinc-900 hover:border-zinc-400'} px-3 py-1.5 rounded transition-all uppercase tracking-widest`}
             >
               {t.resetBtn}

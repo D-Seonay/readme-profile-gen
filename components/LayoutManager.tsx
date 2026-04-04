@@ -78,7 +78,8 @@ export const LayoutManager = () => {
     projects: t.layout.projects,
     wakatime: t.layout.wakatime,
     spotify: t.layout.spotify,
-    rss: t.layout.rss
+    rss: t.layout.rss,
+    typing: t.layout.typing
   };
 
   const handleDragEnd = (event: DragEndEvent) => {

@@ -45,7 +45,19 @@ export const translations = {
       projects: "🚀 Featured Projects",
       wakatime: "⏱️ WakaTime Activity",
       spotify: "🎵 Spotify Activity",
-      rss: "📰 Latest Blog Posts"
+      rss: "📰 Latest Blog Posts",
+      typing: "⌨️ Dynamic Typing Text"
+    },
+
+    typing: {
+      label: "Typing SVG Integration",
+      help: "// Add a dynamic animated text to your profile",
+      placeholder: "Line 1\nLine 2\nLine 3...",
+      textLabel: "Animated Text (One per line)",
+      size: "Font Size",
+      color: "Text Color (Hex)",
+      duration: "Typing Speed (ms)",
+      pause: "Pause between lines (ms)"
     },
 
     banner: {
@@ -184,7 +196,19 @@ export const translations = {
       projects: "🚀 Projets Phares",
       wakatime: "⏱️ Activité WakaTime",
       spotify: "🎵 Musique Spotify",
-      rss: "📰 Derniers Articles"
+      rss: "📰 Derniers Articles",
+      typing: "⌨️ Texte Animé (Typing)"
+    },
+
+    typing: {
+      label: "Intégration Typing SVG",
+      help: "// Ajoutez un texte animé dynamique à votre profil",
+      placeholder: "Ligne 1\nLigne 2\nLigne 3...",
+      textLabel: "Texte à animer (Une phrase par ligne)",
+      size: "Taille de la police",
+      color: "Couleur (Hex)",
+      duration: "Vitesse de frappe (ms)",
+      pause: "Pause entre lignes (ms)"
     },
 
     banner: {

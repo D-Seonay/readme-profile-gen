@@ -13,6 +13,11 @@ interface StoreData {
   bannerUrl: string;
   spotifyUrl: string;
   rssUrl: string;
+  typingText: string;
+  typingColor: string;
+  typingSize: number;
+  typingDuration: number;
+  typingPause: number;
   showWakatimeBadges: boolean;
   showVisitorCounter: boolean;
   featuredRepos: string[];
@@ -43,16 +48,34 @@ interface StoreData {
 export const generateMarkdown = (data: StoreData): string => {
   const { 
     name, title, description, skills, githubUsername, wakatimeUsername, wakatimeBadgeId, showWakatimeBadges, showVisitorCounter, featuredRepos,
-    showStatsCard, showStreakCard, showTopLanguages, showTrophies, showSnake, bannerUrl, spotifyUrl, rssUrl,
+    showStatsCard, showStreakCard, showTopLanguages, showTrophies, showSnake, bannerUrl, spotifyUrl, rssUrl, 
+    typingText, typingColor, typingSize, typingDuration, typingPause,
     theme, alignment, badgeStyle, statsAlign, sectionTitles, socials, donations, layout 
   } = data;
 
   const isCentered = alignment === 'center';
   const isRow = statsAlign === 'row';
 
+  // --- Préparateurs de Sections ---
+
   const getBannerSection = () => {
     if (!bannerUrl) return '';
     const content = `![Profile Banner](${bannerUrl})`;
+    return isCentered ? `<div align="center">\n\n${content}\n\n</div>` : content;
+  };
+
+  const getTypingSection = () => {
+    if (!typingText) return '';
+    
+    // Parse multi-line text into semi-colon separated lines
+    const lines = typingText.split('\n').filter(l => l.trim() !== '').join(';');
+    if (!lines) return '';
+
+    // Color: if not provided, default to a light gray for dark mode compatibility
+    const color = typingColor || "F1F1F1";
+    
+    const url = `https://readme-typing-svg.herokuapp.com?font=Fira+Code&size=${typingSize}&duration=${typingDuration}&pause=${typingPause}&color=${color}&center=${isCentered}&vCenter=true&width=435&lines=${encodeURIComponent(lines)}`;
+    const content = `[![Typing SVG](${url})](https://git.io/typing-svg)`;
     return isCentered ? `<div align="center">\n\n${content}\n\n</div>` : content;
   };
 
@@ -198,6 +221,7 @@ export const generateMarkdown = (data: StoreData): string => {
   const finalSections = layout.map((sectionId) => {
     switch (sectionId) {
       case 'banner': return getBannerSection();
+      case 'typing': return getTypingSection();
       case 'bio': return getBioSection();
       case 'skills': return getSkillsSection();
       case 'socials': return getSocialsSection();

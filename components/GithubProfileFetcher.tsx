@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { useReadmeStore } from '@/store/useReadmeStore';
 import { useTranslation } from '@/hooks/useTranslation';
+import { toast } from 'sonner';
 
 export const GithubProfileFetcher = () => {
   const [localUsername, setLocalUsername] = useState('');
@@ -13,6 +14,11 @@ export const GithubProfileFetcher = () => {
   const handleFetch = async () => {
     if (!localUsername) return;
     await fetchGithubUserData(localUsername);
+    if (!githubFetchError) {
+      toast.success('Profile successfully pre-filled!');
+    } else {
+      toast.error(githubFetchError === 'User not found' ? t.autofill.errorNotFound : t.autofill.errorGeneric);
+    }
   };
 
   return (
