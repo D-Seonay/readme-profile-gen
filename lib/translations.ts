@@ -45,7 +45,15 @@ export const translations = {
       projects: "🚀 Featured Projects",
       wakatime: "⏱️ WakaTime Activity",
       spotify: "🎵 Spotify Activity",
-      rss: "📰 Latest Blog Posts"
+      rss: "📰 Latest Blog Posts",
+      typing: "⌨️ Dynamic Typing Text"
+    },
+
+    typing: {
+      label: "Typing SVG Integration",
+      help: "// Add a dynamic animated text to your profile",
+      placeholder: "I'm a Fullstack Developer...",
+      textLabel: "Animated Text"
     },
 
     banner: {
@@ -184,7 +192,15 @@ export const translations = {
       projects: "🚀 Projets Phares",
       wakatime: "⏱️ Activité WakaTime",
       spotify: "🎵 Musique Spotify",
-      rss: "📰 Derniers Articles"
+      rss: "📰 Derniers Articles",
+      typing: "⌨️ Texte Animé (Typing)"
+    },
+
+    typing: {
+      label: "Intégration Typing SVG",
+      help: "// Ajoutez un texte animé dynamique à votre profil",
+      placeholder: "Je suis développeur Fullstack...",
+      textLabel: "Texte à animer"
     },
 
     banner: {

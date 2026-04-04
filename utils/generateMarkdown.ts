@@ -13,6 +13,7 @@ interface StoreData {
   bannerUrl: string;
   spotifyUrl: string;
   rssUrl: string;
+  typingText: string;
   showWakatimeBadges: boolean;
   showVisitorCounter: boolean;
   featuredRepos: string[];
@@ -43,16 +44,26 @@ interface StoreData {
 export const generateMarkdown = (data: StoreData): string => {
   const { 
     name, title, description, skills, githubUsername, wakatimeUsername, wakatimeBadgeId, showWakatimeBadges, showVisitorCounter, featuredRepos,
-    showStatsCard, showStreakCard, showTopLanguages, showTrophies, showSnake, bannerUrl, spotifyUrl, rssUrl,
+    showStatsCard, showStreakCard, showTopLanguages, showTrophies, showSnake, bannerUrl, spotifyUrl, rssUrl, typingText,
     theme, alignment, badgeStyle, statsAlign, sectionTitles, socials, donations, layout 
   } = data;
 
   const isCentered = alignment === 'center';
   const isRow = statsAlign === 'row';
 
+  // --- Préparateurs de Sections ---
+
   const getBannerSection = () => {
     if (!bannerUrl) return '';
     const content = `![Profile Banner](${bannerUrl})`;
+    return isCentered ? `<div align="center">\n\n${content}\n\n</div>` : content;
+  };
+
+  const getTypingSection = () => {
+    if (!typingText) return '';
+    const color = "F1F1F1"; // On garde une couleur claire standard pour le README
+    const url = `https://readme-typing-svg.herokuapp.com?font=Fira+Code&pause=1000&color=${color}&center=${isCentered}&vCenter=true&width=435&lines=${encodeURIComponent(typingText)}`;
+    const content = `[![Typing SVG](${url})](https://git.io/typing-svg)`;
     return isCentered ? `<div align="center">\n\n${content}\n\n</div>` : content;
   };
 
@@ -198,6 +209,7 @@ export const generateMarkdown = (data: StoreData): string => {
   const finalSections = layout.map((sectionId) => {
     switch (sectionId) {
       case 'banner': return getBannerSection();
+      case 'typing': return getTypingSection();
       case 'bio': return getBioSection();
       case 'skills': return getSkillsSection();
       case 'socials': return getSocialsSection();
