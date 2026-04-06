@@ -28,7 +28,7 @@ export const useKeyboardShortcuts = (actions: {
   }, [actions]);
 
   // Mod + T: Toggle Theme
-  useHotkeys('mod+t', (e) => {
+  useHotkeys('mod+l', (e) => {
     e.preventDefault();
     toggleUITheme();
     toast.success(uiTheme === 'light' ? 'Dark theme enabled' : 'Light theme enabled');
