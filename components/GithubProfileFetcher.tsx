@@ -7,9 +7,14 @@ import { toast } from 'sonner';
 
 export const GithubProfileFetcher = () => {
   const [localUsername, setLocalUsername] = useState('');
-  const { fetchGithubUserData, isLoadingGithubData, githubFetchError, uiTheme } = useReadmeStore();
+  const { 
+    fetchGithubUserData, isLoadingGithubData, githubFetchError, uiTheme,
+    isTourActive, currentTourStep 
+  } = useReadmeStore();
   const { t } = useTranslation();
   const isDark = uiTheme === 'dark';
+
+  const isHighlighted = isTourActive && currentTourStep === 0;
 
   const handleFetch = async () => {
     if (!localUsername) return;
@@ -22,7 +27,7 @@ export const GithubProfileFetcher = () => {
   };
 
   return (
-    <div className={`space-y-4 p-5 border rounded-2xl shadow-xl backdrop-blur-xl animate-in fade-in slide-in-from-top-4 duration-700 transition-colors ${isDark ? 'bg-zinc-900/80 border-zinc-100/10 text-zinc-100' : 'bg-white border-zinc-200 text-zinc-900'}`}>
+    <div className={`space-y-4 p-5 border rounded-2xl shadow-xl backdrop-blur-xl animate-in fade-in slide-in-from-top-4 duration-700 transition-all ${isDark ? 'bg-zinc-900/80 border-zinc-100/10 text-zinc-100' : 'bg-white border-zinc-200 text-zinc-900'} ${isHighlighted ? 'ring-2 ring-indigo-500 shadow-[0_0_20px_rgba(99,102,241,0.5)] z-50 scale-[1.02]' : ''}`}>
       <header className="flex flex-col gap-1">
         <label className={`text-[10px] font-mono uppercase tracking-[0.2em] flex items-center gap-2 ${isDark ? 'text-zinc-400' : 'text-zinc-500'}`}>
           <span className="w-1.5 h-1.5 rounded-full bg-indigo-500 animate-pulse" />

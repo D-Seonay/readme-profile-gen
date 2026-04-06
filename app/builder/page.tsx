@@ -22,6 +22,7 @@ import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 import { ThemeSwitcher } from '@/components/ThemeSwitcher';
 import { CollapsibleSection } from '@/components/CollapsibleSection';
 import { ConfirmModal } from '@/components/ConfirmModal';
+import { OnboardingTour } from '@/components/OnboardingTour';
 import { toast } from 'sonner';
 
 export default function Home() {
@@ -30,10 +31,16 @@ export default function Home() {
   const { t, language } = useTranslation();
   const { 
     name, title, description, setName, setTitle, setDescription, reset, 
-    layout, sectionTitles, uiTheme 
+    layout, sectionTitles, uiTheme, hasCompletedTour, setTourActive
   } = store;
 
   const [isResetModalOpen, setIsResetModalOpen] = useState(false);
+
+  React.useEffect(() => {
+    if (hydrated && !hasCompletedTour) {
+      setTourActive(true);
+    }
+  }, [hydrated, hasCompletedTour, setTourActive]);
 
   if (!hydrated) {
     return (
@@ -219,6 +226,7 @@ export default function Home() {
       </section>
 
       <PreviewPane />
+      <OnboardingTour />
     </main>
   );
 }

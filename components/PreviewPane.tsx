@@ -13,12 +13,13 @@ type ViewMode = 'preview' | 'raw';
 
 export const PreviewPane = () => {
   const store = useReadmeStore();
-  const { statsAlign, uiTheme } = store;
+  const { statsAlign, uiTheme, isTourActive, currentTourStep } = store;
   const { t } = useTranslation();
   const [viewMode, setViewMode] = useState<ViewMode>('preview');
   const [isCopied, setIsCopied] = useState(false);
 
   const isDark = uiTheme === 'dark';
+  const isHighlighted = isTourActive && currentTourStep === 2;
 
   // Génération du Markdown final basé sur le store
   const markdown = generateMarkdown(store);
@@ -54,7 +55,7 @@ export const PreviewPane = () => {
   };
 
   return (
-    <section className={`w-1/2 h-full flex flex-col border-l transition-colors duration-500 ${isDark ? 'bg-zinc-950 border-zinc-900 text-zinc-100' : 'bg-white border-zinc-200 text-zinc-900'}`}>
+    <section className={`w-1/2 h-full flex flex-col border-l transition-all duration-500 ${isDark ? 'bg-zinc-950 border-zinc-900 text-zinc-100' : 'bg-white border-zinc-200 text-zinc-900'} ${isHighlighted ? 'ring-4 ring-inset ring-indigo-500 shadow-[0_0_40px_rgba(99,102,241,0.5)] z-50' : ''}`}>
       
       {/* --- TOOLBAR --- */}
       <header className={`flex items-center justify-between px-6 py-4 backdrop-blur-md border-b z-10 transition-colors ${isDark ? 'bg-zinc-950/80 border-zinc-900' : 'bg-white/80 border-zinc-200'}`}>

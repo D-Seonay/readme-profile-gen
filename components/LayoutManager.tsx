@@ -59,9 +59,11 @@ const SortableItem = ({ id, label, isDark }: { id: string, label: string, isDark
 };
 
 export const LayoutManager = () => {
-  const { layout, reorderLayout, uiTheme } = useReadmeStore();
+  const { layout, reorderLayout, uiTheme, isTourActive, currentTourStep } = useReadmeStore();
   const { t } = useTranslation();
   const isDark = uiTheme === 'dark';
+
+  const isHighlighted = isTourActive && currentTourStep === 1;
   
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -90,7 +92,7 @@ export const LayoutManager = () => {
   };
 
   return (
-    <div className={isDark ? 'text-zinc-100' : 'text-zinc-900'}>
+    <div className={`${isDark ? 'text-zinc-100' : 'text-zinc-900'} ${isHighlighted ? 'ring-2 ring-indigo-500 shadow-[0_0_20px_rgba(99,102,241,0.5)] z-50 p-2 rounded-xl scale-[1.02] transition-all' : 'transition-all'}`}>
       <DndContext 
         sensors={sensors} 
         collisionDetection={closestCenter} 
