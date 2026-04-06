@@ -144,11 +144,11 @@ git commit -m "feat: create OnboardingTour component"
 - Modify: `components/LayoutManager.tsx`
 - Modify: `components/PreviewPane.tsx`
 
-- [ ] **Step 1: Trigger tour on first visit**
+- [x] **Step 1: Trigger tour on first visit**
 
 In `app/builder/page.tsx`, use `useEffect` to start the tour if `hasCompletedTour` is false.
 
-- [ ] **Step 2: Add highlighting logic to target components**
+- [x] **Step 2: Add highlighting logic to target components**
 
 Update `GithubProfileFetcher.tsx` (Step 1):
 ```tsx
@@ -165,7 +165,7 @@ Update `PreviewPane.tsx` (Step 3):
 const isHighlighted = isTourActive && currentTourStep === 2;
 ```
 
-- [ ] **Step 3: Commit**
+- [x] **Step 3: Commit**
 
 ```bash
 git add app/builder/page.tsx components/GithubProfileFetcher.tsx components/LayoutManager.tsx components/PreviewPane.tsx
@@ -174,15 +174,15 @@ git commit -m "feat: integrate tour logic and highlighting in components"
 
 ### Task 4: Final Verification
 
-- [ ] **Step 1: Run build**
+- [x] **Step 1: Run build**
 
 Run: `npm run build`
 
-- [ ] **Step 2: Verify persistence**
+- [x] **Step 2: Verify persistence**
 
 Complete the tour, refresh, and ensure it doesn't reappear.
 
-- [ ] **Step 3: Commit**
+- [x] **Step 3: Commit**
 
 ```bash
 git add docs/superpowers/plans/2026-04-06-onboarding-tour.md
