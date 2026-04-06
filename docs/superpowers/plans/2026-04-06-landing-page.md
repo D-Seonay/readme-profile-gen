@@ -14,17 +14,17 @@
 
 ---
 
-### Task 1: Setup & Translations
+### Task 1: Setup & Translations [COMPLETED]
 
 **Files:**
 - Modify: `package.json`
 - Modify: `lib/translations.ts`
 
-- [ ] **Step 1: Install framer-motion**
+- [x] **Step 1: Install framer-motion**
 
 Run: `npm install framer-motion`
 
-- [ ] **Step 2: Add landing page translations**
+- [x] **Step 2: Add landing page translations**
 
 Add a `landing` section to both `en` and `fr` in `lib/translations.ts`.
 
@@ -49,7 +49,7 @@ landing: {
 }
 ```
 
-- [ ] **Step 3: Commit**
+- [x] **Step 3: Commit**
 
 ```bash
 git add package.json lib/translations.ts
@@ -96,21 +96,21 @@ git add components/landing/LandingNavbar.tsx
 git commit -m "feat: add landing navbar"
 ```
 
-### Task 3: Hero Section & Visual Preview
+### Task 3: Hero Section & Visual Preview [COMPLETED]
 
 **Files:**
 - Create: `components/landing/HeroSection.tsx`
 - Create: `components/landing/VisualPreview.tsx`
 
-- [ ] **Step 1: Implement HeroSection with Framer Motion**
+- [x] **Step 1: Implement HeroSection with Framer Motion**
 
 Add the main heading with a subtle glow and slow entry animations.
 
-- [ ] **Step 2: Implement VisualPreview**
+- [x] **Step 2: Implement VisualPreview**
 
 Create a component that shows a "floating" README mockup with glowing indigo borders.
 
-- [ ] **Step 3: Commit**
+- [x] **Step 3: Commit**
 
 ```bash
 git add components/landing/HeroSection.tsx components/landing/VisualPreview.tsx
