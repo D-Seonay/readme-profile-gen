@@ -22,16 +22,22 @@ export const metadata: Metadata = {
     default: "Ultimate GitHub Profile README Generator | Free Tool",
     template: "%s | Ultimate README Gen"
   },
-  description: "Create a stunning GitHub profile in seconds. Best free tool for developers to generate professional READMEs with stats, trophies, tech stack, and more.",
+  description: "Elevate your GitHub profile with Ultimate README Gen. Design a stunning developer brand in seconds with smart auto-fill, drag-and-drop customization, and dynamic stats. The most powerful free README generator.",
   keywords: [
     "github profile readme generator",
-    "awesome readme generator",
+    "developer branding",
+    "github bio generator",
+    "markdown generator",
     "github stats cards",
     "github trophies",
-    "developer portfolio",
-    "markdown generator",
-    "github bio generator",
-    "best github readme tool"
+    "awesome readme generator",
+    "github profile design",
+    "dynamic github stats",
+    "readme.md generator",
+    "profile customization",
+    "best github readme tool",
+    "software engineer portfolio",
+    "github personalization"
   ],
   alternates: {
     canonical: SITE_URL,
