@@ -166,6 +166,14 @@ export const translations = {
         step2: { title: "2. Customize", desc: "Drag, drop, and style." },
         step3: { title: "3. Copy & Paste", desc: "Your README is ready." }
       }
+    },
+    tour: {
+      skip: "SKIP",
+      next: "NEXT",
+      finish: "FINISH",
+      step1: "START HERE: Enter your GitHub username to auto-fill your profile.",
+      step2: "THE FLEX: Drag and drop to reorder your README sections.",
+      step3: "THE RESULT: Check the live preview and copy your markdown code."
     }
   },
   fr: {
@@ -331,10 +339,18 @@ export const translations = {
         livepreview: { title: "Aperçu en Direct", desc: "Retour instantané sur chaque changement." }
       },
       howItWorks: {
-        step1: { title: "1. Entrez le nom d'utilisateur", desc: "Le scan magique commence." },
+        step1: { title: "1. Entre le nom d'utilisateur", desc: "Le scan magique commence." },
         step2: { title: "2. Personnalisez", desc: "Glissez, déposez et stylisez." },
         step3: { title: "3. Copiez & Collez", desc: "Votre README est prêt." }
       }
+    },
+    tour: {
+      skip: "PASSER",
+      next: "SUIVANT",
+      finish: "TERMINER",
+      step1: "COMMENCE ICI : Entre ton pseudo GitHub pour auto-remplir ton profil.",
+      step2: "LA FLEX : Glisse-dépose pour réorganiser tes sections.",
+      step3: "LE RÉSULTAT : Vérifie l'aperçu et copie ton code markdown."
     }
   }
 };

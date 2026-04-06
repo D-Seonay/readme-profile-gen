@@ -64,6 +64,10 @@ interface ReadmeState {
     wakatime: ServiceStatus;
   };
   layout: SectionId[];
+
+  isTourActive: boolean;
+  currentTourStep: number;
+  hasCompletedTour: boolean;
   
   setLanguage: (language: Language) => void;
   setUITheme: (theme: UITheme) => void;
@@ -102,6 +106,9 @@ interface ReadmeState {
   reorderLayout: (activeId: SectionId, overId: SectionId) => void;
   checkServicesHealth: () => Promise<void>;
   fetchGithubUserData: (username: string) => Promise<void>;
+  setTourActive: (active: boolean) => void;
+  setTourStep: (step: number) => void;
+  completeTour: () => void;
   reset: () => void;
 }
 
@@ -169,6 +176,9 @@ const initialState = {
     wakatime: 'checking' as ServiceStatus,
   },
   layout: DEFAULT_LAYOUT,
+  isTourActive: false,
+  currentTourStep: 0,
+  hasCompletedTour: false,
 };
 
 export const useReadmeStore = create<ReadmeState>()(
@@ -329,6 +339,10 @@ export const useReadmeStore = create<ReadmeState>()(
           set({ isLoadingGithubData: false });
         }
       },
+
+      setTourActive: (isTourActive: boolean) => set({ isTourActive }),
+      setTourStep: (currentTourStep: number) => set({ currentTourStep }),
+      completeTour: () => set({ hasCompletedTour: true, isTourActive: false }),
 
       reset: () => set(initialState),
     }),
