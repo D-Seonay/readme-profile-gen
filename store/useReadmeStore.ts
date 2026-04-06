@@ -109,6 +109,7 @@ interface ReadmeState {
   setTourActive: (active: boolean) => void;
   setTourStep: (step: number) => void;
   completeTour: () => void;
+  toggleUITheme: () => void;
   reset: () => void;
 }
 
@@ -343,6 +344,8 @@ export const useReadmeStore = create<ReadmeState>()(
       setTourActive: (isTourActive: boolean) => set({ isTourActive }),
       setTourStep: (currentTourStep: number) => set({ currentTourStep }),
       completeTour: () => set({ hasCompletedTour: true, isTourActive: false }),
+
+      toggleUITheme: () => set((state) => ({ uiTheme: state.uiTheme === 'light' ? 'dark' : 'light' })),
 
       reset: () => set(initialState),
     }),

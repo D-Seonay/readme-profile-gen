@@ -1,11 +1,11 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, forwardRef } from 'react';
 import { useReadmeStore } from '@/store/useReadmeStore';
 import { useTranslation } from '@/hooks/useTranslation';
 import { toast } from 'sonner';
 
-export const GithubProfileFetcher = () => {
+export const GithubProfileFetcher = forwardRef<HTMLInputElement>((props, ref) => {
   const [localUsername, setLocalUsername] = useState('');
   const { 
     fetchGithubUserData, isLoadingGithubData, githubFetchError, uiTheme,
@@ -41,6 +41,7 @@ export const GithubProfileFetcher = () => {
       <div className="flex gap-2">
         <div className="relative flex-1">
           <input
+            ref={ref}
             type="text"
             value={localUsername}
             onChange={(e) => setLocalUsername(e.target.value)}
@@ -82,4 +83,6 @@ export const GithubProfileFetcher = () => {
       </p>
     </div>
   );
-};
+});
+
+GithubProfileFetcher.displayName = 'GithubProfileFetcher';
