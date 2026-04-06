@@ -56,12 +56,12 @@ git add package.json lib/translations.ts
 git commit -m "feat: setup landing translations and framer-motion"
 ```
 
-### Task 2: Landing Navbar
+### Task 2: Landing Navbar [COMPLETED]
 
 **Files:**
 - Create: `components/landing/LandingNavbar.tsx`
 
-- [ ] **Step 1: Implement LandingNavbar**
+- [x] **Step 1: Implement LandingNavbar**
 
 Create a sticky navbar with a minimal logo, language switcher (reusing `LanguageSwitcher` if possible), and a "Launch App" button.
 
@@ -89,7 +89,7 @@ export const LandingNavbar = () => {
 };
 ```
 
-- [ ] **Step 2: Commit**
+- [x] **Step 2: Commit**
 
 ```bash
 git add components/landing/LandingNavbar.tsx
