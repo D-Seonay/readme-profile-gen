@@ -148,6 +148,24 @@ export const translations = {
       download: "Download",
       engine: "Live Rendering Engine",
       source: "Markdown Source View"
+    },
+
+    landing: {
+      hero: {
+        tagline: "The last GitHub profile generator you'll ever need.",
+        subtitle: "Design an exceptional developer brand in seconds.",
+        cta: "Start Building for Free"
+      },
+      features: {
+        autofill: { title: "Smart Auto-fill", desc: "Scan profile & repositories." },
+        dragdrop: { title: "Drag & Drop UX", desc: "Fluid reordering of sections." },
+        livepreview: { title: "Live Preview", desc: "Instant feedback on every change." }
+      },
+      howItWorks: {
+        step1: { title: "1. Enter Username", desc: "Magic scanning begins." },
+        step2: { title: "2. Customize", desc: "Drag, drop, and style." },
+        step3: { title: "3. Copy & Paste", desc: "Your README is ready." }
+      }
     }
   },
   fr: {
@@ -299,6 +317,24 @@ export const translations = {
       download: "Télécharger",
       engine: "Moteur de rendu temps réel",
       source: "Vue Source Markdown"
+    },
+
+    landing: {
+      hero: {
+        tagline: "Le dernier générateur de profil GitHub dont vous aurez besoin.",
+        subtitle: "Concevez une marque de développeur exceptionnelle en quelques secondes.",
+        cta: "Commencer Gratuitement"
+      },
+      features: {
+        autofill: { title: "Auto-remplissage Intelligent", desc: "Scannez le profil et les dépôts." },
+        dragdrop: { title: "UX Glisser-Déposer", desc: "Réorganisation fluide des sections." },
+        livepreview: { title: "Aperçu en Direct", desc: "Retour instantané sur chaque changement." }
+      },
+      howItWorks: {
+        step1: { title: "1. Entrez le nom d'utilisateur", desc: "Le scan magique commence." },
+        step2: { title: "2. Personnalisez", desc: "Glissez, déposez et stylisez." },
+        step3: { title: "3. Copiez & Collez", desc: "Votre README est prêt." }
+      }
     }
   }
 };

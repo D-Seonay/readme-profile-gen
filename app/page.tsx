@@ -1,39 +1,15 @@
 'use client';
 
-import React, { useState } from 'react';
-import { useReadmeStore, SectionId } from '@/store/useReadmeStore';
+import React from 'react';
+import { LandingNavbar } from '@/components/landing/LandingNavbar';
+import { HeroSection } from '@/components/landing/HeroSection';
+import { VisualPreview } from '@/components/landing/VisualPreview';
+import { FeaturesGrid } from '@/components/landing/FeaturesGrid';
+import { HowItWorks } from '@/components/landing/HowItWorks';
 import { useHydration } from '@/hooks/useHydration';
-import { useTranslation } from '@/hooks/useTranslation';
-import { SkillSelector } from '@/components/SkillSelector';
-import { GithubStatsConfig } from '@/components/GithubStatsConfig';
-import { SocialLinksForm } from '@/components/SocialLinksForm';
-import { DonationsForm } from '@/components/DonationsForm';
-import { ProjectShowcase } from '@/components/ProjectShowcase';
-import { WakatimeConfig } from '@/components/WakatimeConfig';
-import { BannerConfig } from '@/components/BannerConfig';
-import { TypingConfig } from '@/components/TypingConfig';
-import { SpotifyConfig } from '@/components/SpotifyConfig';
-import { RssConfig } from '@/components/RssConfig';
-import { LayoutManager } from '@/components/LayoutManager';
-import { StyleConfig } from '@/components/StyleConfig';
-import { PreviewPane } from '@/components/PreviewPane';
-import { GithubProfileFetcher } from '@/components/GithubProfileFetcher';
-import { LanguageSwitcher } from '@/components/LanguageSwitcher';
-import { ThemeSwitcher } from '@/components/ThemeSwitcher';
-import { CollapsibleSection } from '@/components/CollapsibleSection';
-import { ConfirmModal } from '@/components/ConfirmModal';
-import { toast } from 'sonner';
 
-export default function Home() {
-  const store = useReadmeStore();
+export default function LandingPage() {
   const hydrated = useHydration();
-  const { t, language } = useTranslation();
-  const { 
-    name, title, description, setName, setTitle, setDescription, reset, 
-    layout, sectionTitles, uiTheme 
-  } = store;
-
-  const [isResetModalOpen, setIsResetModalOpen] = useState(false);
 
   if (!hydrated) {
     return (
@@ -43,182 +19,38 @@ export default function Home() {
     );
   }
 
-  const isDark = uiTheme === 'dark';
-
-  const handleConfirmReset = () => {
-    reset();
-    toast.success(language === 'fr' ? 'Toutes les données ont été réinitialisées' : 'All data has been reset');
-  };
-
-  const renderSection = (id: SectionId) => {
-    switch (id) {
-      case 'banner':
-        return (
-          <CollapsibleSection key={id} title={sectionTitles.banner || t.layout.banner} subtitle={t.banner.help}>
-            <BannerConfig />
-          </CollapsibleSection>
-        );
-      case 'typing':
-        return (
-          <CollapsibleSection key={id} title={sectionTitles.typing || t.layout.typing} subtitle={t.typing.help}>
-            <TypingConfig />
-          </CollapsibleSection>
-        );
-      case 'bio':
-        return (
-          <CollapsibleSection key={id} title={sectionTitles.bio || t.layout.bio}>
-            <div className="space-y-6 pt-2">
-              <div className="flex flex-col gap-2">
-                <label className={`text-[10px] font-mono uppercase tracking-[0.2em] ${isDark ? 'text-zinc-500' : 'text-zinc-400'}`}>{t.baseInfo.name}</label>
-                <input
-                  type="text"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  className={`${isDark ? 'bg-zinc-950 border-zinc-800 text-zinc-100' : 'bg-white border-zinc-200 text-zinc-900'} border p-3 rounded font-mono focus:outline-none focus:border-indigo-500 transition-colors placeholder:opacity-20`}
-                  placeholder="Ex: John Doe"
-                />
-              </div>
-              <div className="flex flex-col gap-2">
-                <label className={`text-[10px] font-mono uppercase tracking-[0.2em] ${isDark ? 'text-zinc-500' : 'text-zinc-400'}`}>{t.baseInfo.job}</label>
-                <input
-                  type="text"
-                  value={title}
-                  onChange={(e) => setTitle(e.target.value)}
-                  className={`${isDark ? 'bg-zinc-950 border-zinc-800 text-zinc-100' : 'bg-white border-zinc-200 text-zinc-900'} border p-3 rounded font-mono focus:outline-none focus:border-indigo-500 transition-colors placeholder:opacity-20`}
-                  placeholder="Ex: Fullstack Developer"
-                />
-              </div>
-              <div className="flex flex-col gap-2">
-                <label className={`text-[10px] font-mono uppercase tracking-[0.2em] ${isDark ? 'text-zinc-500' : 'text-zinc-400'}`}>{t.baseInfo.bio}</label>
-                <textarea
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
-                  rows={4}
-                  className={`${isDark ? 'bg-zinc-950 border-zinc-800 text-zinc-100' : 'bg-white border-zinc-200 text-zinc-900'} border p-3 rounded font-mono focus:outline-none focus:border-indigo-500 transition-all resize-none placeholder:opacity-20`}
-                  placeholder={t.baseInfo.placeholderBio}
-                />
-              </div>
-            </div>
-          </CollapsibleSection>
-        );
-      case 'skills':
-        return (
-          <CollapsibleSection key={id} title={sectionTitles.skills || t.layout.skills} subtitle={t.skills.help}>
-            <SkillSelector />
-          </CollapsibleSection>
-        );
-      case 'projects':
-        return (
-          <CollapsibleSection key={id} title={sectionTitles.projects || t.layout.projects} subtitle={t.projects.help}>
-            <ProjectShowcase />
-          </CollapsibleSection>
-        );
-      case 'stats':
-        return (
-          <CollapsibleSection key={id} title={sectionTitles.stats || t.layout.stats} subtitle={t.github.help}>
-            <GithubStatsConfig />
-          </CollapsibleSection>
-        );
-      case 'wakatime':
-        return (
-          <CollapsibleSection key={id} title={sectionTitles.wakatime || t.layout.wakatime} subtitle={t.wakatime.help}>
-            <WakatimeConfig />
-          </CollapsibleSection>
-        );
-      case 'spotify':
-        return (
-          <CollapsibleSection key={id} title={sectionTitles.spotify || t.layout.spotify} subtitle={t.spotify.help}>
-            <SpotifyConfig />
-          </CollapsibleSection>
-        );
-      case 'rss':
-        return (
-          <CollapsibleSection key={id} title={sectionTitles.rss || t.layout.rss} subtitle={t.rss.help}>
-            <RssConfig />
-          </CollapsibleSection>
-        );
-      case 'socials':
-        return (
-          <CollapsibleSection key={id} title={sectionTitles.socials || t.layout.socials} subtitle={t.socials.help}>
-            <SocialLinksForm />
-          </CollapsibleSection>
-        );
-      case 'donations':
-        return (
-          <CollapsibleSection key={id} title={sectionTitles.donations || t.layout.donations} subtitle={t.donations.help}>
-            <DonationsForm />
-          </CollapsibleSection>
-        );
-      default:
-        return null;
-    }
-  };
-
   return (
-    <main className={`flex h-screen w-full overflow-hidden font-sans transition-colors duration-500 ${isDark ? 'bg-zinc-950 text-zinc-100' : 'bg-zinc-50 text-zinc-900'}`}>
-      <ConfirmModal
-        isOpen={isResetModalOpen}
-        onClose={() => setIsResetModalOpen(false)}
-        onConfirm={handleConfirmReset}
-        title={t.resetBtn}
-        description={t.resetConfirm}
-        confirmText={t.resetBtn}
-        cancelText={language === 'fr' ? "Annuler" : "Cancel"}
-      />
-      <section className={`w-1/2 h-full flex flex-col border-r ${isDark ? 'border-zinc-800 bg-zinc-900/50' : 'border-zinc-200 bg-white/80'} backdrop-blur-sm overflow-y-auto custom-scrollbar`}>
-        <header className="p-8 pb-4 flex items-start justify-between">
-          <div>
-            <h1 className="text-3xl font-black italic uppercase tracking-tighter">
-              {t.title} <span className={isDark ? 'text-zinc-500' : 'text-zinc-400'}>{t.subtitle}</span>
-            </h1>
-            <div className="flex items-center gap-2 mt-1">
-              <p className={`${isDark ? 'text-zinc-500' : 'text-zinc-400'} font-mono text-sm italic`}>{t.tagline}</p>
-              <span className="text-zinc-700">•</span>
-              <a 
-                href="https://matheodelaunay.studio" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className={`text-[10px] font-mono uppercase tracking-widest transition-colors ${isDark ? 'text-zinc-600 hover:text-indigo-400' : 'text-zinc-400 hover:text-indigo-600'}`}
-              >
-                by Seonay
-              </a>
-            </div>
-          </div>
-          
-          <div className="flex items-center gap-4">
-            <ThemeSwitcher />
-            <LanguageSwitcher />
-            <button 
-              onClick={() => setIsResetModalOpen(true)}
-              className={`text-[9px] font-mono border ${isDark ? 'border-zinc-800 text-zinc-600 hover:text-zinc-100 hover:border-zinc-500' : 'border-zinc-200 text-zinc-400 hover:text-zinc-900 hover:border-zinc-400'} px-3 py-1.5 rounded transition-all uppercase tracking-widest`}
-            >
-              {t.resetBtn}
-            </button>
-          </div>
-        </header>
+    <div className="min-h-screen bg-zinc-950 text-zinc-100 font-sans selection:bg-indigo-500/30 selection:text-indigo-200">
+      <LandingNavbar />
+      
+      <main>
+        <HeroSection />
+        <VisualPreview />
+        <FeaturesGrid />
+        <HowItWorks />
+      </main>
 
-        <div className="pb-20">
-          <div className="px-8 mb-8 mt-4">
-            <GithubProfileFetcher />
-          </div>
-
-          <CollapsibleSection title={t.style.label} subtitle={t.style.help}>
-            <StyleConfig />
-          </CollapsibleSection>
-
-          <CollapsibleSection title={t.layout.label} subtitle={t.layout.help}>
-            <LayoutManager />
-          </CollapsibleSection>
-
-          {layout.map((sectionId) => renderSection(sectionId))}
-
-          <div className={`mt-8 mx-8 pt-8 border-t ${isDark ? 'border-zinc-800' : 'border-zinc-200'} opacity-20 pointer-events-none text-center`}>
-            <p className="text-xs font-mono italic">{"// End of Editor"}</p>
-          </div>
+      <footer className="py-20 px-8 border-t border-zinc-900 bg-zinc-950 flex flex-col items-center">
+        <div className="text-xl font-black italic tracking-tighter uppercase mb-8">
+          Readme <span className="text-zinc-500">Gen</span>
         </div>
-      </section>
+        
+        <div className="flex flex-wrap justify-center gap-8 mb-12">
+          <a href="https://github.com/D-Seonay/ultimate-readme-gen" target="_blank" rel="noopener noreferrer" className="text-[10px] font-mono uppercase tracking-[0.2em] text-zinc-500 hover:text-indigo-400 transition-colors">
+            Source_Code
+          </a>
+          <a href="https://matheodelaunay.studio" target="_blank" rel="noopener noreferrer" className="text-[10px] font-mono uppercase tracking-[0.2em] text-zinc-500 hover:text-indigo-400 transition-colors">
+            Developer
+          </a>
+          <span className="text-[10px] font-mono uppercase tracking-[0.2em] text-zinc-800">
+            v1.0.0
+          </span>
+        </div>
 
-      <PreviewPane />
-    </main>
+        <p className="text-[10px] font-mono text-zinc-600 uppercase tracking-widest text-center">
+          Designed with <span className="text-indigo-500 animate-pulse">Intent</span> &copy; {new Date().getFullYear()}
+        </p>
+      </footer>
+    </div>
   );
 }
