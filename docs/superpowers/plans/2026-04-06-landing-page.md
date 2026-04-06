@@ -117,21 +117,21 @@ git add components/landing/HeroSection.tsx components/landing/VisualPreview.tsx
 git commit -m "feat: add hero section and visual preview"
 ```
 
-### Task 4: Features & How It Works
+### Task 4: Features & How It Works [COMPLETED]
 
 **Files:**
 - Create: `components/landing/FeaturesGrid.tsx`
 - Create: `components/landing/HowItWorks.tsx`
 
-- [ ] **Step 1: Implement FeaturesGrid**
+- [x] **Step 1: Implement FeaturesGrid**
 
 Use a 3-column grid with cards that have a hover "glow" effect.
 
-- [ ] **Step 2: Implement HowItWorks**
+- [x] **Step 2: Implement HowItWorks**
 
 Show the 3 steps with connecting lines or visual flow.
 
-- [ ] **Step 3: Commit**
+- [x] **Step 3: Commit**
 
 ```bash
 git add components/landing/FeaturesGrid.tsx components/landing/HowItWorks.tsx
