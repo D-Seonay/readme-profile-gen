@@ -252,10 +252,21 @@ export const useReadmeStore = create<ReadmeState>()(
         set({ isLoadingGithubData: true, githubFetchError: null });
         
         try {
-          const [userRes, socialsRes, readmeRes] = await Promise.all([
+          const check = async (service: 'stats' | 'streak' | 'trophies' | 'wakatime') => {
+            try {
+              const res = await fetch(`/api/health?service=${service}`);
+              const data = await res.json();
+              return data.online ? 'online' : 'offline';
+            } catch {
+              return 'offline';
+            }
+          };
+
+          const [userRes, socialsRes, readmeRes, statsH, streakH, trophiesH, wakatimeH] = await Promise.all([
             fetch(`https://api.github.com/users/${username}`),
             fetch(`https://api.github.com/users/${username}/social_accounts`),
-            fetch(`https://api.github.com/repos/${username}/${username}/contents/README.md`)
+            fetch(`https://api.github.com/repos/${username}/${username}/contents/README.md`),
+            check('stats'), check('streak'), check('trophies'), check('wakatime')
           ]);
           
           if (!userRes.ok) {
@@ -303,7 +314,12 @@ export const useReadmeStore = create<ReadmeState>()(
               portfolio: !s.socials.portfolio ? userData.blog || '' : s.socials.portfolio,
               linkedin: !s.socials.linkedin ? (linkedinAccount?.url || '') : s.socials.linkedin,
               email: !s.socials.email ? (detectedEmail || userData.email || '') : s.socials.email,
-            }
+            },
+            showStatsCard: statsH === 'online',
+            showTopLanguages: statsH === 'online',
+            showStreakCard: streakH === 'online',
+            showTrophies: trophiesH === 'online',
+            servicesStatus: { stats: statsH, streak: streakH, trophies: trophiesH, wakatime: wakatimeH }
           }));
 
         } catch (error) {
