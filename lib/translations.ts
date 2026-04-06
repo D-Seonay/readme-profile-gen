@@ -171,9 +171,9 @@ export const translations = {
       skip: "SKIP",
       next: "NEXT",
       finish: "FINISH",
-      step1: "START HERE: Enter your GitHub username to auto-fill your profile.",
+      step1: "START HERE: Enter your GitHub username to auto-fill your profile (or press Mod+K to focus).",
       step2: "THE FLEX: Drag and drop to reorder your README sections.",
-      step3: "THE RESULT: Check the live preview and copy your markdown code."
+      step3: "THE RESULT: Check the live preview. Shortcuts: Mod+C (Copy), Mod+S (Download), Mod+T (Theme), Mod+L (Language)."
     }
   },
   fr: {
@@ -348,9 +348,9 @@ export const translations = {
       skip: "PASSER",
       next: "SUIVANT",
       finish: "TERMINER",
-      step1: "COMMENCE ICI : Entre ton pseudo GitHub pour auto-remplir ton profil.",
+      step1: "COMMENCE ICI : Entre ton pseudo GitHub pour auto-remplir ton profil (ou Mod+K).",
       step2: "LA FLEX : Glisse-dépose pour réorganiser tes sections.",
-      step3: "LE RÉSULTAT : Vérifie l'aperçu et copie ton code markdown."
+      step3: "LE RÉSULTAT : Vérifie l'aperçu. Raccourcis : Mod+C (Copier), Mod+S (Télécharger), Mod+T (Thème), Mod+L (Langue)."
     }
   }
 };
