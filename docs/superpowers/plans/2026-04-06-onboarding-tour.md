@@ -19,7 +19,7 @@
 - Modify: `store/useReadmeStore.ts`
 - Modify: `lib/translations.ts`
 
-- [ ] **Step 1: Add tour state to Zustand store**
+- [x] **Step 1: Add tour state to Zustand store**
 
 Update `ReadmeState` interface and `initialState` in `store/useReadmeStore.ts`:
 ```typescript
@@ -47,7 +47,7 @@ setTourStep: (currentTourStep) => set({ currentTourStep }),
 completeTour: () => set({ isTourActive: false, hasCompletedTour: true }),
 ```
 
-- [ ] **Step 2: Add tour translations**
+- [x] **Step 2: Add tour translations**
 
 Update `lib/translations.ts` with a `tour` section:
 ```typescript
@@ -71,7 +71,7 @@ tour: {
 }
 ```
 
-- [ ] **Step 3: Commit**
+- [x] **Step 3: Commit**
 
 ```bash
 git add store/useReadmeStore.ts lib/translations.ts
@@ -83,7 +83,7 @@ git commit -m "feat: add onboarding tour state and translations"
 **Files:**
 - Create: `components/OnboardingTour.tsx`
 
-- [ ] **Step 1: Implement the Guided Console UI**
+- [x] **Step 1: Implement the Guided Console UI**
 
 Create `components/OnboardingTour.tsx` using `framer-motion` for animations.
 
@@ -129,7 +129,7 @@ export const OnboardingTour = () => {
 };
 ```
 
-- [ ] **Step 2: Commit**
+- [x] **Step 2: Commit**
 
 ```bash
 git add components/OnboardingTour.tsx
