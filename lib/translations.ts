@@ -99,6 +99,17 @@ export const translations = {
       stats: "Coding Stats (Weekly)"
     },
     
+    intro: {
+      workingOn: "🔭 Currently working on",
+      learning: "🌱 Currently learning",
+      collaborateOn: "👯 Looking to collaborate on",
+      askMeAbout: "💬 Ask me about",
+      reachMe: "📫 How to reach me",
+      funFact: "⚡ Fun fact",
+      location: "📍 Location",
+      placeholder: "Project name, technology, or topic..."
+    },
+
     baseInfo: {
       label: "Base Information",
       name: "Full Name",
@@ -276,6 +287,17 @@ export const translations = {
       stats: "Stats de Code (Semaine)"
     },
     
+    intro: {
+      workingOn: "🔭 Je travaille actuellement sur",
+      learning: "🌱 J'apprends actuellement",
+      collaborateOn: "👯 Je cherche à collaborer sur",
+      askMeAbout: "💬 Posez-moi des questions sur",
+      reachMe: "📫 Comment me contacter",
+      funFact: "⚡ Fait amusant",
+      location: "📍 Localisation",
+      placeholder: "Nom du projet, technologie ou sujet..."
+    },
+
     baseInfo: {
       label: "Informations de Base",
       name: "Nom Complet",

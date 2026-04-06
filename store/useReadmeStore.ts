@@ -29,6 +29,13 @@ interface ReadmeState {
   typingSize: number; // New: Font size
   typingDuration: number; // New: Speed
   typingPause: number; // New: Pause between lines
+  workingOn: string;
+  learning: string;
+  collaborateOn: string;
+  askMeAbout: string;
+  reachMe: string;
+  funFact: string;
+  location: string;
   showWakatimeBadges: boolean;
   showVisitorCounter: boolean;
   featuredRepos: string[];
@@ -86,6 +93,13 @@ interface ReadmeState {
   setTypingSize: (size: number) => void; // New action
   setTypingDuration: (duration: number) => void; // New action
   setTypingPause: (pause: number) => void; // New action
+  setWorkingOn: (workingOn: string) => void;
+  setLearning: (learning: string) => void;
+  setCollaborateOn: (collaborateOn: string) => void;
+  setAskMeAbout: (askMeAbout: string) => void;
+  setReachMe: (reachMe: string) => void;
+  setFunFact: (funFact: string) => void;
+  setLocation: (location: string) => void;
   toggleWakatimeBadges: () => void;
   toggleVisitorCounter: () => void;
   addFeaturedRepo: (repo: string) => void;
@@ -131,6 +145,13 @@ const initialState = {
   typingSize: 20,
   typingDuration: 5000,
   typingPause: 1000,
+  workingOn: '',
+  learning: '',
+  collaborateOn: '',
+  askMeAbout: '',
+  reachMe: '',
+  funFact: '',
+  location: '',
   showWakatimeBadges: false,
   showVisitorCounter: false,
   featuredRepos: [],
@@ -208,6 +229,13 @@ export const useReadmeStore = create<ReadmeState>()(
       setTypingSize: (typingSize: number) => set({ typingSize }),
       setTypingDuration: (typingDuration: number) => set({ typingDuration }),
       setTypingPause: (typingPause: number) => set({ typingPause }),
+      setWorkingOn: (workingOn: string) => set({ workingOn }),
+      setLearning: (learning: string) => set({ learning }),
+      setCollaborateOn: (collaborateOn: string) => set({ collaborateOn }),
+      setAskMeAbout: (askMeAbout: string) => set({ askMeAbout }),
+      setReachMe: (reachMe: string) => set({ reachMe }),
+      setFunFact: (funFact: string) => set({ funFact }),
+      setLocation: (location: string) => set({ location }),
       toggleWakatimeBadges: () => set((state) => ({ showWakatimeBadges: !state.showWakatimeBadges })),
       toggleVisitorCounter: () => set((state) => ({ showVisitorCounter: !state.showVisitorCounter })),
       addFeaturedRepo: (repo: string) => set((state) => ({
