@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { useReadmeStore, SectionId } from '@/store/useReadmeStore';
 import { useHydration } from '@/hooks/useHydration';
 import { useTranslation } from '@/hooks/useTranslation';
@@ -16,13 +16,14 @@ import { SpotifyConfig } from '@/components/SpotifyConfig';
 import { RssConfig } from '@/components/RssConfig';
 import { LayoutManager } from '@/components/LayoutManager';
 import { StyleConfig } from '@/components/StyleConfig';
-import { PreviewPane } from '@/components/PreviewPane';
+import { PreviewPane, PreviewPaneHandle } from '@/components/PreviewPane';
 import { GithubProfileFetcher } from '@/components/GithubProfileFetcher';
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 import { ThemeSwitcher } from '@/components/ThemeSwitcher';
 import { CollapsibleSection } from '@/components/CollapsibleSection';
 import { ConfirmModal } from '@/components/ConfirmModal';
 import { OnboardingTour } from '@/components/OnboardingTour';
+import { useKeyboardShortcuts } from '@/hooks/useKeyboardShortcuts';
 import { toast } from 'sonner';
 
 export default function Home() {
@@ -35,6 +36,15 @@ export default function Home() {
   } = store;
 
   const [isResetModalOpen, setIsResetModalOpen] = useState(false);
+  
+  const previewRef = useRef<PreviewPaneHandle>(null);
+  const onboardingInputRef = useRef<HTMLInputElement>(null);
+
+  useKeyboardShortcuts({
+    onCopy: () => previewRef.current?.handleCopy(),
+    onDownload: () => previewRef.current?.handleDownload(),
+    onFocusOnboarding: () => onboardingInputRef.current?.focus(),
+  });
 
   React.useEffect(() => {
     if (hydrated && !hasCompletedTour) {
@@ -206,7 +216,7 @@ export default function Home() {
 
         <div className="pb-20">
           <div className="px-8 mb-8 mt-4">
-            <GithubProfileFetcher />
+            <GithubProfileFetcher ref={onboardingInputRef} />
           </div>
 
           <CollapsibleSection title={t.style.label} subtitle={t.style.help}>
@@ -225,7 +235,7 @@ export default function Home() {
         </div>
       </section>
 
-      <PreviewPane />
+      <PreviewPane ref={previewRef} />
       <OnboardingTour />
     </main>
   );

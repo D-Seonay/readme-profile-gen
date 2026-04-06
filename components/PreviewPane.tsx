@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, forwardRef, useImperativeHandle } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import rehypeRaw from 'rehype-raw';
@@ -11,7 +11,12 @@ import { toast } from 'sonner';
 
 type ViewMode = 'preview' | 'raw';
 
-export const PreviewPane = () => {
+export interface PreviewPaneHandle {
+  handleCopy: () => void;
+  handleDownload: () => void;
+}
+
+export const PreviewPane = forwardRef<PreviewPaneHandle>((props, ref) => {
   const store = useReadmeStore();
   const { statsAlign, uiTheme, isTourActive, currentTourStep } = store;
   const { t } = useTranslation();
@@ -53,6 +58,11 @@ export const PreviewPane = () => {
       console.error('Failed to download!', err);
     }
   };
+
+  useImperativeHandle(ref, () => ({
+    handleCopy,
+    handleDownload
+  }));
 
   return (
     <section className={`w-1/2 h-full flex flex-col border-l transition-all duration-500 ${isDark ? 'bg-zinc-950 border-zinc-900 text-zinc-100' : 'bg-white border-zinc-200 text-zinc-900'} ${isHighlighted ? 'ring-4 ring-inset ring-indigo-500 shadow-[0_0_40px_rgba(99,102,241,0.5)] z-50' : ''}`}>
@@ -146,4 +156,6 @@ export const PreviewPane = () => {
       </footer>
     </section>
   );
-};
+});
+
+PreviewPane.displayName = 'PreviewPane';

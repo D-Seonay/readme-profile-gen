@@ -7,7 +7,7 @@ export const useKeyboardShortcuts = (actions: {
   onDownload: () => void;
   onFocusOnboarding: () => void;
 }) => {
-  const { uiTheme, setUITheme, setLanguage, language } = useReadmeStore();
+  const { uiTheme, toggleUITheme, setLanguage, language } = useReadmeStore();
   
   // Mod + C: Copy
   useHotkeys('mod+c', (e) => {
@@ -30,9 +30,8 @@ export const useKeyboardShortcuts = (actions: {
   // Mod + T: Toggle Theme
   useHotkeys('mod+t', (e) => {
     e.preventDefault();
-    const nextTheme = uiTheme === 'dark' ? 'light' : 'dark';
-    setUITheme(nextTheme);
-    toast.success(nextTheme === 'dark' ? 'Dark theme enabled' : 'Light theme enabled');
+    toggleUITheme();
+    toast.success(uiTheme === 'light' ? 'Dark theme enabled' : 'Light theme enabled');
   });
 
   // Mod + L: Toggle Language
