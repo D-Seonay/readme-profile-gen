@@ -118,10 +118,9 @@ export const generateMarkdown = (data: StoreData): string => {
   const getFollowersSection = () => {
     if (!githubUsername || (!showFollowers && !showFollowing)) return '';
     const titleMd = sectionTitles.followers ? `### ${sectionTitles.followers}\n\n` : '';
-    let content = '';
-
+    
     const generateHtmlGrid = (list: { login: string; avatar_url: string }[]) => {
-      if (list.length === 0) return '';
+      if (list.length === 0) return '_No data found._';
       let html = '<table>\n  <tr>\n';
       list.forEach((user, index) => {
         if (index > 0 && index % 5 === 0) html += '  </tr>\n  <tr>\n';
@@ -149,7 +148,7 @@ export const generateMarkdown = (data: StoreData): string => {
       let subContent = '';
       if (followersMode === 'badges') {
         const followingUrl = encodeURIComponent(`https://api.github.com/users/${githubUsername}`);
-        subContent = `[![Following](https://img.shields.io/badge/dynamic/json?color=0e7afe&label=Following&query=following&url=${followingUrl}&style=${badgeStyle})](https://github.com/${githubUsername}?tab=following)`;
+        subContent = `[![Following](https://img.shields.io/badge/dynamic/json?color=0e7afe&label=Following&query=%24.following&url=${followingUrl}&style=${badgeStyle})](https://github.com/${githubUsername}?tab=following)`;
       } else if (followersMode === 'list') {
         subContent = `[**${data.language === 'fr' ? 'Mes Abonnements' : 'Following'}**](https://github.com/${githubUsername}?tab=following)`;
       } else {
@@ -158,7 +157,8 @@ export const generateMarkdown = (data: StoreData): string => {
       sections.push(subContent);
     }
 
-    content = sections.join('\n\n');
+    const content = sections.join('\n\n');
+    // On force le contenu Markdown pur sans le wrapper DIV si on est en mode GRID car le HTML table gère déjà son alignement
     return isCentered ? `<div align="center">\n\n${titleMd}${content}\n\n</div>` : `${titleMd}${content}`;
   };
 

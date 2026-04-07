@@ -141,6 +141,7 @@ interface ReadmeState {
   reorderLayout: (activeId: SectionId, overId: SectionId) => void;
   checkServicesHealth: () => Promise<void>;
   fetchGithubUserData: (username: string) => Promise<void>;
+  fetchSocialData: (username: string) => Promise<void>; // Nouvelle action
   reset: () => void;
 }
 
@@ -227,7 +228,7 @@ const initialState = {
 
 export const useReadmeStore = create<ReadmeState>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       ...initialState,
 
       setLanguage: (language: Language) => set({ language }),
@@ -318,17 +319,36 @@ export const useReadmeStore = create<ReadmeState>()(
         set({ servicesStatus: { stats, streak, trophies, wakatime } });
       },
 
+      fetchSocialData: async (username: string) => {
+        if (!username) return;
+        try {
+          const [followersRes, followingRes] = await Promise.all([
+            fetch(`https://api.github.com/users/${username}/followers?per_page=10`),
+            fetch(`https://api.github.com/users/${username}/following?per_page=10`)
+          ]);
+          const followers: { login: string; avatar_url: string }[] = followersRes.ok ? await followersRes.json() : [];
+          const following: { login: string; avatar_url: string }[] = followingRes.ok ? await followingRes.json() : [];
+          set({ 
+            followersList: followers.map((f) => ({ login: f.login, avatar_url: f.avatar_url })),
+            followingList: following.map((f) => ({ login: f.login, avatar_url: f.avatar_url }))
+          });
+        } catch (e) {
+          console.error("Error fetching social data", e);
+        }
+      },
+
       fetchGithubUserData: async (username: string) => {
         if (!username) return;
         set({ isLoadingGithubData: true, githubFetchError: null });
         
         try {
-          const [userRes, socialsRes, readmeRes, followersRes, followingRes] = await Promise.all([
+          // Utiliser l'action fetchSocialData définie juste au dessus
+          get().fetchSocialData(username);
+
+          const [userRes, socialsRes, readmeRes] = await Promise.all([
             fetch(`https://api.github.com/users/${username}`),
             fetch(`https://api.github.com/users/${username}/social_accounts`),
-            fetch(`https://api.github.com/repos/${username}/${username}/contents/README.md`),
-            fetch(`https://api.github.com/users/${username}/followers?per_page=10`),
-            fetch(`https://api.github.com/users/${username}/following?per_page=10`)
+            fetch(`https://api.github.com/repos/${username}/${username}/contents/README.md`)
           ]);
           
           if (!userRes.ok) {
@@ -338,8 +358,6 @@ export const useReadmeStore = create<ReadmeState>()(
           
           const userData = await userRes.json();
           const socialAccounts = await socialsRes.json();
-          const followers: { login: string; avatar_url: string }[] = followersRes.ok ? await followersRes.json() : [];
-          const following: { login: string; avatar_url: string }[] = followingRes.ok ? await followingRes.json() : [];
           
           let detectedSkills: string[] = [];
           let detectedEmail = '';
@@ -371,8 +389,6 @@ export const useReadmeStore = create<ReadmeState>()(
             name: !s.name || s.name === initialState.name ? userData.name || s.name : s.name,
             description: !s.description || s.description === initialState.description ? userData.bio || s.description : s.description,
             githubUsername: username,
-            followersList: followers.map((f) => ({ login: f.login, avatar_url: f.avatar_url })),
-            followingList: following.map((f) => ({ login: f.login, avatar_url: f.avatar_url })),
             skills: s.skills.length === 0 ? detectedSkills : s.skills,
             socials: {
               ...s.socials,
