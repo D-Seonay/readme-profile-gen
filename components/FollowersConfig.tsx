@@ -35,6 +35,7 @@ export const FollowersConfig = () => {
         </p>
       </header>
 
+      {/* Toggles Group */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div className={`p-3 rounded-xl border transition-all ${isDark ? 'bg-zinc-900/50 border-zinc-800 hover:border-zinc-700' : 'bg-white border-zinc-200 hover:border-zinc-300'}`}>
           <button onClick={toggleFollowers} className="w-full flex items-center justify-between group">
@@ -59,8 +60,8 @@ export const FollowersConfig = () => {
         </div>
       </div>
 
-      {/* Mode & Limit Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 items-end">
+      {/* Mode & Dynamic Limit Slider */}
+      <div className="space-y-6">
         <div className="space-y-3">
           <label className={`text-[9px] font-mono uppercase tracking-wider ${isDark ? 'text-zinc-500' : 'text-zinc-400'}`}>{t.followers.mode}</label>
           <div className={`flex p-1 rounded-xl border transition-colors ${isDark ? 'bg-zinc-900 border-zinc-800' : 'bg-zinc-100 border-zinc-200'}`}>
@@ -70,20 +71,26 @@ export const FollowersConfig = () => {
           </div>
         </div>
 
-        <div className="space-y-3">
-          <label className={`text-[9px] font-mono uppercase tracking-wider ${isDark ? 'text-zinc-500' : 'text-zinc-400'}`}>
-            {t.followers.limit} ({followersLimit})
-          </label>
-          <input
-            type="range"
-            min="5"
-            max="50"
-            step="5"
-            value={followersLimit}
-            onChange={(e) => setFollowersLimit(parseInt(e.target.value))}
-            className="w-full accent-indigo-500 h-1.5 bg-zinc-800 rounded-lg cursor-pointer"
-          />
-        </div>
+        {/* Slider visible uniquement en mode GRID */}
+        {followersMode === 'grid' && (
+          <div className="space-y-3 pt-2 animate-in fade-in slide-in-from-top-2 duration-300">
+            <div className="flex items-center justify-between px-1">
+              <label className={`text-[9px] font-mono uppercase tracking-wider ${isDark ? 'text-zinc-500' : 'text-zinc-400'}`}>
+                {t.followers.limit}
+              </label>
+              <span className="text-[10px] font-mono text-indigo-500 font-bold">{followersLimit}</span>
+            </div>
+            <input
+              type="range"
+              min="5"
+              max="50"
+              step="5"
+              value={followersLimit}
+              onChange={(e) => setFollowersLimit(parseInt(e.target.value))}
+              className="w-full accent-indigo-500 h-1.5 bg-zinc-800 rounded-lg cursor-pointer"
+            />
+          </div>
+        )}
       </div>
     </div>
   );
