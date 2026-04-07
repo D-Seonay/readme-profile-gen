@@ -19,6 +19,14 @@
 
 The **Ultimate README Gen** is more than just a form. It's a high-performance design tool for developers that leverages the GitHub API to provide a "High-Tech Stealth" user experience with real-time feedback and smart automation.
 
+### 🖼️ Previews
+
+#### Landing Page
+![Landing Page](./public/readme/landingPage.png)
+
+#### Editor Interface
+![User Interface](./public/readme/userInterface.png)
+
 ## 🛠 Key Features
 
 ### 🪄 Smart Auto-fill (Embedded Intelligence)
