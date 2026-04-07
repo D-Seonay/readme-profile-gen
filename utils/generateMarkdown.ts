@@ -124,7 +124,7 @@ export const generateMarkdown = (data: StoreData): string => {
       let html = '<table>\n  <tr>\n';
       list.forEach((user, index) => {
         if (index > 0 && index % 5 === 0) html += '  </tr>\n  <tr>\n';
-        html += `    <td align="center">\n      <a href="https://github.com/${user.login}">\n        <img src="${user.avatar_url}" width="50px;" alt="${user.login}"/><br />\n        <sub><b>${user.login}</b></sub>\n      </a>\n    </td>\n`;
+        html += `    <td align="center">\n      <a href="https://github.com/${user.login}">\n        <img src="${user.avatar_url}" width="50px;" alt="${user.login}" style="border-radius:50%"/>\n      </a>\n    </td>\n`;
       });
       html += '  </tr>\n</table>';
       return html;
