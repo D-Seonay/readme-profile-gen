@@ -27,39 +27,40 @@ The **Ultimate README Gen** is more than just a form. It's a high-performance de
 #### Editor Interface
 ![User Interface](./public/readme/userInterface.png)
 
+---
+
 ## 🛠 Key Features
 
 ### 🪄 Smart Auto-fill (Embedded Intelligence)
 Just enter your GitHub username and let the magic happen:
-- **Profile & Bio:** Automatically fetch your basic information.
-- **Social Networks:** Detect your LinkedIn, Twitter, and Portfolio from your public accounts.
-- **Deep Scanning:** Textual analysis of your current README to auto-check your Tech Stack.
+- **Profile & Bio:** Automatically fetch your basic information and public links.
+- **Deep Scanning:** Textual analysis of your current README to auto-detect your Tech Stack.
 - **Email Extraction:** Smart extraction of your contact address using Regex.
 
 ### ↕️ Dynamic Layout & UX
-- **Drag & Drop:** Reorder your sections (Bio, Skills, Stats, Projects, etc.) with a simple drag-and-drop powered by `@dnd-kit`.
-- **Collapsible Editor:** A clean, organized interface with collapsible sections to focus on what matters.
-- **Dark/Light Mode:** Full support for both Dark and Light UI themes.
-- **Multi-language:** Available in both **English** and **French**.
+- **Drag & Drop:** Reorder your sections (Bio, Skills, Stats, Projects, etc.) with ease.
+- **Smart Layout Manager:** Only manage sections you've actually filled.
+- **Interactive Tour:** A guided onboarding for first-time users.
+- **Keyboard Shortcuts:** `CMD+S` to download, `CMD+C` to copy, `CMD+K` to search, `CMD+T` for theme.
 
 ### 🎨 Total Customization
-- **Themes Gallery:** Choose from 10+ themes for your statistics cards (Dracula, Radical, Tokyonight...).
-- **Global Alignment:** Switch your entire README between Classic (Left) or Modern (Centered) modes.
-- **Badge Factory:** Choose between 4 Shields.io badge styles (Flat, For-the-badge, etc.).
-- **Organized Tech Stack:** 50+ technologies categorized for better readability.
+- **Themes Gallery:** Choose from 10+ themes for your statistics cards.
+- **Global Alignment:** Switch between Classic (Left) or Modern (Centered) modes.
+- **Badge Factory:** Support for 5 different Shields.io badge styles.
+- **Dynamic Typing SVG:** Add animated text with custom fonts, colors, and speeds.
 
 ### 📊 Advanced Integrations
-- **GitHub Stats:** Real-time Global Stats, Most Used Languages, and Streak cards.
-- **GitHub Trophies:** Show off your accomplishments visually.
-- **WakaTime:** Display your weekly coding activity and official WakaTime badges.
-- **Project Showcase:** Highlight your best repositories with beautiful pin cards.
-- **Donations:** Support for Buy Me A Coffee, Ko-fi, and PayPal.
-- **Visitor Counter:** Track how many people view your profile.
+- **🐍 Snake Animation:** The famous contribution grid snake.
+- **🎵 Spotify Now Playing:** Show what you're listening to in real-time.
+- **📰 RSS Feed:** Automatically list your latest blog posts (Medium, Dev.to, etc.).
+- **🖼️ Header Banner:** Add a strong visual impact at the top of your profile.
+- **📊 GitHub Stats & Trophies:** Comprehensive coding metrics and visual achievements.
+- **⏱️ WakaTime:** Weekly coding activity graphs.
 
 ### 🛡️ Resilience & Reliability
-- **Service Health Check:** Real-time monitoring of third-party services with outage alerts.
-- **Local Persistence:** Your data is automatically saved in your browser (LocalStorage).
-- **CI/CD:** Robust GitHub Actions pipeline for automated testing and linting.
+- **Service Health Check:** Real-time monitoring of third-party APIs.
+- **Local Persistence:** Your progress is always saved automatically.
+- **CI/CD:** Automated testing and linting via GitHub Actions.
 
 ---
 
@@ -70,9 +71,10 @@ Just enter your GitHub username and let the magic happen:
 | **Next.js 16 (App Router)** | High-performance React framework |
 | **Zustand** | Global state management & persistence |
 | **Tailwind CSS** | Atomic and responsive design system |
+| **Framer Motion** | Premium "Stealth" animations |
 | **@dnd-kit** | Vertical Drag & Drop engine |
+| **Sonner** | Modern toast notifications |
 | **Vitest** | Unit testing for the generation engine |
-| **GitHub REST API** | Data source for the Smart Auto-fill |
 
 ---
 
@@ -99,15 +101,12 @@ Just enter your GitHub username and let the magic happen:
 
 ## 📅 Roadmap Progress
 
-- [x] **P0:** State Persistence (LocalStorage).
-- [x] **P0:** Direct `.md` file download.
-- [x] **P1:** Stats theme selector.
-- [x] **P1:** GitHub Trophies integration.
-- [x] **P1:** WakaTime activity tracking.
-- [x] **P1:** Multi-language support (EN/FR).
-- [x] **P2:** Generation engine unit tests.
-- [x] **P2:** SEO & Open Graph optimization.
-- [x] **DevOps:** GitHub Actions CI pipeline.
+- [x] **Phase 1:** Core engine, State Persistence, Multi-language.
+- [x] **Phase 2:** Stats, Trophies, WakaTime, Featured Projects.
+- [x] **Phase 3:** Snake, Spotify, RSS, Typing SVG, Header Banners.
+- [x] **Phase 4:** Premium Landing Page, Onboarding Tour, Shortcuts.
+- [ ] **Phase 5:** AI-powered Bio generation (OpenAI/Gemini).
+- [ ] **Phase 6:** Community Templates & Theme Sharing.
 
 ---
 
@@ -124,7 +123,7 @@ Contributions are welcome!
 
 <div align="center">
 
-Developed with ❤️ by [D-Seonay](https://github.com/D-Seonay)
+Developed with ❤️ by [Seonay](https://matheodelaunay.studio)
 
 *Generated with Ultimate GitHub Profile README Generator*
 
