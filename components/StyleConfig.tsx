@@ -1,13 +1,14 @@
 'use client';
 
 import React from 'react';
-import { useReadmeStore, SectionId } from '@/store/useReadmeStore';
+import { useReadmeStore, SectionId, BadgeStyle } from '@/store/useReadmeStore';
 import { useTranslation } from '@/hooks/useTranslation';
 
 export const StyleConfig = () => {
   const { 
     alignment, setAlignment, 
     statsAlign, setStatsAlign,
+    badgeStyle, setBadgeStyle,
     sectionTitles, setSectionTitle,
     uiTheme
   } = useReadmeStore();
@@ -23,7 +24,10 @@ export const StyleConfig = () => {
     { id: 'donations', label: t.layout.donations },
     { id: 'spotify', label: t.layout.spotify },
     { id: 'rss', label: t.layout.rss },
+    { id: 'typing', label: t.layout.typing },
   ];
+
+  const badgeStyles: BadgeStyle[] = ['for-the-badge', 'flat', 'flat-square', 'plastic', 'social'];
 
   return (
     <div className={`space-y-8 transition-colors ${isDark ? 'text-zinc-100' : 'text-zinc-900'}`}>
@@ -75,6 +79,25 @@ export const StyleConfig = () => {
         </div>
       </div>
 
+      {/* Badge Style */}
+      <div className="space-y-3">
+        <label className={`text-[9px] font-mono uppercase tracking-wider ${isDark ? 'text-zinc-500' : 'text-zinc-400'}`}>{t.style.badgeStyle}</label>
+        <div className={`grid grid-cols-2 sm:grid-cols-5 gap-2 p-1 rounded-xl border transition-colors ${isDark ? 'bg-zinc-900 border-zinc-800' : 'bg-zinc-100 border-zinc-200'}`}>
+          {badgeStyles.map((style) => (
+            <button
+              key={style}
+              onClick={() => setBadgeStyle(style)}
+              className={`px-2 py-2 text-[8px] font-mono uppercase rounded-lg transition-all truncate ${
+                badgeStyle === style ? (isDark ? 'bg-zinc-100 text-zinc-950 shadow-sm' : 'bg-white text-zinc-950 shadow-sm') : (isDark ? 'text-zinc-500 hover:text-zinc-300' : 'text-zinc-400 hover:text-zinc-600')
+              }`}
+            >
+              {style.replace(/-/g, ' ')}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Section Titles */}
       <div className="space-y-4">
         <label className={`text-[9px] font-mono uppercase tracking-wider ${isDark ? 'text-zinc-500' : 'text-zinc-400'}`}>{t.style.sectionTitles}</label>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">

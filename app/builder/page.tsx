@@ -22,12 +22,17 @@ import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 import { ThemeSwitcher } from '@/components/ThemeSwitcher';
 import { CollapsibleSection } from '@/components/CollapsibleSection';
 import { ConfirmModal } from '@/components/ConfirmModal';
+import { useKeyboardShortcuts } from '@/hooks/useKeyboardShortcuts';
 import { toast } from 'sonner';
 
 export default function Home() {
   const store = useReadmeStore();
   const hydrated = useHydration();
   const { t, language } = useTranslation();
+  
+  // Activer les raccourcis clavier
+  useKeyboardShortcuts();
+
   const { 
     name, title, description, setName, setTitle, setDescription, reset, 
     currentWork, setCurrentWork, learning, setLearning,
