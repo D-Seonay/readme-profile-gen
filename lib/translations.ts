@@ -17,8 +17,8 @@ export const translations = {
       },
       features: {
         autofill: { title: "Smart Auto-fill", desc: "Fetch your GitHub data instantly." },
-        layout: { title: "Drag & Drop", desc: "Reorder your profile sections easily." },
-        stats: { title: "Dynamic Stats", desc: "Showcase your coding activity beautifully." }
+        dragdrop: { title: "Drag & Drop", desc: "Reorder your profile sections easily." },
+        livepreview: { title: "Live Preview", desc: "See your changes in real-time as you build." }
       },
       howItWorks: {
         step1: { title: "1. Enter Username", desc: "Type your GitHub handle." },
@@ -201,8 +201,8 @@ export const translations = {
       },
       features: {
         autofill: { title: "Remplissage Magique", desc: "Récupérez vos données GitHub instantanément." },
-        layout: { title: "Glisser-Déposer", desc: "Réorganisez les sections de votre profil facilement." },
-        stats: { title: "Stats Dynamiques", desc: "Affichez votre activité de code avec élégance." }
+        dragdrop: { title: "Glisser-Déposer", desc: "Réorganisez les sections de votre profil facilement." },
+        livepreview: { title: "Prévisualisation Live", desc: "Voyez vos changements en temps réel pendant que vous construisez." }
       },
       howItWorks: {
         step1: { title: "1. Pseudo", desc: "Entrez votre nom d'utilisateur GitHub." },
@@ -334,7 +334,7 @@ export const translations = {
     
     socials: {
       label: "Réseaux Sociaux & Contact",
-      help: "// Ces liens seront affichés dans une nouvelle section",
+      help: "// Ces liens seront affichés in a new section",
       linkedin: "LinkedIn",
       twitter: "Twitter / X",
       portfolio: "Portfolio",
