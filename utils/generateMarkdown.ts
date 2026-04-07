@@ -27,6 +27,8 @@ interface StoreData {
   showFollowers: boolean;
   showFollowing: boolean;
   followersMode: 'badges' | 'list' | 'grid';
+  followersList: { login: string; avatar_url: string }[];
+  followingList: { login: string; avatar_url: string }[];
   showWakatimeBadges: boolean;
   showVisitorCounter: boolean;
   featuredRepos: string[];
@@ -116,29 +118,47 @@ export const generateMarkdown = (data: StoreData): string => {
   const getFollowersSection = () => {
     if (!githubUsername || (!showFollowers && !showFollowing)) return '';
     const titleMd = sectionTitles.followers ? `### ${sectionTitles.followers}\n\n` : '';
-    const badges = [];
+    let content = '';
+
+    const generateHtmlGrid = (list: { login: string; avatar_url: string }[]) => {
+      if (list.length === 0) return '';
+      let html = '<table>\n  <tr>\n';
+      list.forEach((user, index) => {
+        if (index > 0 && index % 5 === 0) html += '  </tr>\n  <tr>\n';
+        html += `    <td align="center">\n      <a href="https://github.com/${user.login}">\n        <img src="${user.avatar_url}" width="50px;" alt="${user.login}"/><br />\n        <sub><b>${user.login}</b></sub>\n      </a>\n    </td>\n`;
+      });
+      html += '  </tr>\n</table>';
+      return html;
+    };
+
+    const sections = [];
+
     if (showFollowers) {
+      let subContent = '';
       if (followersMode === 'badges') {
-        badges.push(`[![Followers](https://img.shields.io/github/followers/${githubUsername}?label=Followers&style=${badgeStyle}&color=0e7afe)](https://github.com/${githubUsername}?tab=followers)`);
+        subContent = `[![Followers](https://img.shields.io/github/followers/${githubUsername}?label=Followers&style=${badgeStyle}&color=0e7afe)](https://github.com/${githubUsername}?tab=followers)`;
       } else if (followersMode === 'list') {
-        badges.push(`[**${data.language === 'fr' ? 'Mes Abonnés' : 'My Followers'}**](https://github.com/${githubUsername}?tab=followers)`);
+        subContent = `[**${data.language === 'fr' ? 'Mes Abonnés' : 'My Followers'}**](https://github.com/${githubUsername}?tab=followers)`;
       } else {
-        // Avatar Grid Mode
-        badges.push(`[![Followers Grid](https://github-readme-follower-list.vercel.app/api/?username=${githubUsername}&limit=10&per_line=5)](https://github.com/${githubUsername}?tab=followers)`);
+        subContent = `#### ${data.language === 'fr' ? 'Mes Abonnés' : 'My Followers'}\n\n${generateHtmlGrid(data.followersList)}`;
       }
+      sections.push(subContent);
     }
+
     if (showFollowing) {
+      let subContent = '';
       if (followersMode === 'badges') {
         const followingUrl = encodeURIComponent(`https://api.github.com/users/${githubUsername}`);
-        badges.push(`[![Following](https://img.shields.io/badge/dynamic/json?color=0e7afe&label=Following&query=following&url=${followingUrl}&style=${badgeStyle})](https://github.com/${githubUsername}?tab=following)`);
+        subContent = `[![Following](https://img.shields.io/badge/dynamic/json?color=0e7afe&label=Following&query=following&url=${followingUrl}&style=${badgeStyle})](https://github.com/${githubUsername}?tab=following)`;
       } else if (followersMode === 'list') {
-        badges.push(`[**${data.language === 'fr' ? 'Mes Abonnements' : 'Following'}**](https://github.com/${githubUsername}?tab=following)`);
+        subContent = `[**${data.language === 'fr' ? 'Mes Abonnements' : 'Following'}**](https://github.com/${githubUsername}?tab=following)`;
       } else {
-        // Note: The API usually focus on followers, we reuse it or link it
-        badges.push(`[**${data.language === 'fr' ? 'Voir mes Abonnements' : 'View Following'}**](https://github.com/${githubUsername}?tab=following)`);
+        subContent = `#### ${data.language === 'fr' ? 'Mes Abonnements' : 'Following'}\n\n${generateHtmlGrid(data.followingList)}`;
       }
+      sections.push(subContent);
     }
-    const content = badges.join('\n\n');
+
+    content = sections.join('\n\n');
     return isCentered ? `<div align="center">\n\n${titleMd}${content}\n\n</div>` : `${titleMd}${content}`;
   };
 

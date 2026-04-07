@@ -34,7 +34,9 @@ interface ReadmeState {
   // Social Stats
   showFollowers: boolean;
   showFollowing: boolean;
-  followersMode: 'badges' | 'list' | 'grid'; // 'badges' for shields.io, 'list' for text links, 'grid' for avatars
+  followersMode: 'badges' | 'list' | 'grid';
+  followersList: { login: string; avatar_url: string }[];
+  followingList: { login: string; avatar_url: string }[];
 
   skills: string[];
   githubUsername: string;
@@ -160,6 +162,8 @@ const initialState = {
   showFollowers: false,
   showFollowing: false,
   followersMode: 'badges' as const,
+  followersList: [],
+  followingList: [],
   skills: [],
   githubUsername: '',
   wakatimeUsername: '',
@@ -319,10 +323,12 @@ export const useReadmeStore = create<ReadmeState>()(
         set({ isLoadingGithubData: true, githubFetchError: null });
         
         try {
-          const [userRes, socialsRes, readmeRes] = await Promise.all([
+          const [userRes, socialsRes, readmeRes, followersRes, followingRes] = await Promise.all([
             fetch(`https://api.github.com/users/${username}`),
             fetch(`https://api.github.com/users/${username}/social_accounts`),
-            fetch(`https://api.github.com/repos/${username}/${username}/contents/README.md`)
+            fetch(`https://api.github.com/repos/${username}/${username}/contents/README.md`),
+            fetch(`https://api.github.com/users/${username}/followers?per_page=10`),
+            fetch(`https://api.github.com/users/${username}/following?per_page=10`)
           ]);
           
           if (!userRes.ok) {
@@ -332,6 +338,8 @@ export const useReadmeStore = create<ReadmeState>()(
           
           const userData = await userRes.json();
           const socialAccounts = await socialsRes.json();
+          const followers: { login: string; avatar_url: string }[] = followersRes.ok ? await followersRes.json() : [];
+          const following: { login: string; avatar_url: string }[] = followingRes.ok ? await followingRes.json() : [];
           
           let detectedSkills: string[] = [];
           let detectedEmail = '';
@@ -363,6 +371,8 @@ export const useReadmeStore = create<ReadmeState>()(
             name: !s.name || s.name === initialState.name ? userData.name || s.name : s.name,
             description: !s.description || s.description === initialState.description ? userData.bio || s.description : s.description,
             githubUsername: username,
+            followersList: followers.map((f) => ({ login: f.login, avatar_url: f.avatar_url })),
+            followingList: following.map((f) => ({ login: f.login, avatar_url: f.avatar_url })),
             skills: s.skills.length === 0 ? detectedSkills : s.skills,
             socials: {
               ...s.socials,

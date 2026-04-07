@@ -28,6 +28,8 @@ interface StoreData {
   showFollowers: boolean;
   showFollowing: boolean;
   followersMode: 'badges' | 'list' | 'grid';
+  followersList: { login: string; avatar_url: string }[];
+  followingList: { login: string; avatar_url: string }[];
   showWakatimeBadges: boolean;
   showVisitorCounter: boolean;
   featuredRepos: string[];
@@ -82,6 +84,8 @@ describe('generateMarkdown', () => {
     showFollowers: true,
     showFollowing: true,
     followersMode: 'badges',
+    followersList: [],
+    followingList: [],
     showWakatimeBadges: false,
     showVisitorCounter: false,
     featuredRepos: [],
