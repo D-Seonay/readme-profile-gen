@@ -126,7 +126,8 @@ export const generateMarkdown = (data: StoreData): string => {
     }
     if (showFollowing) {
       if (followersMode === 'badges') {
-        badges.push(`[![Following](https://img.shields.io/github/following/${githubUsername}?label=Following&style=${badgeStyle}&color=0e7afe)](https://github.com/${githubUsername}?tab=following)`);
+        const followingUrl = encodeURIComponent(`https://api.github.com/users/${githubUsername}`);
+        badges.push(`[![Following](https://img.shields.io/badge/dynamic/json?color=0e7afe&label=Following&query=following&url=${followingUrl}&style=${badgeStyle})](https://github.com/${githubUsername}?tab=following)`);
       } else {
         badges.push(`[**${data.language === 'fr' ? 'Mes Abonnements' : 'Following'}**](https://github.com/${githubUsername}?tab=following)`);
       }
