@@ -17,6 +17,19 @@ interface ReadmeState {
   name: string;
   title: string;
   description: string;
+  
+  // Bio
+  currentWork: string;
+  learning: string;
+  collaboration: string;
+  askMeAbout: string;
+  pronouns: string;
+  funFact: string;
+
+  // Tour
+  isTourActive: boolean;
+  currentTourStep: number;
+
   skills: string[];
   githubUsername: string;
   wakatimeUsername: string;
@@ -25,10 +38,10 @@ interface ReadmeState {
   spotifyUrl: string;
   rssUrl: string;
   typingText: string;
-  typingColor: string; // New: Custom color
-  typingSize: number; // New: Font size
-  typingDuration: number; // New: Speed
-  typingPause: number; // New: Pause between lines
+  typingColor: string;
+  typingSize: number;
+  typingDuration: number;
+  typingPause: number;
   showWakatimeBadges: boolean;
   showVisitorCounter: boolean;
   featuredRepos: string[];
@@ -64,16 +77,25 @@ interface ReadmeState {
     wakatime: ServiceStatus;
   };
   layout: SectionId[];
-
-  isTourActive: boolean;
-  currentTourStep: number;
-  hasCompletedTour: boolean;
   
   setLanguage: (language: Language) => void;
   setUITheme: (theme: UITheme) => void;
+  toggleUITheme: () => void;
   setName: (name: string) => void;
   setTitle: (title: string) => void;
   setDescription: (description: string) => void;
+  
+  setCurrentWork: (val: string) => void;
+  setLearning: (val: string) => void;
+  setCollaboration: (val: string) => void;
+  setAskMeAbout: (val: string) => void;
+  setPronouns: (val: string) => void;
+  setFunFact: (val: string) => void;
+
+  setTourStep: (step: number) => void;
+  completeTour: () => void;
+  startTour: () => void;
+
   toggleSkill: (slug: string) => void;
   setGithubUsername: (username: string) => void;
   setWakatimeUsername: (username: string) => void;
@@ -82,10 +104,10 @@ interface ReadmeState {
   setSpotifyUrl: (url: string) => void;
   setRssUrl: (url: string) => void;
   setTypingText: (text: string) => void;
-  setTypingColor: (color: string) => void; // New action
-  setTypingSize: (size: number) => void; // New action
-  setTypingDuration: (duration: number) => void; // New action
-  setTypingPause: (pause: number) => void; // New action
+  setTypingColor: (color: string) => void;
+  setTypingSize: (size: number) => void;
+  setTypingDuration: (duration: number) => void;
+  setTypingPause: (pause: number) => void;
   toggleWakatimeBadges: () => void;
   toggleVisitorCounter: () => void;
   addFeaturedRepo: (repo: string) => void;
@@ -106,10 +128,6 @@ interface ReadmeState {
   reorderLayout: (activeId: SectionId, overId: SectionId) => void;
   checkServicesHealth: () => Promise<void>;
   fetchGithubUserData: (username: string) => Promise<void>;
-  setTourActive: (active: boolean) => void;
-  setTourStep: (step: number) => void;
-  completeTour: () => void;
-  toggleUITheme: () => void;
   reset: () => void;
 }
 
@@ -119,6 +137,14 @@ const initialState = {
   name: 'John Doe',
   title: 'Senior Fullstack Developer',
   description: 'Welcome to my profile! I am passionate about Web and Open Source.',
+  currentWork: '',
+  learning: '',
+  collaboration: '',
+  askMeAbout: '',
+  pronouns: '',
+  funFact: '',
+  isTourActive: false,
+  currentTourStep: 0,
   skills: [],
   githubUsername: '',
   wakatimeUsername: '',
@@ -127,7 +153,7 @@ const initialState = {
   spotifyUrl: '',
   rssUrl: '',
   typingText: '',
-  typingColor: '', // Default to theme
+  typingColor: '',
   typingSize: 20,
   typingDuration: 5000,
   typingPause: 1000,
@@ -177,9 +203,6 @@ const initialState = {
     wakatime: 'checking' as ServiceStatus,
   },
   layout: DEFAULT_LAYOUT,
-  isTourActive: false,
-  currentTourStep: 0,
-  hasCompletedTour: false,
 };
 
 export const useReadmeStore = create<ReadmeState>()(
@@ -189,9 +212,22 @@ export const useReadmeStore = create<ReadmeState>()(
 
       setLanguage: (language: Language) => set({ language }),
       setUITheme: (uiTheme: UITheme) => set({ uiTheme }),
+      toggleUITheme: () => set((state) => ({ uiTheme: state.uiTheme === 'dark' ? 'light' : 'dark' })),
       setName: (name: string) => set({ name }),
       setTitle: (title: string) => set({ title }),
       setDescription: (description: string) => set({ description }),
+      
+      setCurrentWork: (currentWork: string) => set({ currentWork }),
+      setLearning: (learning: string) => set({ learning }),
+      setCollaboration: (collaboration: string) => set({ collaboration }),
+      setAskMeAbout: (askMeAbout: string) => set({ askMeAbout }),
+      setPronouns: (pronouns: string) => set({ pronouns }),
+      setFunFact: (funFact: string) => set({ funFact }),
+
+      setTourStep: (currentTourStep: number) => set({ currentTourStep }),
+      completeTour: () => set({ isTourActive: false, currentTourStep: 0 }),
+      startTour: () => set({ isTourActive: true, currentTourStep: 0 }),
+
       toggleSkill: (slug: string) => set((state) => ({
         skills: state.skills.includes(slug)
           ? state.skills.filter((s) => s !== slug)
@@ -263,21 +299,10 @@ export const useReadmeStore = create<ReadmeState>()(
         set({ isLoadingGithubData: true, githubFetchError: null });
         
         try {
-          const check = async (service: 'stats' | 'streak' | 'trophies' | 'wakatime') => {
-            try {
-              const res = await fetch(`/api/health?service=${service}`);
-              const data = await res.json();
-              return data.online ? 'online' : 'offline';
-            } catch {
-              return 'offline';
-            }
-          };
-
-          const [userRes, socialsRes, readmeRes, statsH, streakH, trophiesH, wakatimeH] = await Promise.all([
+          const [userRes, socialsRes, readmeRes] = await Promise.all([
             fetch(`https://api.github.com/users/${username}`),
             fetch(`https://api.github.com/users/${username}/social_accounts`),
-            fetch(`https://api.github.com/repos/${username}/${username}/contents/README.md`),
-            check('stats'), check('streak'), check('trophies'), check('wakatime')
+            fetch(`https://api.github.com/repos/${username}/${username}/contents/README.md`)
           ]);
           
           if (!userRes.ok) {
@@ -325,12 +350,7 @@ export const useReadmeStore = create<ReadmeState>()(
               portfolio: !s.socials.portfolio ? userData.blog || '' : s.socials.portfolio,
               linkedin: !s.socials.linkedin ? (linkedinAccount?.url || '') : s.socials.linkedin,
               email: !s.socials.email ? (detectedEmail || userData.email || '') : s.socials.email,
-            },
-            showStatsCard: statsH === 'online',
-            showTopLanguages: statsH === 'online',
-            showStreakCard: streakH === 'online',
-            showTrophies: trophiesH === 'online',
-            servicesStatus: { stats: statsH, streak: streakH, trophies: trophiesH, wakatime: wakatimeH }
+            }
           }));
 
         } catch (error) {
@@ -340,12 +360,6 @@ export const useReadmeStore = create<ReadmeState>()(
           set({ isLoadingGithubData: false });
         }
       },
-
-      setTourActive: (isTourActive: boolean) => set({ isTourActive }),
-      setTourStep: (currentTourStep: number) => set({ currentTourStep }),
-      completeTour: () => set({ hasCompletedTour: true, isTourActive: false }),
-
-      toggleUITheme: () => set((state) => ({ uiTheme: state.uiTheme === 'light' ? 'dark' : 'light' })),
 
       reset: () => set(initialState),
     }),

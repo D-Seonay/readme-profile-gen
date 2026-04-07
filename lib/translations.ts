@@ -9,6 +9,33 @@ export const translations = {
     dark: "Dark",
     light: "Light",
     
+    landing: {
+      hero: {
+        tagline: "The Ultimate GitHub Profile README Generator",
+        subtitle: "Design a professional profile in seconds with smart automation, interactive layouts, and beautiful stats cards.",
+        cta: "Start Building Now"
+      },
+      features: {
+        autofill: { title: "Smart Auto-fill", desc: "Fetch your GitHub data instantly." },
+        dragdrop: { title: "Drag & Drop", desc: "Reorder your profile sections easily." },
+        livepreview: { title: "Live Preview", desc: "See your changes in real-time as you build." }
+      },
+      howItWorks: {
+        step1: { title: "1. Enter Username", desc: "Type your GitHub handle." },
+        step2: { title: "2. Customize", desc: "Pick your tech stack and layout." },
+        step3: { title: "3. Export", desc: "Copy the code to your profile." }
+      }
+    },
+
+    tour: {
+      skip: "Skip",
+      next: "Next",
+      finish: "Finish",
+      step1: "Magic Auto-fill: Start here by typing your GitHub username!",
+      step2: "Visual Design: Customize alignment, colors, and badge styles.",
+      step3: "Reorder Sections: Drag and drop to organize your README exactly how you want."
+    },
+
     autofill: {
       label: "Smart Onboarding",
       title: "Magic: Pre-fill my profile",
@@ -104,7 +131,13 @@ export const translations = {
       name: "Full Name",
       job: "Job Title",
       bio: "Bio / Description",
-      placeholderBio: "Tell us about yourself..."
+      placeholderBio: "Tell us about yourself...",
+      workingOn: "Currently working on",
+      learning: "Learning about",
+      collaboration: "Collaborating on",
+      askMeAbout: "Ask me about",
+      pronouns: "Pronouns",
+      funFact: "Fun fact"
     },
     
     skills: {
@@ -148,32 +181,6 @@ export const translations = {
       download: "Download",
       engine: "Live Rendering Engine",
       source: "Markdown Source View"
-    },
-
-    landing: {
-      hero: {
-        tagline: "The last GitHub profile generator you'll ever need.",
-        subtitle: "Design an exceptional developer brand in seconds.",
-        cta: "Start Building for Free"
-      },
-      features: {
-        autofill: { title: "Smart Auto-fill", desc: "Scan profile & repositories." },
-        dragdrop: { title: "Drag & Drop UX", desc: "Fluid reordering of sections." },
-        livepreview: { title: "Live Preview", desc: "Instant feedback on every change." }
-      },
-      howItWorks: {
-        step1: { title: "1. Enter Username", desc: "Magic scanning begins." },
-        step2: { title: "2. Customize", desc: "Drag, drop, and style." },
-        step3: { title: "3. Copy & Paste", desc: "Your README is ready." }
-      }
-    },
-    tour: {
-      skip: "SKIP",
-      next: "NEXT",
-      finish: "FINISH",
-      step1: "START HERE: Enter your GitHub username to auto-fill your profile (or press Mod+K to focus).",
-      step2: "THE FLEX: Drag and drop to reorder your README sections.",
-      step3: "THE RESULT: Check the live preview. Shortcuts: Mod+C (Copy), Mod+S (Download), Mod+T (Theme), Mod+L (Language)."
     }
   },
   fr: {
@@ -185,6 +192,33 @@ export const translations = {
     themeLabel: "Thème",
     dark: "Sombre",
     light: "Clair",
+
+    landing: {
+      hero: {
+        tagline: "Le Générateur de README GitHub Ultime",
+        subtitle: "Concevez un profil professionnel en quelques secondes avec une automatisation intelligente et des cartes de stats magnifiques.",
+        cta: "Commencer maintenant"
+      },
+      features: {
+        autofill: { title: "Remplissage Magique", desc: "Récupérez vos données GitHub instantanément." },
+        dragdrop: { title: "Glisser-Déposer", desc: "Réorganisez les sections de votre profil facilement." },
+        livepreview: { title: "Prévisualisation Live", desc: "Voyez vos changements en temps réel pendant que vous construisez." }
+      },
+      howItWorks: {
+        step1: { title: "1. Pseudo", desc: "Entrez votre nom d'utilisateur GitHub." },
+        step2: { title: "2. Personnalisez", desc: "Choisissez votre stack et votre layout." },
+        step3: { title: "3. Exportez", desc: "Copiez le code sur votre profil." }
+      }
+    },
+
+    tour: {
+      skip: "Passer",
+      next: "Suivant",
+      finish: "Terminer",
+      step1: "Remplissage Magique : Commencez ici en entrant votre pseudo GitHub !",
+      step2: "Design Visuel : Personnalisez l'alignement, les couleurs et le style des badges.",
+      step3: "Ordre des Sections : Glissez-déposez pour organiser votre README comme vous le souhaitez."
+    },
     
     autofill: {
       label: "Onboarding Intelligent",
@@ -281,7 +315,13 @@ export const translations = {
       name: "Nom Complet",
       job: "Poste / Titre",
       bio: "Bio / Description",
-      placeholderBio: "Parlez de vous..."
+      placeholderBio: "Parlez de vous...",
+      workingOn: "Travaille actuellement sur",
+      learning: "Apprend",
+      collaboration: "Collabore sur",
+      askMeAbout: "Questions sur",
+      pronouns: "Pronoms",
+      funFact: "Anecdote"
     },
     
     skills: {
@@ -294,7 +334,7 @@ export const translations = {
     
     socials: {
       label: "Réseaux Sociaux & Contact",
-      help: "// Ces liens seront affichés dans une nouvelle section",
+      help: "// Ces liens seront affichés in a new section",
       linkedin: "LinkedIn",
       twitter: "Twitter / X",
       portfolio: "Portfolio",
@@ -325,32 +365,6 @@ export const translations = {
       download: "Télécharger",
       engine: "Moteur de rendu temps réel",
       source: "Vue Source Markdown"
-    },
-
-    landing: {
-      hero: {
-        tagline: "Le dernier générateur de profil GitHub dont vous aurez besoin.",
-        subtitle: "Concevez une marque de développeur exceptionnelle en quelques secondes.",
-        cta: "Commencer Gratuitement"
-      },
-      features: {
-        autofill: { title: "Auto-remplissage Intelligent", desc: "Scannez le profil et les dépôts." },
-        dragdrop: { title: "UX Glisser-Déposer", desc: "Réorganisation fluide des sections." },
-        livepreview: { title: "Aperçu en Direct", desc: "Retour instantané sur chaque changement." }
-      },
-      howItWorks: {
-        step1: { title: "1. Entre le nom d'utilisateur", desc: "Le scan magique commence." },
-        step2: { title: "2. Personnalisez", desc: "Glissez, déposez et stylisez." },
-        step3: { title: "3. Copiez & Collez", desc: "Votre README est prêt." }
-      }
-    },
-    tour: {
-      skip: "PASSER",
-      next: "SUIVANT",
-      finish: "TERMINER",
-      step1: "COMMENCE ICI : Entre ton pseudo GitHub pour auto-remplir ton profil (ou Mod+K).",
-      step2: "LA FLEX : Glisse-dépose pour réorganiser tes sections.",
-      step3: "LE RÉSULTAT : Vérifie l'aperçu. Raccourcis : Mod+C (Copier), Mod+S (Télécharger), Mod+T (Thème), Mod+L (Langue)."
     }
   }
 };

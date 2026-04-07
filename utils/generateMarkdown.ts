@@ -6,6 +6,12 @@ interface StoreData {
   name: string;
   title: string;
   description: string;
+  currentWork: string;
+  learning: string;
+  collaboration: string;
+  askMeAbout: string;
+  pronouns: string;
+  funFact: string;
   skills: string[];
   githubUsername: string;
   wakatimeUsername: string;
@@ -48,8 +54,9 @@ interface StoreData {
 export const generateMarkdown = (data: StoreData): string => {
   const { 
     name, title, description, skills, githubUsername, wakatimeUsername, wakatimeBadgeId, showWakatimeBadges, showVisitorCounter, featuredRepos,
-    showStatsCard, showStreakCard, showTopLanguages, showTrophies, showSnake, bannerUrl, spotifyUrl, rssUrl, 
-    typingText, typingColor, typingSize, typingDuration, typingPause,
+    showStatsCard, showStreakCard, showTopLanguages, showTrophies, showSnake, bannerUrl, spotifyUrl, rssUrl, typingText,
+    typingColor, typingSize, typingDuration, typingPause,
+    currentWork, learning, collaboration, askMeAbout, pronouns, funFact,
     theme, alignment, badgeStyle, statsAlign, sectionTitles, socials, donations, layout 
   } = data;
 
@@ -66,21 +73,29 @@ export const generateMarkdown = (data: StoreData): string => {
 
   const getTypingSection = () => {
     if (!typingText) return '';
-    
-    // Parse multi-line text into semi-colon separated lines
     const lines = typingText.split('\n').filter(l => l.trim() !== '').join(';');
     if (!lines) return '';
-
-    // Color: if not provided, default to a light gray for dark mode compatibility
     const color = typingColor || "F1F1F1";
-    
     const url = `https://readme-typing-svg.herokuapp.com?font=Fira+Code&size=${typingSize}&duration=${typingDuration}&pause=${typingPause}&color=${color}&center=${isCentered}&vCenter=true&width=435&lines=${encodeURIComponent(lines)}`;
     const content = `[![Typing SVG](${url})](https://git.io/typing-svg)`;
     return isCentered ? `<div align="center">\n\n${content}\n\n</div>` : content;
   };
 
   const getBioSection = () => {
-    const md = `# 👋 Hello, I'm ${name}\n\n## 🚀 ${title}\n\n${description}`;
+    let md = `# 👋 Hello, I'm ${name}\n\n## 🚀 ${title}\n\n${description}`;
+    
+    const extraInfo = [];
+    if (currentWork) extraInfo.push(`- 🔭 I’m currently working on **${currentWork}**`);
+    if (learning) extraInfo.push(`- 🌱 I’m currently learning **${learning}**`);
+    if (collaboration) extraInfo.push(`- 👯 I’m looking to collaborate on **${collaboration}**`);
+    if (askMeAbout) extraInfo.push(`- 💬 Ask me about **${askMeAbout}**`);
+    if (pronouns) extraInfo.push(`- 📫 How to reach me: **${pronouns}**`);
+    if (funFact) extraInfo.push(`- ⚡ Fun fact: **${funFact}**`);
+
+    if (extraInfo.length > 0) {
+      md += `\n\n${extraInfo.join('\n')}`;
+    }
+
     return isCentered ? `<div align="center">\n\n${md}\n\n</div>` : md;
   };
 

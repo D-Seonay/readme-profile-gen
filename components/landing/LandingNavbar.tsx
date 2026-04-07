@@ -1,5 +1,4 @@
 'use client';
-import { useTranslation } from '@/hooks/useTranslation';
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 import Link from 'next/link';
 
