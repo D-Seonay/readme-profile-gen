@@ -10,6 +10,7 @@ export const FollowersConfig = () => {
     showFollowers, toggleFollowers,
     showFollowing, toggleFollowing,
     followersMode, setFollowersMode,
+    followersLimit, setFollowersLimit,
     followersList, fetchSocialData,
     uiTheme 
   } = useReadmeStore();
@@ -58,12 +59,30 @@ export const FollowersConfig = () => {
         </div>
       </div>
 
-      <div className="space-y-3">
-        <label className={`text-[9px] font-mono uppercase tracking-wider ${isDark ? 'text-zinc-500' : 'text-zinc-400'}`}>{t.followers.mode}</label>
-        <div className={`flex p-1 rounded-xl border transition-colors ${isDark ? 'bg-zinc-900 border-zinc-800' : 'bg-zinc-100 border-zinc-200'}`}>
-          <button onClick={() => setFollowersMode('badges')} className={`flex-1 px-3 py-2 text-[10px] font-mono uppercase rounded-lg transition-all ${followersMode === 'badges' ? (isDark ? 'bg-zinc-100 text-zinc-950 shadow-sm' : 'bg-white text-zinc-950 shadow-sm') : (isDark ? 'text-zinc-500 hover:text-zinc-300' : 'text-zinc-400 hover:text-zinc-600')}`}>{t.followers.badges}</button>
-          <button onClick={() => setFollowersMode('list')} className={`flex-1 px-3 py-2 text-[10px] font-mono uppercase rounded-lg transition-all ${followersMode === 'list' ? (isDark ? 'bg-zinc-100 text-zinc-950 shadow-sm' : 'bg-white text-zinc-950 shadow-sm') : (isDark ? 'text-zinc-500 hover:text-zinc-300' : 'text-zinc-400 hover:text-zinc-600')}`}>{t.followers.list}</button>
-          <button onClick={() => setFollowersMode('grid')} className={`flex-1 px-3 py-2 text-[10px] font-mono uppercase rounded-lg transition-all ${followersMode === 'grid' ? (isDark ? 'bg-zinc-100 text-zinc-950 shadow-sm' : 'bg-white text-zinc-950 shadow-sm') : (isDark ? 'text-zinc-500 hover:text-zinc-300' : 'text-zinc-400 hover:text-zinc-600')}`}>{t.followers.grid}</button>
+      {/* Mode & Limit Grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 items-end">
+        <div className="space-y-3">
+          <label className={`text-[9px] font-mono uppercase tracking-wider ${isDark ? 'text-zinc-500' : 'text-zinc-400'}`}>{t.followers.mode}</label>
+          <div className={`flex p-1 rounded-xl border transition-colors ${isDark ? 'bg-zinc-900 border-zinc-800' : 'bg-zinc-100 border-zinc-200'}`}>
+            <button onClick={() => setFollowersMode('badges')} className={`flex-1 px-3 py-2 text-[10px] font-mono uppercase rounded-lg transition-all ${followersMode === 'badges' ? (isDark ? 'bg-zinc-100 text-zinc-950 shadow-sm' : 'bg-white text-zinc-950 shadow-sm') : (isDark ? 'text-zinc-500 hover:text-zinc-300' : 'text-zinc-400 hover:text-zinc-600')}`}>{t.followers.badges}</button>
+            <button onClick={() => setFollowersMode('list')} className={`flex-1 px-3 py-2 text-[10px] font-mono uppercase rounded-lg transition-all ${followersMode === 'list' ? (isDark ? 'bg-zinc-100 text-zinc-950 shadow-sm' : 'bg-white text-zinc-950 shadow-sm') : (isDark ? 'text-zinc-500 hover:text-zinc-300' : 'text-zinc-400 hover:text-zinc-600')}`}>{t.followers.list}</button>
+            <button onClick={() => setFollowersMode('grid')} className={`flex-1 px-3 py-2 text-[10px] font-mono uppercase rounded-lg transition-all ${followersMode === 'grid' ? (isDark ? 'bg-zinc-100 text-zinc-950 shadow-sm' : 'bg-white text-zinc-950 shadow-sm') : (isDark ? 'text-zinc-500 hover:text-zinc-300' : 'text-zinc-400 hover:text-zinc-600')}`}>{t.followers.grid}</button>
+          </div>
+        </div>
+
+        <div className="space-y-3">
+          <label className={`text-[9px] font-mono uppercase tracking-wider ${isDark ? 'text-zinc-500' : 'text-zinc-400'}`}>
+            {t.followers.limit} ({followersLimit})
+          </label>
+          <input
+            type="range"
+            min="5"
+            max="50"
+            step="5"
+            value={followersLimit}
+            onChange={(e) => setFollowersLimit(parseInt(e.target.value))}
+            className="w-full accent-indigo-500 h-1.5 bg-zinc-800 rounded-lg cursor-pointer"
+          />
         </div>
       </div>
     </div>

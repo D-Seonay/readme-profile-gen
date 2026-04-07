@@ -85,7 +85,8 @@ export const translations = {
       mode: "Display Style",
       badges: "Dynamic Badges",
       list: "Simple Links",
-      grid: "Avatar Grid"
+      grid: "Avatar Grid",
+      limit: "Max Items"
     },
 
     typing: {
@@ -281,7 +282,8 @@ export const translations = {
       mode: "Style d'affichage",
       badges: "Badges Dynamiques",
       list: "Liens Simples",
-      grid: "Grille d'Avatars"
+      grid: "Grille d'Avatars",
+      limit: "Nombre maximum"
     },
 
     typing: {

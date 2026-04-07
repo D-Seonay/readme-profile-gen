@@ -35,6 +35,7 @@ interface ReadmeState {
   showFollowers: boolean;
   showFollowing: boolean;
   followersMode: 'badges' | 'list' | 'grid';
+  followersLimit: number; // Nouveau: Limite d'affichage
   followersList: { login: string; avatar_url: string }[];
   followingList: { login: string; avatar_url: string }[];
 
@@ -108,6 +109,7 @@ interface ReadmeState {
   toggleFollowers: () => void;
   toggleFollowing: () => void;
   setFollowersMode: (mode: 'badges' | 'list' | 'grid') => void;
+  setFollowersLimit: (limit: number) => void;
 
   toggleSkill: (slug: string) => void;
   setGithubUsername: (username: string) => void;
@@ -163,6 +165,7 @@ const initialState = {
   showFollowers: false,
   showFollowing: false,
   followersMode: 'badges' as const,
+  followersLimit: 10,
   followersList: [],
   followingList: [],
   skills: [],
@@ -252,6 +255,12 @@ export const useReadmeStore = create<ReadmeState>()(
       toggleFollowers: () => set((state) => ({ showFollowers: !state.showFollowers })),
       toggleFollowing: () => set((state) => ({ showFollowing: !state.showFollowing })),
       setFollowersMode: (followersMode) => set({ followersMode }),
+      setFollowersLimit: (followersLimit) => {
+        set({ followersLimit });
+        // Refetch avec la nouvelle limite si un pseudo est présent
+        const { githubUsername, fetchSocialData } = get();
+        if (githubUsername) fetchSocialData(githubUsername);
+      },
 
       toggleSkill: (slug: string) => set((state) => ({
         skills: state.skills.includes(slug)
@@ -321,10 +330,11 @@ export const useReadmeStore = create<ReadmeState>()(
 
       fetchSocialData: async (username: string) => {
         if (!username) return;
+        const limit = get().followersLimit;
         try {
           const [followersRes, followingRes] = await Promise.all([
-            fetch(`https://api.github.com/users/${username}/followers?per_page=10`),
-            fetch(`https://api.github.com/users/${username}/following?per_page=10`)
+            fetch(`https://api.github.com/users/${username}/followers?per_page=${limit}`),
+            fetch(`https://api.github.com/users/${username}/following?per_page=${limit}`)
           ]);
           const followers: { login: string; avatar_url: string }[] = followersRes.ok ? await followersRes.json() : [];
           const following: { login: string; avatar_url: string }[] = followingRes.ok ? await followingRes.json() : [];
