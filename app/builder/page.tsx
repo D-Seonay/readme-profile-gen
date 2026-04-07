@@ -313,8 +313,19 @@ export default function Home() {
 
           {layout.map((sectionId) => renderSection(sectionId))}
 
-          <div className={`mt-8 mx-8 pt-8 border-t ${isDark ? 'border-zinc-800' : 'border-zinc-200'} opacity-20 pointer-events-none text-center`}>
-            <p className="text-xs font-mono italic">{"// End of Editor"}</p>
+          <div className={`mt-8 mx-8 pt-8 border-t ${isDark ? 'border-zinc-800' : 'border-zinc-200'} flex flex-col items-center gap-4`}>
+            <a 
+              href="https://github.com/D-Seonay/readme-profile-gen/issues/new" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className={`flex items-center gap-2 text-[10px] font-mono uppercase tracking-widest transition-colors ${isDark ? 'text-zinc-600 hover:text-indigo-400' : 'text-zinc-400 hover:text-indigo-600'}`}
+            >
+              <svg className="w-3 h-3" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                <path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+              Report Bug / Request Idea
+            </a>
+            <p className="text-xs font-mono italic opacity-20 pointer-events-none">{"// End of Editor"}</p>
           </div>
         </div>
       </section>
