@@ -124,7 +124,9 @@ export const generateMarkdown = (data: StoreData): string => {
       let html = '<table>\n  <tr>\n';
       list.forEach((user, index) => {
         if (index > 0 && index % 5 === 0) html += '  </tr>\n  <tr>\n';
-        html += `    <td align="center">\n      <a href="https://github.com/${user.login}">\n        <img src="${user.avatar_url}" width="50px;" alt="${user.login}" style="border-radius:50%"/>\n      </a>\n    </td>\n`;
+        // Utilisation de weserv.nl pour forcer le masque circulaire (mask=circle)
+        const proxyAvatarUrl = `https://images.weserv.nl/?url=${encodeURIComponent(user.avatar_url)}&mask=circle&w=50&h=50`;
+        html += `    <td align="center">\n      <a href="https://github.com/${user.login}">\n        <img src="${proxyAvatarUrl}" width="50px;" alt="${user.login}"/>\n      </a>\n    </td>\n`;
       });
       html += '  </tr>\n</table>';
       return html;
