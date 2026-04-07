@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useMemo } from 'react';
 import { useReadmeStore, SectionId } from '@/store/useReadmeStore';
 import { useHydration } from '@/hooks/useHydration';
 import { useTranslation } from '@/hooks/useTranslation';
@@ -33,12 +33,15 @@ export default function Home() {
   const previewRef = useRef<PreviewPaneHandle>(null);
   const onboardingInputRef = useRef<HTMLInputElement>(null);
   
-  // Activer les raccourcis clavier
-  useKeyboardShortcuts({
+  // Options de raccourcis mémoïsées pour la stabilité
+  const shortcutOptions = useMemo(() => ({
     onCopy: () => previewRef.current?.handleCopy(),
     onDownload: () => previewRef.current?.handleDownload(),
     onFocusOnboarding: () => onboardingInputRef.current?.focus(),
-  });
+  }), []);
+
+  // Activer les raccourcis clavier
+  useKeyboardShortcuts(shortcutOptions);
 
   const { 
     name, title, description, setName, setTitle, setDescription, reset, 
@@ -281,7 +284,7 @@ export default function Home() {
 
         <div className="pb-20">
           <div className="px-8 mb-8 mt-4">
-            <GithubProfileFetcher />
+            <GithubProfileFetcher ref={onboardingInputRef} />
           </div>
 
           <CollapsibleSection title={t.style.label} subtitle={t.style.help}>
@@ -300,7 +303,7 @@ export default function Home() {
         </div>
       </section>
 
-      <PreviewPane />
+      <PreviewPane ref={previewRef} />
     </main>
   );
 }

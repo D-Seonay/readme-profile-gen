@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useReadmeStore } from '@/store/useReadmeStore';
 
 interface ShortcutOptions {
@@ -9,6 +9,14 @@ interface ShortcutOptions {
 
 export const useKeyboardShortcuts = (options: ShortcutOptions = {}) => {
   const { toggleUITheme, setLanguage, language } = useReadmeStore();
+  
+  // Utiliser une ref pour les options afin d'éviter de redéclencher l'effet inutilement
+  // tout en ayant toujours accès aux dernières versions des fonctions
+  const optionsRef = useRef(options);
+  
+  useEffect(() => {
+    optionsRef.current = options;
+  }, [options]);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -19,8 +27,8 @@ export const useKeyboardShortcuts = (options: ShortcutOptions = {}) => {
       const key = e.key.toLowerCase();
       const isCmdOrCtrl = e.metaKey || e.ctrlKey;
 
-      // Global shortcuts (even when typing?) - usually no, except for save/copy
-      if (isInput && key !== 'enter' && key !== 's') return;
+      // Global shortcuts
+      if (isInput && key !== 'enter' && key !== 's' && key !== 'k') return;
 
       // CMD/CTRL + T to toggle theme
       if (isCmdOrCtrl && key === 't' && !isInput) {
@@ -34,27 +42,20 @@ export const useKeyboardShortcuts = (options: ShortcutOptions = {}) => {
         setLanguage(language === 'en' ? 'fr' : 'en');
       }
 
-      // CMD/CTRL + C to copy (if custom handler provided)
-      if (isCmdOrCtrl && key === 'c' && !isInput && options.onCopy) {
-        // We don't preventDefault here to allow normal copying elsewhere if needed
-        // but we trigger our success toast/logic
-        options.onCopy();
-      }
-
       // CMD/CTRL + S to download
       if (isCmdOrCtrl && key === 's') {
         e.preventDefault();
-        options.onDownload?.();
+        optionsRef.current.onDownload?.();
       }
 
       // CMD/CTRL + K to focus search/onboarding
       if (isCmdOrCtrl && key === 'k') {
         e.preventDefault();
-        options.onFocusOnboarding?.();
+        optionsRef.current.onFocusOnboarding?.();
       }
     };
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [toggleUITheme, setLanguage, language, options]);
+  }, [toggleUITheme, setLanguage, language]);
 };
