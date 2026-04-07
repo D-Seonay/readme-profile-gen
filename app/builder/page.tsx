@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useRef, useState, useMemo } from 'react';
+import React, { useRef, useState, useMemo, useEffect } from 'react';
 import { useReadmeStore, SectionId } from '@/store/useReadmeStore';
 import { useHydration } from '@/hooks/useHydration';
 import { useTranslation } from '@/hooks/useTranslation';
@@ -22,6 +22,7 @@ import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 import { ThemeSwitcher } from '@/components/ThemeSwitcher';
 import { CollapsibleSection } from '@/components/CollapsibleSection';
 import { ConfirmModal } from '@/components/ConfirmModal';
+import { OnboardingTour } from '@/components/OnboardingTour';
 import { useKeyboardShortcuts } from '@/hooks/useKeyboardShortcuts';
 import { toast } from 'sonner';
 
@@ -48,8 +49,15 @@ export default function Home() {
     currentWork, setCurrentWork, learning, setLearning,
     collaboration, setCollaboration, askMeAbout, setAskMeAbout,
     pronouns, setPronouns, funFact, setFunFact,
-    layout, sectionTitles, uiTheme 
+    layout, sectionTitles, uiTheme, hasCompletedTour, startTour
   } = store;
+
+  // Déclencher le tour d'onboarding au premier chargement si non complété
+  useEffect(() => {
+    if (hydrated && !hasCompletedTour) {
+      startTour();
+    }
+  }, [hydrated, hasCompletedTour, startTour]);
 
   const [isResetModalOpen, setIsResetModalOpen] = useState(false);
 
@@ -250,6 +258,7 @@ export default function Home() {
         confirmText={t.resetBtn}
         cancelText={language === 'fr' ? "Annuler" : "Cancel"}
       />
+      <OnboardingTour />
       <section className={`w-1/2 h-full flex flex-col border-r ${isDark ? 'border-zinc-800 bg-zinc-900/50' : 'border-zinc-200 bg-white/80'} backdrop-blur-sm overflow-y-auto custom-scrollbar`}>
         <header className="p-8 pb-4 flex items-start justify-between">
           <div>

@@ -29,6 +29,7 @@ interface ReadmeState {
   // Tour
   isTourActive: boolean;
   currentTourStep: number;
+  hasCompletedTour: boolean;
 
   skills: string[];
   githubUsername: string;
@@ -118,9 +119,9 @@ interface ReadmeState {
   toggleTrophies: () => void;
   toggleSnake: () => void;
   setTheme: (theme: string) => void;
-  setSkillsViewMode: (mode: 'grouped' | 'flat') => void;
+  setSkillsViewMode: (skillsViewMode: 'grouped' | 'flat') => void;
   setAlignment: (alignment: 'left' | 'center') => void;
-  setBadgeStyle: (style: BadgeStyle) => void;
+  setBadgeStyle: (badgeStyle: BadgeStyle) => void;
   setStatsAlign: (align: 'column' | 'row') => void;
   setSectionTitle: (id: SectionId, title: string) => void;
   setSocial: (platform: keyof ReadmeState['socials'], value: string) => void;
@@ -145,6 +146,7 @@ const initialState = {
   funFact: '',
   isTourActive: false,
   currentTourStep: 0,
+  hasCompletedTour: false,
   skills: [],
   githubUsername: '',
   wakatimeUsername: '',
@@ -225,7 +227,7 @@ export const useReadmeStore = create<ReadmeState>()(
       setFunFact: (funFact: string) => set({ funFact }),
 
       setTourStep: (currentTourStep: number) => set({ currentTourStep }),
-      completeTour: () => set({ isTourActive: false, currentTourStep: 0 }),
+      completeTour: () => set({ isTourActive: false, currentTourStep: 0, hasCompletedTour: true }),
       startTour: () => set({ isTourActive: true, currentTourStep: 0 }),
 
       toggleSkill: (slug: string) => set((state) => ({
