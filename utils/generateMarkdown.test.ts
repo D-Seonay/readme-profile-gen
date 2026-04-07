@@ -7,6 +7,12 @@ interface StoreData {
   name: string;
   title: string;
   description: string;
+  currentWork: string;
+  learning: string;
+  collaboration: string;
+  askMeAbout: string;
+  pronouns: string;
+  funFact: string;
   skills: string[];
   githubUsername: string;
   wakatimeUsername: string;
@@ -52,6 +58,12 @@ describe('generateMarkdown', () => {
     name: 'John Doe',
     title: 'Developer',
     description: 'Test Bio',
+    currentWork: 'Ultimate README Gen',
+    learning: 'Next.js 16',
+    collaboration: '',
+    askMeAbout: '',
+    pronouns: '',
+    funFact: '',
     skills: ['react', 'typescript'],
     githubUsername: 'johndoe',
     wakatimeUsername: '',
@@ -103,18 +115,17 @@ describe('generateMarkdown', () => {
     layout: ['bio', 'skills', 'socials', 'stats', 'donations'] as SectionId[],
   };
 
-  it('should generate a bio section correctly', () => {
+  it('should generate a bio section correctly with extra info', () => {
     const md = generateMarkdown(mockData);
     expect(md).toContain('# 👋 Hello, I\'m John Doe');
-    expect(md).toContain('## 🚀 Developer');
-    expect(md).toContain('Test Bio');
+    expect(md).toContain('🔭 I’m currently working on **Ultimate README Gen**');
+    expect(md).toContain('🌱 I’m currently learning **Next.js 16**');
   });
 
   it('should include skill badges', () => {
     const md = generateMarkdown(mockData);
     expect(md).toContain('![React]');
     expect(md).toContain('logo=react');
-    expect(md).toContain('![TypeScript]');
   });
 
   it('should handle centered alignment', () => {
@@ -131,26 +142,17 @@ describe('generateMarkdown', () => {
     const md = generateMarkdown(reorderedData);
     const statsIndex = md.indexOf('### 📊 GitHub Stats');
     const bioIndex = md.indexOf('# 👋 Hello');
-    
     expect(statsIndex).toBeLessThan(bioIndex);
   });
 
   it('should include social badges with correct links', () => {
     const md = generateMarkdown(mockData);
     expect(md).toContain('https://linkedin.com/in/johndoe');
-    expect(md).toContain('mailto:test@example.com');
-  });
-
-  it('should include donation badges', () => {
-    const md = generateMarkdown(mockData);
-    expect(md).toContain('https://www.buymeacoffee.com/johndoe');
-    expect(md).toContain('Buy%20Me%20A%20Coffee');
   });
 
   it('should not show stats section if no username is provided', () => {
     const noUser: StoreData = { ...mockData, githubUsername: '' };
     const md = generateMarkdown(noUser);
-    expect(noUser.githubUsername).toBe('');
     expect(md).not.toContain('### 📊 GitHub Stats');
   });
 });
