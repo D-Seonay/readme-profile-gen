@@ -121,15 +121,13 @@ export const generateMarkdown = (data: StoreData): string => {
     
     const generateHtmlGrid = (list: { login: string; avatar_url: string }[]) => {
       if (list.length === 0) return '_No data found._';
-      let html = '<table border="0">\n  <tr>\n';
-      list.forEach((user, index) => {
-        if (index > 0 && index % 10 === 0) html += '  </tr>\n  <tr>\n';
-        // Utilisation de weserv.nl pour forcer le masque circulaire (mask=circle)
+      
+      // On aligne simplement les images les unes à côté des autres
+      // GitHub gère très bien le retour à la ligne automatique
+      return list.map((user) => {
         const proxyAvatarUrl = `https://images.weserv.nl/?url=${encodeURIComponent(user.avatar_url)}&mask=circle&w=50&h=50`;
-        html += `    <td align="center" border="0">\n      <a href="https://github.com/${user.login}">\n        <img src="${proxyAvatarUrl}" width="50px;" alt="${user.login}"/>\n      </a>\n    </td>\n`;
-      });
-      html += '  </tr>\n</table>';
-      return html;
+        return `<a href="https://github.com/${user.login}"><img src="${proxyAvatarUrl}" width="50px" alt="${user.login}" /></a>`;
+      }).join(' ');
     };
 
     const sections = [];
