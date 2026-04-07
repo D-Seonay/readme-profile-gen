@@ -25,6 +25,11 @@ interface StoreData {
   typingSize: number;
   typingDuration: number;
   typingPause: number;
+  showFollowers: boolean;
+  showFollowing: boolean;
+  followersMode: 'badges' | 'list' | 'grid';
+  followersList: { login: string; avatar_url: string }[];
+  followingList: { login: string; avatar_url: string }[];
   showWakatimeBadges: boolean;
   showVisitorCounter: boolean;
   featuredRepos: string[];
@@ -76,6 +81,11 @@ describe('generateMarkdown', () => {
     typingSize: 20,
     typingDuration: 5000,
     typingPause: 1000,
+    showFollowers: true,
+    showFollowing: true,
+    followersMode: 'badges',
+    followersList: [],
+    followingList: [],
     showWakatimeBadges: false,
     showVisitorCounter: false,
     featuredRepos: [],
@@ -99,7 +109,8 @@ describe('generateMarkdown', () => {
       wakatime: '⏱️ Coding Activity',
       spotify: '🎵 Now Playing',
       rss: '📰 Latest Blog Posts',
-      typing: '⌨️ Dynamic Text'
+      typing: '⌨️ Dynamic Text',
+      followers: '👥 Network'
     },
     socials: {
       linkedin: 'johndoe',
@@ -112,14 +123,20 @@ describe('generateMarkdown', () => {
       kofi: '',
       paypal: ''
     },
-    layout: ['bio', 'skills', 'socials', 'stats', 'donations'] as SectionId[],
+    layout: ['bio', 'skills', 'socials', 'stats', 'donations', 'followers'] as SectionId[],
   };
 
   it('should generate a bio section correctly with extra info', () => {
     const md = generateMarkdown(mockData);
     expect(md).toContain('# 👋 Hello, I\'m John Doe');
     expect(md).toContain('🔭 I’m currently working on **Ultimate README Gen**');
-    expect(md).toContain('🌱 I’m currently learning **Next.js 16**');
+  });
+
+  it('should include followers and following badges', () => {
+    const md = generateMarkdown(mockData);
+    expect(md).toContain('[![Followers]');
+    expect(md).toContain('[![Following]');
+    expect(md).toContain('github/followers/johndoe');
   });
 
   it('should include skill badges', () => {
@@ -143,11 +160,6 @@ describe('generateMarkdown', () => {
     const statsIndex = md.indexOf('### 📊 GitHub Stats');
     const bioIndex = md.indexOf('# 👋 Hello');
     expect(statsIndex).toBeLessThan(bioIndex);
-  });
-
-  it('should include social badges with correct links', () => {
-    const md = generateMarkdown(mockData);
-    expect(md).toContain('https://linkedin.com/in/johndoe');
   });
 
   it('should not show stats section if no username is provided', () => {

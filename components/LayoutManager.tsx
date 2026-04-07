@@ -91,7 +91,8 @@ export const LayoutManager = () => {
     wakatime: t.layout.wakatime,
     spotify: t.layout.spotify,
     rss: t.layout.rss,
-    typing: t.layout.typing
+    typing: t.layout.typing,
+    followers: t.layout.followers
   };
 
   const isSectionUsed = (id: SectionId) => {
@@ -107,6 +108,7 @@ export const LayoutManager = () => {
       case 'spotify': return !!store.spotifyUrl;
       case 'rss': return !!store.rssUrl;
       case 'typing': return !!store.typingText;
+      case 'followers': return !!(store.githubUsername && (store.showFollowers || store.showFollowing));
       default: return false;
     }
   };

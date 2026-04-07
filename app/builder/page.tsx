@@ -14,6 +14,7 @@ import { BannerConfig } from '@/components/BannerConfig';
 import { TypingConfig } from '@/components/TypingConfig';
 import { SpotifyConfig } from '@/components/SpotifyConfig';
 import { RssConfig } from '@/components/RssConfig';
+import { FollowersConfig } from '@/components/FollowersConfig';
 import { LayoutManager } from '@/components/LayoutManager';
 import { StyleConfig } from '@/components/StyleConfig';
 import { PreviewPane, PreviewPaneHandle } from '@/components/PreviewPane';
@@ -228,6 +229,12 @@ export default function Home() {
         return (
           <CollapsibleSection key={id} title={sectionTitles.rss || t.layout.rss} subtitle={t.rss.help}>
             <RssConfig />
+          </CollapsibleSection>
+        );
+      case 'followers':
+        return (
+          <CollapsibleSection key={id} title={sectionTitles.followers || t.layout.followers} subtitle={t.followers.help}>
+            <FollowersConfig />
           </CollapsibleSection>
         );
       case 'socials':

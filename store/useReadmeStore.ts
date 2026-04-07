@@ -3,13 +3,13 @@ import { persist, createJSONStorage } from 'zustand/middleware';
 import { arrayMove } from '@dnd-kit/sortable';
 import { skillsData } from '@/lib/skillsData';
 
-export type SectionId = 'banner' | 'bio' | 'skills' | 'socials' | 'stats' | 'donations' | 'projects' | 'wakatime' | 'spotify' | 'rss' | 'typing';
+export type SectionId = 'banner' | 'bio' | 'skills' | 'socials' | 'stats' | 'donations' | 'projects' | 'wakatime' | 'spotify' | 'rss' | 'typing' | 'followers';
 export type ServiceStatus = 'checking' | 'online' | 'offline';
 export type BadgeStyle = 'for-the-badge' | 'flat' | 'flat-square' | 'plastic' | 'social';
 export type Language = 'en' | 'fr';
 export type UITheme = 'dark' | 'light';
 
-const DEFAULT_LAYOUT: SectionId[] = ['banner', 'bio', 'skills', 'socials', 'stats', 'donations', 'projects', 'wakatime', 'spotify', 'rss', 'typing'];
+const DEFAULT_LAYOUT: SectionId[] = ['banner', 'typing', 'bio', 'skills', 'socials', 'stats', 'donations', 'projects', 'wakatime', 'spotify', 'rss', 'followers'];
 
 interface ReadmeState {
   language: Language;
@@ -30,6 +30,14 @@ interface ReadmeState {
   isTourActive: boolean;
   currentTourStep: number;
   hasCompletedTour: boolean;
+
+  // Social Stats
+  showFollowers: boolean;
+  showFollowing: boolean;
+  followersMode: 'badges' | 'list' | 'grid';
+  followersLimit: number; // Nouveau: Limite d'affichage
+  followersList: { login: string; avatar_url: string }[];
+  followingList: { login: string; avatar_url: string }[];
 
   skills: string[];
   githubUsername: string;
@@ -97,6 +105,12 @@ interface ReadmeState {
   completeTour: () => void;
   startTour: () => void;
 
+  // Social Stats Actions
+  toggleFollowers: () => void;
+  toggleFollowing: () => void;
+  setFollowersMode: (mode: 'badges' | 'list' | 'grid') => void;
+  setFollowersLimit: (limit: number) => void;
+
   toggleSkill: (slug: string) => void;
   setGithubUsername: (username: string) => void;
   setWakatimeUsername: (username: string) => void;
@@ -119,9 +133,9 @@ interface ReadmeState {
   toggleTrophies: () => void;
   toggleSnake: () => void;
   setTheme: (theme: string) => void;
-  setSkillsViewMode: (skillsViewMode: 'grouped' | 'flat') => void;
+  setSkillsViewMode: (mode: 'grouped' | 'flat') => void;
   setAlignment: (alignment: 'left' | 'center') => void;
-  setBadgeStyle: (badgeStyle: BadgeStyle) => void;
+  setBadgeStyle: (style: BadgeStyle) => void;
   setStatsAlign: (align: 'column' | 'row') => void;
   setSectionTitle: (id: SectionId, title: string) => void;
   setSocial: (platform: keyof ReadmeState['socials'], value: string) => void;
@@ -129,6 +143,7 @@ interface ReadmeState {
   reorderLayout: (activeId: SectionId, overId: SectionId) => void;
   checkServicesHealth: () => Promise<void>;
   fetchGithubUserData: (username: string) => Promise<void>;
+  fetchSocialData: (username: string) => Promise<void>; // Nouvelle action
   reset: () => void;
 }
 
@@ -147,6 +162,12 @@ const initialState = {
   isTourActive: false,
   currentTourStep: 0,
   hasCompletedTour: false,
+  showFollowers: false,
+  showFollowing: false,
+  followersMode: 'badges' as const,
+  followersLimit: 10,
+  followersList: [],
+  followingList: [],
   skills: [],
   githubUsername: '',
   wakatimeUsername: '',
@@ -162,9 +183,9 @@ const initialState = {
   showWakatimeBadges: false,
   showVisitorCounter: false,
   featuredRepos: [],
-  showStatsCard: true,
+  showStatsCard: false,
   showStreakCard: false,
-  showTopLanguages: true,
+  showTopLanguages: false,
   showTrophies: false,
   showSnake: false,
   theme: 'transparent',
@@ -183,7 +204,8 @@ const initialState = {
     wakatime: '⏱️ Coding Activity',
     spotify: '🎵 Now Playing',
     rss: '📰 Latest Blog Posts',
-    typing: '⌨️ Dynamic Text'
+    typing: '⌨️ Dynamic Text',
+    followers: '👥 Network'
   },
   socials: {
     linkedin: '',
@@ -209,7 +231,7 @@ const initialState = {
 
 export const useReadmeStore = create<ReadmeState>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       ...initialState,
 
       setLanguage: (language: Language) => set({ language }),
@@ -229,6 +251,16 @@ export const useReadmeStore = create<ReadmeState>()(
       setTourStep: (currentTourStep: number) => set({ currentTourStep }),
       completeTour: () => set({ isTourActive: false, currentTourStep: 0, hasCompletedTour: true }),
       startTour: () => set({ isTourActive: true, currentTourStep: 0 }),
+
+      toggleFollowers: () => set((state) => ({ showFollowers: !state.showFollowers })),
+      toggleFollowing: () => set((state) => ({ showFollowing: !state.showFollowing })),
+      setFollowersMode: (followersMode) => set({ followersMode }),
+      setFollowersLimit: (followersLimit) => {
+        set({ followersLimit });
+        // Refetch avec la nouvelle limite si un pseudo est présent
+        const { githubUsername, fetchSocialData } = get();
+        if (githubUsername) fetchSocialData(githubUsername);
+      },
 
       toggleSkill: (slug: string) => set((state) => ({
         skills: state.skills.includes(slug)
@@ -296,11 +328,33 @@ export const useReadmeStore = create<ReadmeState>()(
         set({ servicesStatus: { stats, streak, trophies, wakatime } });
       },
 
+      fetchSocialData: async (username: string) => {
+        if (!username) return;
+        const limit = get().followersLimit;
+        try {
+          const [followersRes, followingRes] = await Promise.all([
+            fetch(`https://api.github.com/users/${username}/followers?per_page=${limit}`),
+            fetch(`https://api.github.com/users/${username}/following?per_page=${limit}`)
+          ]);
+          const followers: { login: string; avatar_url: string }[] = followersRes.ok ? await followersRes.json() : [];
+          const following: { login: string; avatar_url: string }[] = followingRes.ok ? await followingRes.json() : [];
+          set({ 
+            followersList: followers.map((f) => ({ login: f.login, avatar_url: f.avatar_url })),
+            followingList: following.map((f) => ({ login: f.login, avatar_url: f.avatar_url }))
+          });
+        } catch (e) {
+          console.error("Error fetching social data", e);
+        }
+      },
+
       fetchGithubUserData: async (username: string) => {
         if (!username) return;
         set({ isLoadingGithubData: true, githubFetchError: null });
         
         try {
+          // Utiliser l'action fetchSocialData définie juste au dessus
+          get().fetchSocialData(username);
+
           const [userRes, socialsRes, readmeRes] = await Promise.all([
             fetch(`https://api.github.com/users/${username}`),
             fetch(`https://api.github.com/users/${username}/social_accounts`),

@@ -73,7 +73,20 @@ export const translations = {
       wakatime: "⏱️ WakaTime Activity",
       spotify: "🎵 Spotify Activity",
       rss: "📰 Latest Blog Posts",
-      typing: "⌨️ Dynamic Typing Text"
+      typing: "⌨️ Dynamic Typing Text",
+      followers: "👥 Network & Followers"
+    },
+
+    followers: {
+      label: "Followers & Network",
+      help: "// Show your GitHub community growth",
+      showFollowers: "Show Followers",
+      showFollowing: "Show Following",
+      mode: "Display Style",
+      badges: "Dynamic Badges",
+      list: "Simple Links",
+      grid: "Avatar Grid",
+      limit: "Max Items"
     },
 
     typing: {
@@ -257,7 +270,20 @@ export const translations = {
       wakatime: "⏱️ Activité WakaTime",
       spotify: "🎵 Musique Spotify",
       rss: "📰 Derniers Articles",
-      typing: "⌨️ Texte Animé (Typing)"
+      typing: "⌨️ Texte Animé (Typing)",
+      followers: "👥 Réseau & Followers"
+    },
+
+    followers: {
+      label: "Followers & Réseau",
+      help: "// Affichez la croissance de votre communauté",
+      showFollowers: "Afficher Followers",
+      showFollowing: "Afficher Following",
+      mode: "Style d'affichage",
+      badges: "Badges Dynamiques",
+      list: "Liens Simples",
+      grid: "Grille d'Avatars",
+      limit: "Nombre maximum"
     },
 
     typing: {
