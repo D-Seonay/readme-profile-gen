@@ -84,7 +84,8 @@ export const translations = {
       showFollowing: "Show Following",
       mode: "Display Style",
       badges: "Dynamic Badges",
-      list: "Simple Links"
+      list: "Simple Links",
+      grid: "Avatar Grid"
     },
 
     typing: {
@@ -279,7 +280,8 @@ export const translations = {
       showFollowing: "Afficher Following",
       mode: "Style d'affichage",
       badges: "Badges Dynamiques",
-      list: "Liens Simples"
+      list: "Liens Simples",
+      grid: "Grille d'Avatars"
     },
 
     typing: {

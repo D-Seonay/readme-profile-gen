@@ -34,7 +34,7 @@ interface ReadmeState {
   // Social Stats
   showFollowers: boolean;
   showFollowing: boolean;
-  followersMode: 'badges' | 'list'; // 'badges' for shields.io, 'list' for text links
+  followersMode: 'badges' | 'list' | 'grid'; // 'badges' for shields.io, 'list' for text links, 'grid' for avatars
 
   skills: string[];
   githubUsername: string;
@@ -105,7 +105,7 @@ interface ReadmeState {
   // Social Stats Actions
   toggleFollowers: () => void;
   toggleFollowing: () => void;
-  setFollowersMode: (mode: 'badges' | 'list') => void;
+  setFollowersMode: (mode: 'badges' | 'list' | 'grid') => void;
 
   toggleSkill: (slug: string) => void;
   setGithubUsername: (username: string) => void;

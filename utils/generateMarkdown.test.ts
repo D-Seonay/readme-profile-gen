@@ -27,7 +27,7 @@ interface StoreData {
   typingPause: number;
   showFollowers: boolean;
   showFollowing: boolean;
-  followersMode: 'badges' | 'list';
+  followersMode: 'badges' | 'list' | 'grid';
   showWakatimeBadges: boolean;
   showVisitorCounter: boolean;
   featuredRepos: string[];

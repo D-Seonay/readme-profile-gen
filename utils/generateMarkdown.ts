@@ -26,7 +26,7 @@ interface StoreData {
   typingPause: number;
   showFollowers: boolean;
   showFollowing: boolean;
-  followersMode: 'badges' | 'list';
+  followersMode: 'badges' | 'list' | 'grid';
   showWakatimeBadges: boolean;
   showVisitorCounter: boolean;
   featuredRepos: string[];
@@ -120,19 +120,25 @@ export const generateMarkdown = (data: StoreData): string => {
     if (showFollowers) {
       if (followersMode === 'badges') {
         badges.push(`[![Followers](https://img.shields.io/github/followers/${githubUsername}?label=Followers&style=${badgeStyle}&color=0e7afe)](https://github.com/${githubUsername}?tab=followers)`);
-      } else {
+      } else if (followersMode === 'list') {
         badges.push(`[**${data.language === 'fr' ? 'Mes Abonnés' : 'My Followers'}**](https://github.com/${githubUsername}?tab=followers)`);
+      } else {
+        // Avatar Grid Mode
+        badges.push(`[![Followers Grid](https://github-readme-follower-list.vercel.app/api/?username=${githubUsername}&limit=10&per_line=5)](https://github.com/${githubUsername}?tab=followers)`);
       }
     }
     if (showFollowing) {
       if (followersMode === 'badges') {
         const followingUrl = encodeURIComponent(`https://api.github.com/users/${githubUsername}`);
         badges.push(`[![Following](https://img.shields.io/badge/dynamic/json?color=0e7afe&label=Following&query=following&url=${followingUrl}&style=${badgeStyle})](https://github.com/${githubUsername}?tab=following)`);
-      } else {
+      } else if (followersMode === 'list') {
         badges.push(`[**${data.language === 'fr' ? 'Mes Abonnements' : 'Following'}**](https://github.com/${githubUsername}?tab=following)`);
+      } else {
+        // Note: The API usually focus on followers, we reuse it or link it
+        badges.push(`[**${data.language === 'fr' ? 'Voir mes Abonnements' : 'View Following'}**](https://github.com/${githubUsername}?tab=following)`);
       }
     }
-    const content = badges.join(' ');
+    const content = badges.join('\n\n');
     return isCentered ? `<div align="center">\n\n${titleMd}${content}\n\n</div>` : `${titleMd}${content}`;
   };
 

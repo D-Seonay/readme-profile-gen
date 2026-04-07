@@ -77,6 +77,14 @@ export const FollowersConfig = () => {
           >
             {t.followers.list}
           </button>
+          <button
+            onClick={() => setFollowersMode('grid')}
+            className={`flex-1 px-3 py-2 text-[10px] font-mono uppercase rounded-lg transition-all ${
+              followersMode === 'grid' ? (isDark ? 'bg-zinc-100 text-zinc-950 shadow-sm' : 'bg-white text-zinc-950 shadow-sm') : (isDark ? 'text-zinc-500 hover:text-zinc-300' : 'text-zinc-400 hover:text-zinc-600')
+            }`}
+          >
+            {t.followers.grid}
+          </button>
         </div>
       </div>
     </div>
