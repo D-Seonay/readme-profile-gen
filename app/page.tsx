@@ -43,7 +43,7 @@ export default function LandingPage() {
         </div>
         
         <div className="flex flex-wrap justify-center gap-8 mb-12">
-          <a href="https://github.com/D-Seonay/ultimate-readme-gen" target="_blank" rel="noopener noreferrer" className={`text-[10px] font-mono uppercase tracking-[0.2em] transition-colors ${isDark ? 'text-zinc-500 hover:text-indigo-400' : 'text-zinc-400 hover:text-indigo-600'}`}>
+          <a href="https://github.com/D-Seonay/readme-profile-gen" target="_blank" rel="noopener noreferrer" className={`text-[10px] font-mono uppercase tracking-[0.2em] transition-colors ${isDark ? 'text-zinc-500 hover:text-indigo-400' : 'text-zinc-400 hover:text-indigo-600'}`}>
             Source_Code
           </a>
           <a href="https://matheodelaunay.studio" target="_blank" rel="noopener noreferrer" className={`text-[10px] font-mono uppercase tracking-[0.2em] transition-colors ${isDark ? 'text-zinc-500 hover:text-indigo-400' : 'text-zinc-400 hover:text-indigo-600'}`}>
