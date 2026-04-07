@@ -42,6 +42,12 @@ export const useKeyboardShortcuts = (options: ShortcutOptions = {}) => {
         setLanguage(language === 'en' ? 'fr' : 'en');
       }
 
+      // CMD/CTRL + C to copy markdown
+      if (isCmdOrCtrl && key === 'c' && !isInput) {
+        e.preventDefault();
+        optionsRef.current.onCopy?.();
+      }
+
       // CMD/CTRL + S to download
       if (isCmdOrCtrl && key === 's') {
         e.preventDefault();
