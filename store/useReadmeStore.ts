@@ -3,13 +3,13 @@ import { persist, createJSONStorage } from 'zustand/middleware';
 import { arrayMove } from '@dnd-kit/sortable';
 import { skillsData } from '@/lib/skillsData';
 
-export type SectionId = 'banner' | 'bio' | 'skills' | 'socials' | 'stats' | 'donations' | 'projects' | 'wakatime' | 'spotify' | 'rss' | 'typing';
+export type SectionId = 'banner' | 'bio' | 'skills' | 'socials' | 'stats' | 'donations' | 'projects' | 'wakatime' | 'spotify' | 'rss' | 'typing' | 'followers';
 export type ServiceStatus = 'checking' | 'online' | 'offline';
 export type BadgeStyle = 'for-the-badge' | 'flat' | 'flat-square' | 'plastic' | 'social';
 export type Language = 'en' | 'fr';
 export type UITheme = 'dark' | 'light';
 
-const DEFAULT_LAYOUT: SectionId[] = ['banner', 'bio', 'skills', 'socials', 'stats', 'donations', 'projects', 'wakatime', 'spotify', 'rss', 'typing'];
+const DEFAULT_LAYOUT: SectionId[] = ['banner', 'typing', 'bio', 'skills', 'socials', 'stats', 'donations', 'projects', 'wakatime', 'spotify', 'rss', 'followers'];
 
 interface ReadmeState {
   language: Language;
@@ -30,6 +30,11 @@ interface ReadmeState {
   isTourActive: boolean;
   currentTourStep: number;
   hasCompletedTour: boolean;
+
+  // Social Stats
+  showFollowers: boolean;
+  showFollowing: boolean;
+  followersMode: 'badges' | 'list'; // 'badges' for shields.io, 'list' for text links
 
   skills: string[];
   githubUsername: string;
@@ -97,6 +102,11 @@ interface ReadmeState {
   completeTour: () => void;
   startTour: () => void;
 
+  // Social Stats Actions
+  toggleFollowers: () => void;
+  toggleFollowing: () => void;
+  setFollowersMode: (mode: 'badges' | 'list') => void;
+
   toggleSkill: (slug: string) => void;
   setGithubUsername: (username: string) => void;
   setWakatimeUsername: (username: string) => void;
@@ -119,9 +129,9 @@ interface ReadmeState {
   toggleTrophies: () => void;
   toggleSnake: () => void;
   setTheme: (theme: string) => void;
-  setSkillsViewMode: (skillsViewMode: 'grouped' | 'flat') => void;
+  setSkillsViewMode: (mode: 'grouped' | 'flat') => void;
   setAlignment: (alignment: 'left' | 'center') => void;
-  setBadgeStyle: (badgeStyle: BadgeStyle) => void;
+  setBadgeStyle: (style: BadgeStyle) => void;
   setStatsAlign: (align: 'column' | 'row') => void;
   setSectionTitle: (id: SectionId, title: string) => void;
   setSocial: (platform: keyof ReadmeState['socials'], value: string) => void;
@@ -147,6 +157,9 @@ const initialState = {
   isTourActive: false,
   currentTourStep: 0,
   hasCompletedTour: false,
+  showFollowers: false,
+  showFollowing: false,
+  followersMode: 'badges' as const,
   skills: [],
   githubUsername: '',
   wakatimeUsername: '',
@@ -183,7 +196,8 @@ const initialState = {
     wakatime: '⏱️ Coding Activity',
     spotify: '🎵 Now Playing',
     rss: '📰 Latest Blog Posts',
-    typing: '⌨️ Dynamic Text'
+    typing: '⌨️ Dynamic Text',
+    followers: '👥 Network'
   },
   socials: {
     linkedin: '',
@@ -229,6 +243,10 @@ export const useReadmeStore = create<ReadmeState>()(
       setTourStep: (currentTourStep: number) => set({ currentTourStep }),
       completeTour: () => set({ isTourActive: false, currentTourStep: 0, hasCompletedTour: true }),
       startTour: () => set({ isTourActive: true, currentTourStep: 0 }),
+
+      toggleFollowers: () => set((state) => ({ showFollowers: !state.showFollowers })),
+      toggleFollowing: () => set((state) => ({ showFollowing: !state.showFollowing })),
+      setFollowersMode: (followersMode) => set({ followersMode }),
 
       toggleSkill: (slug: string) => set((state) => ({
         skills: state.skills.includes(slug)

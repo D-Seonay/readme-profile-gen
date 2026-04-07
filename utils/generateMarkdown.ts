@@ -24,6 +24,9 @@ interface StoreData {
   typingSize: number;
   typingDuration: number;
   typingPause: number;
+  showFollowers: boolean;
+  showFollowing: boolean;
+  followersMode: 'badges' | 'list';
   showWakatimeBadges: boolean;
   showVisitorCounter: boolean;
   featuredRepos: string[];
@@ -57,6 +60,7 @@ export const generateMarkdown = (data: StoreData): string => {
     showStatsCard, showStreakCard, showTopLanguages, showTrophies, showSnake, bannerUrl, spotifyUrl, rssUrl, typingText,
     typingColor, typingSize, typingDuration, typingPause,
     currentWork, learning, collaboration, askMeAbout, pronouns, funFact,
+    showFollowers, showFollowing, followersMode,
     theme, alignment, badgeStyle, statsAlign, sectionTitles, socials, donations, layout 
   } = data;
 
@@ -83,7 +87,6 @@ export const generateMarkdown = (data: StoreData): string => {
 
   const getBioSection = () => {
     let md = `# 👋 Hello, I'm ${name}\n\n## 🚀 ${title}\n\n${description}`;
-    
     const extraInfo = [];
     if (currentWork) extraInfo.push(`- 🔭 I’m currently working on **${currentWork}**`);
     if (learning) extraInfo.push(`- 🌱 I’m currently learning **${learning}**`);
@@ -91,11 +94,7 @@ export const generateMarkdown = (data: StoreData): string => {
     if (askMeAbout) extraInfo.push(`- 💬 Ask me about **${askMeAbout}**`);
     if (pronouns) extraInfo.push(`- 📫 How to reach me: **${pronouns}**`);
     if (funFact) extraInfo.push(`- ⚡ Fun fact: **${funFact}**`);
-
-    if (extraInfo.length > 0) {
-      md += `\n\n${extraInfo.join('\n')}`;
-    }
-
+    if (extraInfo.length > 0) md += `\n\n${extraInfo.join('\n')}`;
     return isCentered ? `<div align="center">\n\n${md}\n\n</div>` : md;
   };
 
@@ -109,10 +108,31 @@ export const generateMarkdown = (data: StoreData): string => {
       })
       .filter(Boolean)
       .join(' ');
-    
     const titleMd = sectionTitles.skills ? `### ${sectionTitles.skills}\n\n` : '';
     const content = `${titleMd}${badges}`;
     return isCentered ? `<div align="center">\n\n${content}\n\n</div>` : content;
+  };
+
+  const getFollowersSection = () => {
+    if (!githubUsername || (!showFollowers && !showFollowing)) return '';
+    const titleMd = sectionTitles.followers ? `### ${sectionTitles.followers}\n\n` : '';
+    const badges = [];
+    if (showFollowers) {
+      if (followersMode === 'badges') {
+        badges.push(`[![Followers](https://img.shields.io/github/followers/${githubUsername}?label=Followers&style=${badgeStyle}&color=0e7afe)](https://github.com/${githubUsername}?tab=followers)`);
+      } else {
+        badges.push(`[**${data.language === 'fr' ? 'Mes Abonnés' : 'My Followers'}**](https://github.com/${githubUsername}?tab=followers)`);
+      }
+    }
+    if (showFollowing) {
+      if (followersMode === 'badges') {
+        badges.push(`[![Following](https://img.shields.io/github/following/${githubUsername}?label=Following&style=${badgeStyle}&color=0e7afe)](https://github.com/${githubUsername}?tab=following)`);
+      } else {
+        badges.push(`[**${data.language === 'fr' ? 'Mes Abonnements' : 'Following'}**](https://github.com/${githubUsername}?tab=following)`);
+      }
+    }
+    const content = badges.join(' ');
+    return isCentered ? `<div align="center">\n\n${titleMd}${content}\n\n</div>` : `${titleMd}${content}`;
   };
 
   const getSocialsSection = () => {
@@ -132,7 +152,6 @@ export const generateMarkdown = (data: StoreData): string => {
     if (socials.email) {
       badges.push(`[![Email](https://img.shields.io/badge/Email-D14836?style=${badgeStyle}&logo=gmail&logoColor=white)](mailto:${socials.email})`);
     }
-
     if (badges.length === 0) return '';
     const titleMd = sectionTitles.socials ? `## ${sectionTitles.socials}\n\n` : '';
     const content = `${titleMd}${badges.join(' ')}`;
@@ -142,32 +161,24 @@ export const generateMarkdown = (data: StoreData): string => {
   const getStatsSection = () => {
     const hasActiveStats = (githubUsername && (showStatsCard || showStreakCard || showTopLanguages || showTrophies || showSnake)) || (githubUsername && showVisitorCounter);
     if (!hasActiveStats) return '';
-
     const titleMd = sectionTitles.stats ? `### ${sectionTitles.stats}\n\n` : '';
     let content = isCentered ? '<div align="center">' : '<div>';
     content += '\n\n';
-    
     if (showVisitorCounter && githubUsername) {
       content += `![Visitors](https://komarev.com/ghpvc/?username=${githubUsername}&label=Profile%20views&color=0e7afe&style=${badgeStyle})\n\n`;
     }
-
     if (showTrophies) {
       content += `![GitHub Trophies](https://github-profile-trophy.vercel.app/?username=${githubUsername}&theme=${theme === 'transparent' ? 'flat' : theme}&no-frame=true&margin-w=15)\n\n`;
     }
-
     const statsImages = [];
     if (showStatsCard) statsImages.push(`![GitHub Stats](https://github-readme-stats.vercel.app/api?username=${githubUsername}&theme=${theme}&hide_border=true&show_icons=true)`);
     if (showTopLanguages) statsImages.push(`![Top Langs](https://github-readme-stats.vercel.app/api/top-langs/?username=${githubUsername}&theme=${theme}&hide_border=true&layout=compact)`);
     if (showStreakCard) statsImages.push(`![GitHub Streak](https://streak-stats.demolab.com/?user=${githubUsername}&theme=${theme}&hide_border=true)`);
-
     content += statsImages.join(isRow ? ' ' : '\n');
-
     if (showSnake && githubUsername) {
       content += `\n\n![Snake animation](https://github.com/${githubUsername}/${githubUsername}/blob/output/github-contribution-grid-snake.svg)`;
     }
-
     content += '\n\n</div>';
-    
     return `${titleMd}${content}`;
   };
 
@@ -182,7 +193,6 @@ export const generateMarkdown = (data: StoreData): string => {
     if (donations.paypal) {
       badges.push(`[![PayPal](https://img.shields.io/badge/PayPal-00457C?style=${badgeStyle}&logo=paypal&logoColor=white)](https://www.paypal.me/${donations.paypal})`);
     }
-
     if (badges.length === 0) return '';
     const titleMd = sectionTitles.donations ? `## ${sectionTitles.donations}\n\n` : '';
     const content = `${titleMd}${badges.join(' ')}`;
@@ -246,6 +256,7 @@ export const generateMarkdown = (data: StoreData): string => {
       case 'wakatime': return getWakatimeSection();
       case 'spotify': return getSpotifySection();
       case 'rss': return getRssSection();
+      case 'followers': return getFollowersSection();
       default: return '';
     }
   });
