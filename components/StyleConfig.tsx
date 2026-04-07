@@ -16,6 +16,7 @@ export const StyleConfig = () => {
   const isDark = uiTheme === 'dark';
 
   const sections: { id: SectionId; label: string }[] = [
+    { id: 'banner', label: t.layout.banner },
     { id: 'bio', label: t.layout.bio },
     { id: 'skills', label: t.layout.skills },
     { id: 'projects', label: t.layout.projects },
@@ -25,6 +26,7 @@ export const StyleConfig = () => {
     { id: 'spotify', label: t.layout.spotify },
     { id: 'rss', label: t.layout.rss },
     { id: 'typing', label: t.layout.typing },
+    { id: 'followers', label: t.layout.followers },
   ];
 
   const badgeStyles: BadgeStyle[] = ['for-the-badge', 'flat', 'flat-square', 'plastic', 'social'];
