@@ -1,12 +1,16 @@
 'use client';
 
 import { motion } from 'framer-motion';
+import { useReadmeStore } from '@/store/useReadmeStore';
 
 export const VisualPreview = () => {
+  const { uiTheme } = useReadmeStore();
+  const isDark = uiTheme === 'dark';
+
   return (
     <div className="relative w-full max-w-5xl mx-auto px-6 py-20">
       {/* Background Glow */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80%] h-[60%] bg-indigo-500/20 blur-[100px] rounded-full -z-10" />
+      <div className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80%] h-[60%] blur-[100px] rounded-full -z-10 transition-colors duration-500 ${isDark ? 'bg-indigo-500/20' : 'bg-indigo-500/10'}`} />
 
       <motion.div
         initial={{ opacity: 0, y: 40 }}
@@ -17,28 +21,28 @@ export const VisualPreview = () => {
         {/* Border Glow Effect */}
         <div className="absolute -inset-[1px] bg-gradient-to-r from-indigo-500/0 via-indigo-500/50 to-indigo-500/0 opacity-50 group-hover:opacity-100 transition-opacity duration-700 blur-[2px] rounded-xl" />
         
-        <div className="relative bg-zinc-950 border border-zinc-800 rounded-xl overflow-hidden shadow-2xl shadow-indigo-500/10">
+        <div className={`relative rounded-xl overflow-hidden shadow-2xl transition-colors duration-500 border ${isDark ? 'bg-zinc-950 border-zinc-800 shadow-indigo-500/10' : 'bg-white border-zinc-200 shadow-zinc-200'}`}>
           {/* Browser Header */}
-          <div className="flex items-center gap-2 px-4 py-3 border-b border-zinc-800 bg-zinc-900/50">
-            <div className="w-2.5 h-2.5 rounded-full bg-zinc-800" />
-            <div className="w-2.5 h-2.5 rounded-full bg-zinc-800" />
-            <div className="w-2.5 h-2.5 rounded-full bg-zinc-800" />
-            <div className="ml-4 h-5 w-48 bg-zinc-800 rounded-md" />
+          <div className={`flex items-center gap-2 px-4 py-3 border-b transition-colors duration-500 ${isDark ? 'border-zinc-800 bg-zinc-900/50' : 'border-zinc-200 bg-zinc-50'}`}>
+            <div className={`w-2.5 h-2.5 rounded-full ${isDark ? 'bg-zinc-800' : 'bg-zinc-200'}`} />
+            <div className={`w-2.5 h-2.5 rounded-full ${isDark ? 'bg-zinc-800' : 'bg-zinc-200'}`} />
+            <div className={`w-2.5 h-2.5 rounded-full ${isDark ? 'bg-zinc-800' : 'bg-zinc-200'}`} />
+            <div className={`ml-4 h-5 w-48 rounded-md ${isDark ? 'bg-zinc-800' : 'bg-zinc-100'}`} />
           </div>
 
           {/* README Mockup Content */}
           <div className="p-8 space-y-8 min-h-[400px]">
             {/* Banner Section */}
-            <div className="w-full h-32 bg-zinc-900 rounded-lg animate-pulse" />
+            <div className={`w-full h-32 rounded-lg animate-pulse ${isDark ? 'bg-zinc-900' : 'bg-zinc-100'}`} />
             
             <div className="flex flex-col md:flex-row gap-8">
               {/* Profile Pic Placeholder */}
-              <div className="w-32 h-32 rounded-full bg-zinc-900 flex-shrink-0 animate-pulse" />
+              <div className={`w-32 h-32 rounded-full flex-shrink-0 animate-pulse ${isDark ? 'bg-zinc-900' : 'bg-zinc-100'}`} />
               
               <div className="flex-1 space-y-4">
-                <div className="h-8 w-64 bg-zinc-800 rounded animate-pulse" />
-                <div className="h-4 w-full bg-zinc-900 rounded animate-pulse" />
-                <div className="h-4 w-3/4 bg-zinc-900 rounded animate-pulse" />
+                <div className={`h-8 w-64 rounded animate-pulse ${isDark ? 'bg-zinc-800' : 'bg-zinc-200'}`} />
+                <div className={`h-4 w-full rounded animate-pulse ${isDark ? 'bg-zinc-900' : 'bg-zinc-100'}`} />
+                <div className={`h-4 w-3/4 rounded animate-pulse ${isDark ? 'bg-zinc-900' : 'bg-zinc-100'}`} />
                 
                 {/* Badges */}
                 <div className="flex gap-2 pt-4">
@@ -51,8 +55,8 @@ export const VisualPreview = () => {
 
             {/* Stats Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="h-40 bg-zinc-900/50 border border-zinc-800 rounded-lg" />
-              <div className="h-40 bg-zinc-900/50 border border-zinc-800 rounded-lg" />
+              <div className={`h-40 border rounded-lg ${isDark ? 'bg-zinc-900/50 border-zinc-800' : 'bg-zinc-50 border-zinc-200'}`} />
+              <div className={`h-40 border rounded-lg ${isDark ? 'bg-zinc-900/50 border-zinc-800' : 'bg-zinc-50 border-zinc-200'}`} />
             </div>
           </div>
         </div>

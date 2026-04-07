@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { BMCWidget } from "@/components/BMCWidget";
 import { Toaster } from "sonner";
+import { ThemeWrapper } from "@/components/ThemeWrapper";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -116,10 +117,12 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
       </head>
-      <body className="min-h-full flex flex-col bg-zinc-950">
-        {children}
-        <BMCWidget />
-        <Toaster richColors closeButton position="bottom-right" />
+      <body className="min-h-full flex flex-col transition-colors duration-500">
+        <ThemeWrapper>
+          {children}
+          <BMCWidget />
+          <Toaster richColors closeButton position="bottom-right" />
+        </ThemeWrapper>
       </body>
     </html>
   );

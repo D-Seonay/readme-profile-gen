@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { useReadmeStore, SectionId } from '@/store/useReadmeStore';
 import { useHydration } from '@/hooks/useHydration';
 import { useTranslation } from '@/hooks/useTranslation';
@@ -16,7 +16,7 @@ import { SpotifyConfig } from '@/components/SpotifyConfig';
 import { RssConfig } from '@/components/RssConfig';
 import { LayoutManager } from '@/components/LayoutManager';
 import { StyleConfig } from '@/components/StyleConfig';
-import { PreviewPane } from '@/components/PreviewPane';
+import { PreviewPane, PreviewPaneHandle } from '@/components/PreviewPane';
 import { GithubProfileFetcher } from '@/components/GithubProfileFetcher';
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 import { ThemeSwitcher } from '@/components/ThemeSwitcher';
@@ -29,9 +29,16 @@ export default function Home() {
   const store = useReadmeStore();
   const hydrated = useHydration();
   const { t, language } = useTranslation();
+
+  const previewRef = useRef<PreviewPaneHandle>(null);
+  const onboardingInputRef = useRef<HTMLInputElement>(null);
   
   // Activer les raccourcis clavier
-  useKeyboardShortcuts();
+  useKeyboardShortcuts({
+    onCopy: () => previewRef.current?.handleCopy(),
+    onDownload: () => previewRef.current?.handleDownload(),
+    onFocusOnboarding: () => onboardingInputRef.current?.focus(),
+  });
 
   const { 
     name, title, description, setName, setTitle, setDescription, reset, 

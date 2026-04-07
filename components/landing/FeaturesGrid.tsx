@@ -2,8 +2,14 @@
 
 import { motion } from 'framer-motion';
 import { useTranslation } from '@/hooks/useTranslation';
+import { useReadmeStore } from '@/store/useReadmeStore';
 
-const features = [
+interface Feature {
+  id: 'autofill' | 'dragdrop' | 'livepreview';
+  icon: React.ReactNode;
+}
+
+const features: Feature[] = [
   {
     id: 'autofill',
     icon: (
@@ -33,9 +39,11 @@ const features = [
 
 export const FeaturesGrid = () => {
   const { t } = useTranslation();
+  const { uiTheme } = useReadmeStore();
+  const isDark = uiTheme === 'dark';
 
   return (
-    <section className="py-24 px-6 bg-zinc-950">
+    <section className={`py-24 px-6 transition-colors duration-500 ${isDark ? 'bg-zinc-950' : 'bg-zinc-100'}`}>
       <div className="max-w-6xl mx-auto">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {features.map((feature, index) => (
@@ -50,20 +58,20 @@ export const FeaturesGrid = () => {
               {/* Card Background & Glow */}
               <div className="absolute -inset-0.5 bg-gradient-to-r from-indigo-500 to-indigo-600 rounded-lg blur opacity-0 group-hover:opacity-20 transition duration-500" />
               
-              <div className="relative h-full p-8 bg-zinc-900/50 border border-zinc-800 rounded-lg hover:border-indigo-500/50 transition-colors duration-300 flex flex-col items-start">
-                <div className="mb-6 p-3 rounded-md bg-zinc-800/50 text-indigo-500 group-hover:text-indigo-400 transition-colors">
+              <div className={`relative h-full p-8 rounded-lg border transition-all duration-300 flex flex-col items-start ${isDark ? 'bg-zinc-900/50 border-zinc-800 hover:border-indigo-500/50' : 'bg-white border-zinc-200 hover:border-indigo-500/50 shadow-sm'}`}>
+                <div className={`mb-6 p-3 rounded-md transition-colors ${isDark ? 'bg-zinc-800/50 text-indigo-500' : 'bg-zinc-100 text-indigo-600'}`}>
                   {feature.icon}
                 </div>
                 
-                <h3 className="text-xl font-black italic tracking-tighter uppercase mb-4 text-zinc-100 group-hover:text-white transition-colors">
-                  {t.landing.features[feature.id as keyof typeof t.landing.features].title}
+                <h3 className={`text-xl font-black italic tracking-tighter uppercase mb-4 transition-colors ${isDark ? 'text-zinc-100 group-hover:text-white' : 'text-zinc-900 group-hover:text-black'}`}>
+                  {t.landing.features[feature.id].title}
                 </h3>
                 
-                <p className="text-zinc-400 font-mono text-sm leading-relaxed">
-                  {t.landing.features[feature.id as keyof typeof t.landing.features].desc}
+                <p className={`font-mono text-sm leading-relaxed ${isDark ? 'text-zinc-400' : 'text-zinc-500'}`}>
+                  {t.landing.features[feature.id].desc}
                 </p>
 
-                <div className="mt-8 flex items-center text-[10px] font-mono text-zinc-600 uppercase tracking-widest group-hover:text-indigo-500 transition-colors">
+                <div className={`mt-8 flex items-center text-[10px] font-mono uppercase tracking-widest group-hover:text-indigo-500 transition-colors ${isDark ? 'text-zinc-600' : 'text-zinc-400'}`}>
                   <span className="mr-2">Status:</span>
                   <span className="animate-pulse">Active_</span>
                 </div>
