@@ -3,13 +3,14 @@ import { persist, createJSONStorage } from 'zustand/middleware';
 import { arrayMove } from '@dnd-kit/sortable';
 import { skillsData } from '@/lib/skillsData';
 
-export type SectionId = 'banner' | 'bio' | 'skills' | 'socials' | 'stats' | 'donations' | 'projects' | 'wakatime' | 'spotify' | 'rss' | 'typing' | 'followers';
+export type SectionId = 'banner' | 'bio' | 'skills' | 'socials' | 'stats' | 'donations' | 'projects' | 'wakatime' | 'spotify' | 'rss' | 'typing' | 'followers' | 'statstats';
 export type ServiceStatus = 'checking' | 'online' | 'offline';
 export type BadgeStyle = 'for-the-badge' | 'flat' | 'flat-square' | 'plastic' | 'social';
 export type Language = 'en' | 'fr';
 export type UITheme = 'dark' | 'light';
+export type StatStatsCard = 'stats' | 'top-langs' | 'streak' | 'top-repos' | 'activity' | 'trophies' | 'org';
 
-const DEFAULT_LAYOUT: SectionId[] = ['banner', 'typing', 'bio', 'skills', 'socials', 'stats', 'donations', 'projects', 'wakatime', 'spotify', 'rss', 'followers'];
+const DEFAULT_LAYOUT: SectionId[] = ['banner', 'typing', 'bio', 'skills', 'statstats', 'socials', 'stats', 'donations', 'projects', 'wakatime', 'spotify', 'rss', 'followers'];
 
 interface ReadmeState {
   language: Language;
@@ -66,6 +67,13 @@ interface ReadmeState {
   statsAlign: 'column' | 'row';
   sectionTitles: Record<SectionId, string>;
   
+  // STAT-STATS
+  statStatsCards: StatStatsCard[];
+  statStatsTheme: string;
+  statStatsFont: string;
+  statStatsCompact: boolean;
+  statStatsHide: string[];
+
   socials: {
     linkedin: string;
     twitter: string;
@@ -138,6 +146,14 @@ interface ReadmeState {
   setBadgeStyle: (style: BadgeStyle) => void;
   setStatsAlign: (align: 'column' | 'row') => void;
   setSectionTitle: (id: SectionId, title: string) => void;
+  
+  // STAT-STATS Actions
+  setStatStatsCards: (cards: StatStatsCard[]) => void;
+  setStatStatsTheme: (theme: string) => void;
+  setStatStatsFont: (font: string) => void;
+  toggleStatStatsCompact: () => void;
+  setStatStatsHide: (hide: string[]) => void;
+
   setSocial: (platform: keyof ReadmeState['socials'], value: string) => void;
   setDonation: (platform: keyof ReadmeState['donations'], value: string) => void;
   reorderLayout: (activeId: SectionId, overId: SectionId) => void;
@@ -205,8 +221,14 @@ const initialState = {
     spotify: '🎵 Now Playing',
     rss: '📰 Latest Blog Posts',
     typing: '⌨️ Dynamic Text',
-    followers: '👥 Network'
+    followers: '👥 Network',
+    statstats: '⚡ Modern Stats'
   },
+  statStatsCards: [],
+  statStatsTheme: 'dark',
+  statStatsFont: 'Inter',
+  statStatsCompact: false,
+  statStatsHide: [],
   socials: {
     linkedin: '',
     twitter: '',
@@ -228,6 +250,7 @@ const initialState = {
   },
   layout: DEFAULT_LAYOUT,
 };
+
 
 export const useReadmeStore = create<ReadmeState>()(
   persist(
@@ -299,6 +322,14 @@ export const useReadmeStore = create<ReadmeState>()(
       setSectionTitle: (id: SectionId, title: string) => set((state) => ({
         sectionTitles: { ...state.sectionTitles, [id]: title }
       })),
+
+      // STAT-STATS Actions Implementation
+      setStatStatsCards: (statStatsCards: StatStatsCard[]) => set({ statStatsCards }),
+      setStatStatsTheme: (statStatsTheme: string) => set({ statStatsTheme }),
+      setStatStatsFont: (statStatsFont: string) => set({ statStatsFont }),
+      toggleStatStatsCompact: () => set((state) => ({ statStatsCompact: !state.statStatsCompact })),
+      setStatStatsHide: (statStatsHide: string[]) => set({ statStatsHide }),
+
       setSocial: (platform, value) => set((state) => ({
         socials: { ...state.socials, [platform]: value }
       })),
