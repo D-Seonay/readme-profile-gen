@@ -1,5 +1,5 @@
 import { getSkillBySlug } from '@/lib/skillsData';
-import { SectionId, BadgeStyle, Language } from '@/store/useReadmeStore';
+import { SectionId, BadgeStyle, Language, StatStatsCard } from '@/store/useReadmeStore';
 
 interface StoreData {
   language: Language;
@@ -42,6 +42,14 @@ interface StoreData {
   badgeStyle: BadgeStyle;
   statsAlign: 'column' | 'row';
   sectionTitles: Record<SectionId, string>;
+  
+  // STAT-STATS
+  statStatsCards: StatStatsCard[];
+  statStatsTheme: string;
+  statStatsFont: string;
+  statStatsCompact: boolean;
+  statStatsHide: string[];
+
   socials: {
     linkedin: string;
     twitter: string;
@@ -63,6 +71,7 @@ export const generateMarkdown = (data: StoreData): string => {
     typingColor, typingSize, typingDuration, typingPause,
     currentWork, learning, collaboration, askMeAbout, pronouns, funFact,
     showFollowers, showFollowing, followersMode,
+    statStatsCards, statStatsTheme, statStatsFont, statStatsCompact, statStatsHide,
     theme, alignment, badgeStyle, statsAlign, sectionTitles, socials, donations, layout 
   } = data;
 
@@ -209,6 +218,30 @@ export const generateMarkdown = (data: StoreData): string => {
     return `${titleMd}${content}`;
   };
 
+  const getStatStatsSection = () => {
+    if (!githubUsername || statStatsCards.length === 0) return '';
+    const titleMd = sectionTitles.statstats ? `### ${sectionTitles.statstats}\n\n` : '';
+    let content = isCentered ? '<div align="center">\n\n' : '<div>\n\n';
+    
+    const cards = statStatsCards.map(cardType => {
+      const baseUrl = 'https://github-stats-cards.matheodelaunay.studio/api';
+      const params = new URLSearchParams({
+        username: githubUsername,
+        theme: statStatsTheme,
+        font: statStatsFont,
+      });
+      if (statStatsCompact) params.append('compact', 'true');
+      if (statStatsHide.length > 0) params.append('hide', statStatsHide.join(','));
+      
+      const url = `${baseUrl}/${cardType}?${params.toString()}`;
+      return `![${cardType}](${url})`;
+    });
+
+    content += cards.join(isRow ? ' ' : '\n');
+    content += '\n\n</div>';
+    return `${titleMd}${content}`;
+  };
+
   const getDonationsSection = () => {
     const badges = [];
     if (donations.buymeacoffee) {
@@ -284,6 +317,7 @@ export const generateMarkdown = (data: StoreData): string => {
       case 'spotify': return getSpotifySection();
       case 'rss': return getRssSection();
       case 'followers': return getFollowersSection();
+      case 'statstats': return getStatStatsSection();
       default: return '';
     }
   });
