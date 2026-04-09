@@ -15,6 +15,7 @@ import { TypingConfig } from '@/components/TypingConfig';
 import { SpotifyConfig } from '@/components/SpotifyConfig';
 import { RssConfig } from '@/components/RssConfig';
 import { FollowersConfig } from '@/components/FollowersConfig';
+import { StatStatsConfig } from '@/components/StatStatsConfig';
 import { LayoutManager } from '@/components/LayoutManager';
 import { StyleConfig } from '@/components/StyleConfig';
 import { PreviewPane, PreviewPaneHandle } from '@/components/PreviewPane';
@@ -241,6 +242,12 @@ export default function Home() {
         return (
           <CollapsibleSection key={id} title={sectionTitles.socials || t.layout.socials} subtitle={t.socials.help}>
             <SocialLinksForm />
+          </CollapsibleSection>
+        );
+      case 'statstats':
+        return (
+          <CollapsibleSection key={id} title={sectionTitles.statstats || t.layout.statstats} subtitle={t.statstats.help}>
+            <StatStatsConfig />
           </CollapsibleSection>
         );
       case 'donations':

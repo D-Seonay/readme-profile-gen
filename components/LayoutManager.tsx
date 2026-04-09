@@ -92,7 +92,8 @@ export const LayoutManager = () => {
     spotify: t.layout.spotify,
     rss: t.layout.rss,
     typing: t.layout.typing,
-    followers: t.layout.followers
+    followers: t.layout.followers,
+    statstats: t.layout.statstats
   };
 
   const isSectionUsed = (id: SectionId) => {
@@ -109,6 +110,7 @@ export const LayoutManager = () => {
       case 'rss': return !!store.rssUrl;
       case 'typing': return !!store.typingText;
       case 'followers': return !!(store.githubUsername && (store.showFollowers || store.showFollowing));
+      case 'statstats': return store.statStatsCards.length > 0;
       default: return false;
     }
   };
