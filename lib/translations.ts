@@ -74,7 +74,25 @@ export const translations = {
       spotify: "🎵 Spotify Activity",
       rss: "📰 Latest Blog Posts",
       typing: "⌨️ Dynamic Typing Text",
-      followers: "👥 Network & Followers"
+      followers: "👥 Network & Followers",
+      statstats: "⚡ Modern Stats (STAT-STATS)"
+    },
+
+    statstats: {
+      label: "STAT-STATS Integration",
+      help: "// Modern and customizable GitHub statistics cards",
+      theme: "Card Theme",
+      font: "Google Font",
+      compact: "Compact Layout",
+      hide: "Hide Statistics",
+      cards: "Selected Cards",
+      stats: "Overall Stats",
+      topLangs: "Top Languages",
+      streak: "GitHub Streak",
+      topRepos: "Top Repositories",
+      activity: "Recent Activity",
+      trophies: "GitHub Trophies",
+      org: "Organization Stats"
     },
 
     followers: {
@@ -271,7 +289,25 @@ export const translations = {
       spotify: "🎵 Musique Spotify",
       rss: "📰 Derniers Articles",
       typing: "⌨️ Texte Animé (Typing)",
-      followers: "👥 Réseau & Followers"
+      followers: "👥 Réseau & Followers",
+      statstats: "⚡ Stats Modernes (STAT-STATS)"
+    },
+
+    statstats: {
+      label: "Intégration STAT-STATS",
+      help: "// Cartes de statistiques GitHub modernes et personnalisables",
+      theme: "Thème de la carte",
+      font: "Police Google Font",
+      compact: "Mise en page compacte",
+      hide: "Masquer des statistiques",
+      cards: "Cartes sélectionnées",
+      stats: "Stats Globales",
+      topLangs: "Top Langages",
+      streak: "Séquence (Streak)",
+      topRepos: "Meilleurs Dépôts",
+      activity: "Activité Récente",
+      trophies: "Trophées GitHub",
+      org: "Stats d'Organisation"
     },
 
     followers: {
