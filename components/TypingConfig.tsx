@@ -69,10 +69,19 @@ export const TypingConfig = () => {
                 className={`flex-1 border px-3 py-1.5 rounded-lg font-mono text-[10px] focus:outline-none focus:border-indigo-500 transition-all ${isDark ? 'bg-zinc-950 border-zinc-800 text-zinc-100' : 'bg-white border-zinc-200 text-zinc-900'}`}
                 placeholder="Ex: FF0000"
               />
-              <div 
-                className="w-8 h-8 rounded-lg border border-zinc-800 shadow-inner" 
-                style={{ backgroundColor: `#${displayColor}` }}
-              />
+              <div className="relative w-8 h-8 rounded-lg border border-zinc-800 shadow-inner overflow-hidden">
+                <div 
+                  className="w-full h-full" 
+                  style={{ backgroundColor: `#${displayColor}` }} 
+                />
+                <input 
+                  type="color"
+                  value={`#${displayColor.length === 6 ? displayColor : (isDark ? 'F1F1F1' : '171717')}`}
+                  onChange={(e) => setTypingColor(e.target.value.replace('#', ''))}
+                  className="absolute inset-0 opacity-0 cursor-pointer w-full h-full"
+                  title="Pick a color"
+                />
+              </div>
             </div>
           </div>
 
