@@ -37,7 +37,7 @@
     "jsdom": "^27.0.1",
     "tailwindcss": "^4",
     "typescript": "^5",
-    "vitest": "^4.1.0"
+    "vitest": "^4.1.11"
   },
   "optionalDependencies": {
     "@rolldown/binding-darwin-arm64": "^1.0.0-rc.13"
