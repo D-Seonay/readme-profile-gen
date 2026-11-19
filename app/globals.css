@@ -575,3 +575,118 @@ body {
 .focus-ring-none:focus-visible {
   outline: none;
 }
+
+/* ─────────────────────────────────────────────────────────────────────
+ * Landing page additions (components/landing). Additive only: nothing
+ * above this line is changed. Every colour still comes from the tokens.
+ * ───────────────────────────────────────────────────────────────────── */
+
+@theme inline {
+  /* Hero "press": a line of Markdown is typed, then its block is printed.
+     Per-element timing comes from --type-* / --print-* / --stamp-* custom
+     properties set inline, which is why this block is `inline`. */
+  --animate-type: type-line var(--type-duration, 0.4s) steps(var(--type-steps, 16), end) var(--type-delay, 0s) both;
+  --animate-print: print-in 0.45s var(--ease-snap) var(--print-delay, 0s) both;
+  --animate-stamp-in: stamp-in 0.55s var(--ease-snap) var(--stamp-delay, 0s) both;
+  --animate-marquee: marquee 42s linear infinite;
+
+  @keyframes type-line {
+    from { clip-path: inset(0 100% 0 0); }
+    to { clip-path: inset(0 0 0 0); }
+  }
+  @keyframes print-in {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes stamp-in {
+    0% { opacity: 0; transform: scale(1.7); }
+    65% { opacity: 1; transform: scale(0.94); }
+    100% { opacity: 1; transform: scale(1); }
+  }
+  @keyframes marquee {
+    to { transform: translateX(-50%); }
+  }
+  @keyframes fan-in {
+    from { translate: var(--fan-x, 0) 2.5rem; rotate: 0deg; }
+    to { translate: 0 0; rotate: var(--fan-rotate, 0deg); }
+  }
+  @keyframes fill-x {
+    from { transform: scaleX(0); }
+    to { transform: scaleX(1); }
+  }
+  @keyframes fill-y {
+    from { transform: scaleY(0); }
+    to { transform: scaleY(1); }
+  }
+}
+
+/* Anything with data-anim starts at once when motion is reduced
+   (the global rule above shortens durations but keeps delays). */
+@media (prefers-reduced-motion: reduce) {
+  [data-anim] {
+    animation-delay: 0s !important;
+  }
+}
+
+/* Proof cards settle from a straight stack into a fan as their section
+   scrolls in. Scroll-driven, so it never takes over the scroll; without
+   support or with reduced motion the cards simply sit in their final pose. */
+@utility scroll-fan {
+  rotate: var(--fan-rotate, 0deg);
+  @media (prefers-reduced-motion: no-preference) {
+    @supports (animation-timeline: view()) {
+      animation: fan-in linear both;
+      animation-timeline: view();
+      animation-range: entry 0% cover 42%;
+    }
+  }
+}
+
+/* Named view timeline for the "three moves" section; its progress rule
+   reads it with scroll-fill-x / scroll-fill-y. */
+@utility timeline-steps {
+  view-timeline-name: --landing-steps;
+}
+
+@utility scroll-fill-x {
+  transform-origin: left center;
+  @media (prefers-reduced-motion: no-preference) {
+    @supports (animation-timeline: view()) {
+      animation: fill-x linear both;
+      animation-timeline: --landing-steps;
+      animation-range: entry 60% cover 62%;
+    }
+  }
+}
+
+@utility scroll-fill-y {
+  transform-origin: center top;
+  @media (prefers-reduced-motion: no-preference) {
+    @supports (animation-timeline: view()) {
+      animation: fill-y linear both;
+      animation-timeline: --landing-steps;
+      animation-range: entry 40% cover 70%;
+    }
+  }
+}
+
+/* Text link with a highlighter sweep: accent fill grows behind the text. */
+@utility link-mark {
+  text-decoration-line: underline;
+  text-decoration-color: var(--line-strong);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.28em;
+  background-image: linear-gradient(var(--accent), var(--accent));
+  background-repeat: no-repeat;
+  background-position: 0 100%;
+  background-size: 0% 100%;
+  transition:
+    background-size 0.3s var(--ease-snap),
+    color 0.2s ease-out;
+  &:hover,
+  &:focus-visible {
+    background-size: 100% 100%;
+    color: var(--accent-ink);
+    text-decoration-color: transparent;
+  }
+}
