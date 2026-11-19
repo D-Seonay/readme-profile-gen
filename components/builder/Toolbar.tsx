@@ -9,6 +9,8 @@ import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 import { Button, Icon, IconButton, Kbd, Menu, MenuEntry } from '@/components/ui';
 import { CompletenessMeter } from './CompletenessMeter';
 import { CopyButton } from './CopyButton';
+import { HistoryControls } from '@/components/features/HistoryControls';
+import { ShareLinkButton } from '@/components/features/ShareLink';
 
 interface ToolbarProps {
   onOpenOutline: () => void;
@@ -71,7 +73,10 @@ export const Toolbar = ({ onOpenOutline, onOpenPalette, onSelect, onCopy, onDown
         <IconButton icon="search" label={tb.searchLabel} onClick={onOpenPalette} tooltipAlign="end" />
       </div>
 
+      {/* Mounted at every width: it also installs the undo/redo shortcuts. */}
+      <HistoryControls />
       <div className="hidden items-center gap-2 md:flex">
+        <ShareLinkButton />
         <LanguageSwitcher />
         <IconButton
           icon={uiTheme === 'dark' ? 'sun' : 'moon'}

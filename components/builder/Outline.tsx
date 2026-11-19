@@ -70,7 +70,9 @@ export const Outline = ({ selected, onSelect, onAddFree, onClose, className }: O
         <h2 className="px-3 pb-1.5 font-mono text-[11px] text-ink-soft">{o.setup}</h2>
         <ul className="space-y-px">
           <SetupRow icon="flag" label={o.start} selected={selected === 'start'} onSelect={() => onSelect('start')} />
+          <SetupRow icon="layers" label={o.templates} selected={selected === 'templates'} onSelect={() => onSelect('templates')} />
           <SetupRow icon="sliders" label={o.style} selected={selected === 'style'} onSelect={() => onSelect('style')} />
+          <SetupRow icon="check" label={o.tools} selected={selected === 'tools'} onSelect={() => onSelect('tools')} />
         </ul>
 
         <div className="mt-6 flex items-baseline justify-between px-3 pb-1.5">

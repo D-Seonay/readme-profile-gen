@@ -17,7 +17,26 @@ import { SpotifyConfig } from '@/components/SpotifyConfig';
 import { RssConfig } from '@/components/RssConfig';
 import { FollowersConfig } from '@/components/FollowersConfig';
 import { CustomSectionEditor } from '@/components/CustomSectionEditor';
+import { FeatureSectionEditor } from '@/components/features/featureSections';
+import { RssFeedOptions, SkillIconsConfig, StatsProviderSwitch, WakaReadmeToggle } from '@/components/features/SectionExtras';
+import type { FeatureSectionId } from '@/store/useReadmeStore';
 import { cleanHelp, cleanLabel } from './labels';
+
+/** An editor followed by the engine's extra options for the same section. */
+const withExtras = (editor: React.ReactNode, extras: React.ReactNode) => (
+  <div className="space-y-9">
+    {editor}
+    <div className="border-t border-line pt-7">{extras}</div>
+  </div>
+);
+
+/** Sections added by the extended engine: they carry their own heading field. */
+const featureSection = (id: FeatureSectionId, icon: IconName): SectionMeta => ({
+  icon,
+  label: (t) => t.engine.sections[id],
+  help: (t) => t.engine.help[id],
+  render: () => <FeatureSectionEditor id={id} />,
+});
 
 export interface SectionMeta {
   icon: IconName;
@@ -65,7 +84,7 @@ export const SECTION_META: Record<SectionId, SectionMeta> = {
     label: (t) => t.layout.skills,
     help: (t) => t.skills.help,
     heading: '###',
-    render: () => <SkillSelector />,
+    render: () => withExtras(<SkillSelector />, <SkillIconsConfig />),
   },
   statstats: {
     icon: 'pulse',
@@ -86,7 +105,7 @@ export const SECTION_META: Record<SectionId, SectionMeta> = {
     label: (t) => t.layout.stats,
     help: (t) => t.github.help,
     heading: '###',
-    render: () => <GithubStatsConfig />,
+    render: () => withExtras(<GithubStatsConfig />, <StatsProviderSwitch />),
   },
   donations: {
     icon: 'heart',
@@ -107,7 +126,7 @@ export const SECTION_META: Record<SectionId, SectionMeta> = {
     label: (t) => t.layout.wakatime,
     help: (t) => t.wakatime.help,
     heading: '##',
-    render: () => <WakatimeConfig />,
+    render: () => withExtras(<WakatimeConfig />, <WakaReadmeToggle />),
   },
   spotify: {
     icon: 'music',
@@ -121,7 +140,7 @@ export const SECTION_META: Record<SectionId, SectionMeta> = {
     label: (t) => t.layout.rss,
     help: (t) => t.rss.help,
     heading: '##',
-    render: () => <RssConfig />,
+    render: () => withExtras(<RssConfig />, <RssFeedOptions />),
   },
   followers: {
     icon: 'users',
@@ -130,6 +149,14 @@ export const SECTION_META: Record<SectionId, SectionMeta> = {
     heading: '###',
     render: () => <FollowersConfig />,
   },
+  headerBanner: featureSection('headerBanner', 'image'),
+  footerBanner: featureSection('footerBanner', 'image'),
+  activity: featureSection('activity', 'pulse'),
+  summaryCards: featureSection('summaryCards', 'chart'),
+  quote: featureSection('quote', 'book'),
+  experience: featureSection('experience', 'rows'),
+  currently: featureSection('currently', 'clock'),
+  pinned: featureSection('pinned', 'pin'),
 };
 
 export { cleanLabel, cleanHelp };

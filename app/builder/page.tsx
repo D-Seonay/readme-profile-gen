@@ -16,7 +16,12 @@ import { ConfirmModal } from '@/components/ConfirmModal';
 import { OnboardingTour, TourStep } from '@/components/OnboardingTour';
 import { Button, Dialog, Field, Group, Input, Kbd, MenuEntry, cx } from '@/components/ui';
 import { ReadmeDocumentProvider, useReadmeDocument } from '@/components/builder/ReadmeDocument';
-import { BuilderNavContext, PlateId } from '@/components/builder/BuilderNav';
+import { BuilderNavContext, PlateId, isSetupPlate } from '@/components/builder/BuilderNav';
+import { TemplateGallery } from '@/components/features/TemplateGallery';
+import { ReadmeImporter } from '@/components/features/ReadmeImporter';
+import { HealthCheckPanel } from '@/components/features/HealthCheckPanel';
+import { WorkflowExport } from '@/components/features/WorkflowExport';
+import { ShareLinkLoader } from '@/components/features/ShareLink';
 import { getSlotInfo, renderSlotEditor } from '@/components/builder/sections';
 import { Plate, PlateLink } from '@/components/builder/Plate';
 import { Outline } from '@/components/builder/Outline';
@@ -77,10 +82,10 @@ function BuilderShell() {
 
   // A stored plate can point at a free section that no longer exists.
   const selected: PlateId =
-    storedPlate === 'start' || storedPlate === 'style' || layout.includes(storedPlate as LayoutId)
+    isSetupPlate(storedPlate) || layout.includes(storedPlate as LayoutId)
       ? (storedPlate as PlateId)
       : 'start';
-  const selectedLayoutId = selected === 'start' || selected === 'style' ? undefined : selected;
+  const selectedLayoutId = isSetupPlate(selected) ? undefined : selected;
 
   // Preview width: never squeeze the editor below a comfortable measure.
   const previewMax = viewport - (isXl ? 272 + 460 : 440);
@@ -194,7 +199,9 @@ function BuilderShell() {
 
   const commands: Command[] = [
     { id: 'jump-start', group: 'jump', label: t.builder.outline.start, icon: 'flag', keywords: 'github auto-fill autofill start', run: () => select('start') },
+    { id: 'jump-templates', group: 'jump', label: t.builder.outline.templates, icon: 'layers', keywords: 'templates presets starter kits modeles', run: () => select('templates') },
     { id: 'jump-style', group: 'jump', label: t.builder.outline.style, icon: 'sliders', keywords: 'style design alignment badges headings', run: () => select('style') },
+    { id: 'jump-tools', group: 'jump', label: t.builder.outline.tools, icon: 'check', keywords: 'tools health check score workflows actions import readme', run: () => select('tools') },
     ...layout.map((id, index): Command => {
       const info = getSlotInfo(id, t, customSections);
       return {
@@ -219,6 +226,8 @@ function BuilderShell() {
     { id: 'download', group: 'actions', label: t.builder.toolbar.downloadLabel, icon: 'download', shortcut: [mod, 'S'], run: download },
     { id: 'export', group: 'actions', label: p.exportConfig, icon: 'braces', keywords: 'json backup save', run: handleExport },
     { id: 'import', group: 'actions', label: p.importConfig, icon: 'upload', keywords: 'json restore load', run: openImport },
+    { id: 'undo', group: 'actions', label: t.engine.history.undo, icon: 'undo', shortcut: [mod, 'Z'], run: () => useReadmeStore.getState().undo() },
+    { id: 'redo', group: 'actions', label: t.engine.history.redo, icon: 'rotate', shortcut: [mod, '⇧', 'Z'], run: () => useReadmeStore.getState().redo() },
     { id: 'reset', group: 'actions', label: p.reset, icon: 'rotate', keywords: 'clear delete', run: () => setResetOpen(true) },
     {
       id: 'theme',
@@ -289,12 +298,14 @@ function BuilderShell() {
   ];
 
   /* -------------------------------------------------------------- plates */
-  const sequence: PlateId[] = ['start', 'style', ...layout];
+  const sequence: PlateId[] = ['start', 'templates', 'style', 'tools', ...layout];
   const position = sequence.indexOf(selected);
   const linkTo = (id: PlateId | undefined): PlateLink | undefined => {
     if (!id) return undefined;
     if (id === 'start') return { label: t.builder.outline.start, onSelect: () => select('start') };
     if (id === 'style') return { label: t.builder.outline.style, onSelect: () => select('style') };
+    if (id === 'templates') return { label: t.builder.outline.templates, onSelect: () => select('templates') };
+    if (id === 'tools') return { label: t.builder.outline.tools, onSelect: () => select('tools') };
     return { label: slotLabel(id), number: pad(layout.indexOf(id) + 1), onSelect: () => select(id) };
   };
   const prev = linkTo(sequence[position - 1]);
@@ -329,6 +340,30 @@ function BuilderShell() {
       return (
         <Plate key="style" title={t.builder.outline.style} help={t.builder.style.help} icon="sliders" prev={prev} next={next}>
           <StyleConfig />
+        </Plate>
+      );
+    }
+    if (selected === 'templates') {
+      return (
+        <Plate key="templates" title={t.builder.outline.templates} help={t.engine.templates.help} icon="layers" prev={prev} next={next}>
+          <TemplateGallery />
+        </Plate>
+      );
+    }
+    if (selected === 'tools') {
+      return (
+        <Plate key="tools" title={t.builder.outline.tools} help={t.builder.outline.toolsHelp} icon="check" prev={prev} next={next}>
+          <div className="space-y-9">
+            <Group first title={t.engine.health.label} hint={t.engine.health.help}>
+              <HealthCheckPanel />
+            </Group>
+            <Group title={t.engine.workflows.label} hint={t.engine.workflows.help}>
+              <WorkflowExport />
+            </Group>
+            <Group title={t.engine.importer.label} hint={t.engine.importer.help}>
+              <ReadmeImporter />
+            </Group>
+          </div>
         </Plate>
       );
     }
@@ -430,6 +465,7 @@ function BuilderShell() {
         />
 
         <OnboardingTour steps={tourSteps} />
+        <ShareLinkLoader />
         {fileInput}
       </div>
     </BuilderNavContext.Provider>
