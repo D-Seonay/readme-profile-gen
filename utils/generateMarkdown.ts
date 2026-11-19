@@ -1,5 +1,63 @@
 import { getSkillBySlug } from '@/lib/skillsData';
-import { SectionId, BadgeStyle, Language, StatStatsCard } from '@/store/useReadmeStore';
+import { SectionId, LayoutId, BadgeStyle, Language, StatStatsCard, CustomBadge, CustomSection, BioLine, BioFieldKey } from '@/store/useReadmeStore';
+
+// Libellés par défaut du README généré, utilisés quand le champ libre correspondant est vide
+export const README_DEFAULTS: Record<Language, { greeting: string; bioLabels: Record<BioFieldKey, string> }> = {
+  en: {
+    greeting: "👋 Hello, I'm {name}",
+    bioLabels: {
+      currentWork: '🔭 I’m currently working on',
+      learning: '🌱 I’m currently learning',
+      collaboration: '👯 I’m looking to collaborate on',
+      askMeAbout: '💬 Ask me about',
+      pronouns: '😄 Pronouns:',
+      funFact: '⚡ Fun fact:',
+    },
+  },
+  fr: {
+    greeting: '👋 Salut, moi c’est {name}',
+    bioLabels: {
+      currentWork: '🔭 Je travaille actuellement sur',
+      learning: '🌱 J’apprends en ce moment',
+      collaboration: '👯 Je cherche à collaborer sur',
+      askMeAbout: '💬 Posez-moi vos questions sur',
+      pronouns: '😄 Pronoms :',
+      funFact: '⚡ Anecdote :',
+    },
+  },
+};
+
+const BIO_FIELD_ORDER: BioFieldKey[] = ['currentWork', 'learning', 'collaboration', 'askMeAbout', 'pronouns', 'funFact'];
+
+// Échappement shields.io : "-" et "_" sont des séparateurs dans le chemin du badge
+const shieldsText = (text: string) => encodeURIComponent(text.trim().replace(/-/g, '--').replace(/_/g, '__'));
+
+const normalizeColor = (color: string) => {
+  const hex = color.trim().replace(/^#/, '');
+  return /^([0-9a-f]{3}|[0-9a-f]{6})$/i.test(hex) ? hex : '555555';
+};
+
+const normalizeUrl = (url: string) => {
+  const trimmed = url.trim();
+  if (!trimmed) return '';
+  if (/^[a-z][a-z0-9+.-]*:/i.test(trimmed)) return trimmed;
+  if (/^[^\s@/]+@[^\s@/]+\.[^\s@/]+$/.test(trimmed)) return `mailto:${trimmed}`;
+  return `https://${trimmed}`;
+};
+
+/**
+ * Badge shields.io entièrement libre (texte, couleur, logo Simple Icons, lien).
+ * Renvoie '' si le badge est incomplet.
+ */
+export const buildCustomBadge = (badge: CustomBadge, badgeStyle: BadgeStyle, requireUrl = false): string => {
+  const label = badge.label.trim();
+  const url = normalizeUrl(badge.url);
+  if (!label || (requireUrl && !url)) return '';
+  const logo = badge.logo.trim();
+  const logoParam = logo ? `&logo=${encodeURIComponent(logo)}&logoColor=white` : '';
+  const image = `![${label.replace(/[[\]]/g, '')}](https://img.shields.io/badge/${shieldsText(label)}-${normalizeColor(badge.color)}?style=${badgeStyle}${logoParam})`;
+  return url ? `[${image}](${url.replace(/\)/g, '%29')})` : image;
+};
 
 interface StoreData {
   language: Language;
@@ -42,7 +100,7 @@ interface StoreData {
   badgeStyle: BadgeStyle;
   statsAlign: 'column' | 'row';
   sectionTitles: Record<SectionId, string>;
-  
+
   // STAT-STATS
   statStatsCards: StatStatsCard[];
   statStatsTheme: string;
@@ -61,22 +119,36 @@ interface StoreData {
     kofi: string;
     paypal: string;
   };
-  layout: SectionId[];
+  layout: LayoutId[];
+
+  // Champs libres (optionnels : absents ou vides = comportement par défaut)
+  greeting?: string;
+  titlePrefix?: string;
+  bioLabels?: Partial<Record<BioFieldKey, string>>;
+  bioLines?: BioLine[];
+  customSkills?: CustomBadge[];
+  customSocials?: CustomBadge[];
+  customDonations?: CustomBadge[];
+  customSections?: CustomSection[];
+  showCredit?: boolean;
 }
 
 export const generateMarkdown = (data: StoreData): string => {
-  const { 
+  const {
     name, title, description, skills, githubUsername, wakatimeUsername, wakatimeBadgeId, showWakatimeBadges, showVisitorCounter, featuredRepos,
     showStatsCard, showStreakCard, showTopLanguages, showTrophies, showSnake, bannerUrl, spotifyUrl, rssUrl, typingText,
     typingColor, typingSize, typingDuration, typingPause,
     currentWork, learning, collaboration, askMeAbout, pronouns, funFact,
     showFollowers, showFollowing, followersMode,
     statStatsCards, statStatsTheme, statStatsFont, statStatsCompact, statStatsHide,
-    theme, alignment, badgeStyle, statsAlign, sectionTitles, socials, donations, layout 
+    theme, alignment, badgeStyle, statsAlign, sectionTitles, socials, donations, layout,
+    greeting = '', titlePrefix = '🚀', bioLabels = {}, bioLines = [],
+    customSkills = [], customSocials = [], customDonations = [], customSections = [], showCredit = true
   } = data;
 
   const isCentered = alignment === 'center';
   const isRow = statsAlign === 'row';
+  const defaults = README_DEFAULTS[data.language] ?? README_DEFAULTS.en;
 
   // --- Préparateurs de Sections ---
 
@@ -97,28 +169,43 @@ export const generateMarkdown = (data: StoreData): string => {
   };
 
   const getBioSection = () => {
-    let md = `# 👋 Hello, I'm ${name}\n\n## 🚀 ${title}\n\n${description}`;
-    const extraInfo = [];
-    if (currentWork) extraInfo.push(`- 🔭 I’m currently working on **${currentWork}**`);
-    if (learning) extraInfo.push(`- 🌱 I’m currently learning **${learning}**`);
-    if (collaboration) extraInfo.push(`- 👯 I’m looking to collaborate on **${collaboration}**`);
-    if (askMeAbout) extraInfo.push(`- 💬 Ask me about **${askMeAbout}**`);
-    if (pronouns) extraInfo.push(`- 📫 How to reach me: **${pronouns}**`);
-    if (funFact) extraInfo.push(`- ⚡ Fun fact: **${funFact}**`);
-    if (extraInfo.length > 0) md += `\n\n${extraInfo.join('\n')}`;
+    const blocks: string[] = [];
+
+    // Salutation libre : {name} est remplacé par le nom, vide = salutation par défaut de la langue
+    const customGreeting = greeting.trim();
+    const heading = (customGreeting || defaults.greeting).replace(/\{name\}/g, name.trim()).trim();
+    // Sans nom ni salutation personnalisée, on n'affiche pas un titre bancal
+    if (name.trim() || customGreeting) blocks.push(`# ${heading}`);
+
+    if (title.trim()) blocks.push(`## ${[titlePrefix.trim(), title.trim()].filter(Boolean).join(' ')}`);
+    if (description.trim()) blocks.push(description);
+
+    const values: Record<BioFieldKey, string> = { currentWork, learning, collaboration, askMeAbout, pronouns, funFact };
+    const extraInfo = BIO_FIELD_ORDER
+      .filter((key) => values[key].trim())
+      .map((key) => `- ${bioLabels[key]?.trim() || defaults.bioLabels[key]} **${values[key].trim()}**`);
+    for (const line of bioLines) {
+      if (line.text.trim()) extraInfo.push(`- ${line.text.trim()}`);
+    }
+    if (extraInfo.length > 0) blocks.push(extraInfo.join('\n'));
+
+    if (blocks.length === 0) return '';
+    const md = blocks.join('\n\n');
     return isCentered ? `<div align="center">\n\n${md}\n\n</div>` : md;
   };
 
   const getSkillsSection = () => {
-    if (skills.length === 0) return '';
-    const badges = skills
-      .map((slug) => {
+    const badges = [
+      ...skills.map((slug) => {
         const skill = getSkillBySlug(slug);
         if (!skill) return '';
         return `![${skill.name}](https://img.shields.io/badge/${encodeURIComponent(skill.name)}-${skill.color}?style=${badgeStyle}&logo=${skill.slug}&logoColor=white)`;
-      })
+      }),
+      ...customSkills.map((badge) => buildCustomBadge(badge, badgeStyle)),
+    ]
       .filter(Boolean)
       .join(' ');
+    if (!badges) return '';
     const titleMd = sectionTitles.skills ? `### ${sectionTitles.skills}\n\n` : '';
     const content = `${titleMd}${badges}`;
     return isCentered ? `<div align="center">\n\n${content}\n\n</div>` : content;
@@ -127,10 +214,10 @@ export const generateMarkdown = (data: StoreData): string => {
   const getFollowersSection = () => {
     if (!githubUsername || (!showFollowers && !showFollowing)) return '';
     const titleMd = sectionTitles.followers ? `### ${sectionTitles.followers}\n\n` : '';
-    
+
     const generateHtmlGrid = (list: { login: string; avatar_url: string }[]) => {
       if (list.length === 0) return '_No data found._';
-      
+
       // On aligne simplement les images les unes à côté des autres
       // GitHub gère très bien le retour à la ligne automatique
       return list.map((user) => {
@@ -188,6 +275,7 @@ export const generateMarkdown = (data: StoreData): string => {
     if (socials.email) {
       badges.push(`[![Email](https://img.shields.io/badge/Email-D14836?style=${badgeStyle}&logo=gmail&logoColor=white)](mailto:${socials.email})`);
     }
+    badges.push(...customSocials.map((badge) => buildCustomBadge(badge, badgeStyle, true)).filter(Boolean));
     if (badges.length === 0) return '';
     const titleMd = sectionTitles.socials ? `## ${sectionTitles.socials}\n\n` : '';
     const content = `${titleMd}${badges.join(' ')}`;
@@ -222,7 +310,7 @@ export const generateMarkdown = (data: StoreData): string => {
     if (!githubUsername || statStatsCards.length === 0) return '';
     const titleMd = sectionTitles.statstats ? `### ${sectionTitles.statstats}\n\n` : '';
     let content = isCentered ? '<div align="center">\n\n' : '<div>\n\n';
-    
+
     const cards = statStatsCards.map(cardType => {
       const baseUrl = 'https://github-stats-cards.matheodelaunay.studio/api';
       const params = new URLSearchParams({
@@ -232,7 +320,7 @@ export const generateMarkdown = (data: StoreData): string => {
       });
       if (statStatsCompact) params.append('compact', 'true');
       if (statStatsHide.length > 0) params.append('hide', statStatsHide.join(','));
-      
+
       const url = `${baseUrl}/${cardType}?${params.toString()}`;
       return `![${cardType}](${url})`;
     });
@@ -253,6 +341,7 @@ export const generateMarkdown = (data: StoreData): string => {
     if (donations.paypal) {
       badges.push(`[![PayPal](https://img.shields.io/badge/PayPal-00457C?style=${badgeStyle}&logo=paypal&logoColor=white)](https://www.paypal.me/${donations.paypal})`);
     }
+    badges.push(...customDonations.map((badge) => buildCustomBadge(badge, badgeStyle, true)).filter(Boolean));
     if (badges.length === 0) return '';
     const titleMd = sectionTitles.donations ? `## ${sectionTitles.donations}\n\n` : '';
     const content = `${titleMd}${badges.join(' ')}`;
@@ -263,7 +352,7 @@ export const generateMarkdown = (data: StoreData): string => {
     if (!githubUsername || featuredRepos.length === 0) return '';
     const titleMd = sectionTitles.projects ? `## ${sectionTitles.projects}\n\n` : '';
     let content = isCentered ? '<div align="center">\n\n' : '<div>\n\n';
-    const projectCards = featuredRepos.map(repo => 
+    const projectCards = featuredRepos.map(repo =>
       `![${repo}](https://github-readme-stats.vercel.app/api/pin/?username=${githubUsername}&repo=${repo}&theme=${theme}&hide_border=true)`
     );
     content += projectCards.join(isRow ? ' ' : '\n');
@@ -303,6 +392,17 @@ export const generateMarkdown = (data: StoreData): string => {
     return isCentered ? `<div align="center">\n\n${titleMd}${content}\n\n</div>` : `${titleMd}${content}`;
   };
 
+  // Section libre : titre optionnel + Markdown/HTML écrit tel quel par l'utilisateur
+  const getCustomSection = (id: string) => {
+    const section = customSections.find((s) => s.id === id);
+    if (!section) return '';
+    const sectionTitle = section.title.trim();
+    const content = section.content.trim();
+    if (!sectionTitle && !content) return '';
+    const md = [sectionTitle ? `## ${sectionTitle}` : '', content].filter(Boolean).join('\n\n');
+    return isCentered ? `<div align="center">\n\n${md}\n\n</div>` : md;
+  };
+
   const finalSections = layout.map((sectionId) => {
     switch (sectionId) {
       case 'banner': return getBannerSection();
@@ -318,13 +418,16 @@ export const generateMarkdown = (data: StoreData): string => {
       case 'rss': return getRssSection();
       case 'followers': return getFollowersSection();
       case 'statstats': return getStatStatsSection();
-      default: return '';
+      default: return getCustomSection(sectionId);
     }
   });
 
-  const footerCredit = data.language === 'fr' 
+  const body = finalSections.filter(Boolean).join('\n\n');
+  if (!showCredit) return body.trim();
+
+  const footerCredit = data.language === 'fr'
     ? '*Généré avec Ultimate GitHub Profile README Generator*'
     : '*Generated with Ultimate GitHub Profile README Generator*';
 
-  return `${finalSections.filter(Boolean).join('\n\n')}\n\n---\n${footerCredit}`.trim();
+  return `${body}\n\n---\n${footerCredit}`.trim();
 };

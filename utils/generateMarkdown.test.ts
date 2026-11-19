@@ -2,60 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { generateMarkdown } from './generateMarkdown';
 import { SectionId, BadgeStyle, Language } from '@/store/useReadmeStore';
 
-interface StoreData {
-  language: Language;
-  name: string;
-  title: string;
-  description: string;
-  currentWork: string;
-  learning: string;
-  collaboration: string;
-  askMeAbout: string;
-  pronouns: string;
-  funFact: string;
-  skills: string[];
-  githubUsername: string;
-  wakatimeUsername: string;
-  wakatimeBadgeId: string;
-  bannerUrl: string;
-  spotifyUrl: string;
-  rssUrl: string;
-  typingText: string;
-  typingColor: string;
-  typingSize: number;
-  typingDuration: number;
-  typingPause: number;
-  showFollowers: boolean;
-  showFollowing: boolean;
-  followersMode: 'badges' | 'list' | 'grid';
-  followersList: { login: string; avatar_url: string }[];
-  followingList: { login: string; avatar_url: string }[];
-  showWakatimeBadges: boolean;
-  showVisitorCounter: boolean;
-  featuredRepos: string[];
-  showStatsCard: boolean;
-  showStreakCard: boolean;
-  showTopLanguages: boolean;
-  showTrophies: boolean;
-  showSnake: boolean;
-  theme: string;
-  alignment: 'left' | 'center';
-  badgeStyle: BadgeStyle;
-  statsAlign: 'column' | 'row';
-  sectionTitles: Record<SectionId, string>;
-  socials: {
-    linkedin: string;
-    twitter: string;
-    portfolio: string;
-    email: string;
-  };
-  donations: {
-    buymeacoffee: string;
-    kofi: string;
-    paypal: string;
-  };
-  layout: SectionId[];
-}
+type StoreData = Parameters<typeof generateMarkdown>[0];
 
 describe('generateMarkdown', () => {
   const mockData: StoreData = {
@@ -110,8 +57,14 @@ describe('generateMarkdown', () => {
       spotify: '🎵 Now Playing',
       rss: '📰 Latest Blog Posts',
       typing: '⌨️ Dynamic Text',
-      followers: '👥 Network'
+      followers: '👥 Network',
+      statstats: '⚡ Modern Stats'
     },
+    statStatsCards: [],
+    statStatsTheme: 'dark',
+    statStatsFont: 'Inter',
+    statStatsCompact: false,
+    statStatsHide: [],
     socials: {
       linkedin: 'johndoe',
       twitter: '',
@@ -166,5 +119,84 @@ describe('generateMarkdown', () => {
     const noUser: StoreData = { ...mockData, githubUsername: '' };
     const md = generateMarkdown(noUser);
     expect(md).not.toContain('### 📊 GitHub Stats');
+  });
+
+  describe('free-form fields', () => {
+    const free = (extra: Partial<StoreData>) => generateMarkdown({ ...mockData, ...extra });
+
+    it('uses a custom greeting and replaces {name}', () => {
+      expect(free({ greeting: 'Yo, {name} here' })).toContain('# Yo, John Doe here');
+      expect(free({ greeting: 'Welcome!' })).toContain('# Welcome!');
+    });
+
+    it('localizes default labels and lets the user override them', () => {
+      const fr = free({ language: 'fr' });
+      expect(fr).toContain('# 👋 Salut, moi c’est John Doe');
+      expect(fr).toContain('- 🔭 Je travaille actuellement sur **Ultimate README Gen**');
+
+      const custom = free({ bioLabels: { currentWork: '🛠️ Building' } });
+      expect(custom).toContain('- 🛠️ Building **Ultimate README Gen**');
+      expect(custom).toContain('- 🌱 I’m currently learning **Next.js 16**');
+    });
+
+    it('labels pronouns as pronouns', () => {
+      const md = free({ pronouns: 'they/them' });
+      expect(md).toContain('- 😄 Pronouns: **they/them**');
+      expect(md).not.toContain('How to reach me');
+    });
+
+    it('supports a free title prefix and skips empty title/description', () => {
+      expect(free({ titlePrefix: '' })).toContain('## Developer');
+      expect(free({ titlePrefix: '🎨' })).toContain('## 🎨 Developer');
+      const empty = free({ title: '', description: '  ' });
+      expect(empty).not.toContain('## 🚀');
+    });
+
+    it('appends free bio lines', () => {
+      const md = free({ bioLines: [{ id: 'a', text: '🎮 Gamer at night' }, { id: 'b', text: '   ' }] });
+      expect(md).toContain('- 🎮 Gamer at night');
+      expect(md.match(/^- /gm)?.length).toBe(3);
+    });
+
+    it('renders custom skill, social and donation badges', () => {
+      const md = free({
+        skills: [],
+        customSkills: [{ id: '1', label: 'My-Tool_X', url: '', color: '#ff0000', logo: 'rust' }],
+        customSocials: [
+          { id: '2', label: 'YouTube', url: 'youtube.com/@me', color: 'FF0000', logo: 'youtube' },
+          { id: '3', label: 'No link', url: '', color: 'FF0000', logo: '' },
+        ],
+        customDonations: [{ id: '4', label: 'Patreon', url: 'https://patreon.com/me', color: 'bad', logo: '' }],
+      });
+      expect(md).toContain('![My-Tool_X](https://img.shields.io/badge/My--Tool__X-ff0000?style=for-the-badge&logo=rust&logoColor=white)');
+      expect(md).toContain('[![YouTube](https://img.shields.io/badge/YouTube-FF0000?style=for-the-badge&logo=youtube&logoColor=white)](https://youtube.com/@me)');
+      expect(md).not.toContain('No link');
+      expect(md).toContain('[![Patreon](https://img.shields.io/badge/Patreon-bad?style=for-the-badge)](https://patreon.com/me)');
+    });
+
+    it('turns a bare email into a mailto link and falls back on invalid colors', () => {
+      const md = free({ customSocials: [{ id: '1', label: 'Mail', url: 'me@example.com', color: 'nope', logo: '' }] });
+      expect(md).toContain('(https://img.shields.io/badge/Mail-555555?style=for-the-badge)](mailto:me@example.com)');
+    });
+
+    it('renders custom sections at their layout position and skips empty ones', () => {
+      const md = free({
+        layout: ['custom-a', 'bio', 'custom-b', 'custom-missing'],
+        customSections: [
+          { id: 'custom-a', title: 'Now', content: 'Raw **markdown** <b>html</b>' },
+          { id: 'custom-b', title: '', content: '' },
+        ],
+      });
+      expect(md).toContain('## Now\n\nRaw **markdown** <b>html</b>');
+      expect(md.indexOf('## Now')).toBeLessThan(md.indexOf('# 👋 Hello'));
+      expect(md).not.toContain('undefined');
+    });
+
+    it('can hide the footer credit', () => {
+      expect(free({})).toContain('Generated with Ultimate GitHub Profile README Generator');
+      const md = free({ showCredit: false });
+      expect(md).not.toContain('Generated with');
+      expect(md.endsWith('---')).toBe(false);
+    });
   });
 });

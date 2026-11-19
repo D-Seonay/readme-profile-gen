@@ -10,6 +10,35 @@ export type Language = 'en' | 'fr';
 export type UITheme = 'dark' | 'light';
 export type StatStatsCard = 'stats' | 'top-langs' | 'streak' | 'top-repos' | 'activity' | 'trophies' | 'org';
 
+// --- Champs libres ---
+export type CustomSectionId = `custom-${string}`;
+export type LayoutId = SectionId | CustomSectionId;
+export const isCustomSectionId = (id: string): id is CustomSectionId => id.startsWith('custom-');
+
+export interface CustomSection {
+  id: CustomSectionId;
+  title: string;
+  content: string;
+}
+
+export interface CustomBadge {
+  id: string;
+  label: string;
+  url: string;
+  color: string;
+  logo: string;
+}
+
+export interface BioLine {
+  id: string;
+  text: string;
+}
+
+export type BioFieldKey = 'currentWork' | 'learning' | 'collaboration' | 'askMeAbout' | 'pronouns' | 'funFact';
+export type BadgeListKey = 'customSkills' | 'customSocials' | 'customDonations';
+
+const createId = () => `${Date.now().toString(36)}${Math.random().toString(36).slice(2, 7)}`;
+
 const DEFAULT_LAYOUT: SectionId[] = ['banner', 'typing', 'bio', 'skills', 'statstats', 'socials', 'stats', 'donations', 'projects', 'wakatime', 'spotify', 'rss', 'followers'];
 
 interface ReadmeState {
@@ -26,6 +55,17 @@ interface ReadmeState {
   askMeAbout: string;
   pronouns: string;
   funFact: string;
+
+  // Champs libres
+  greeting: string;
+  titlePrefix: string;
+  bioLabels: Record<BioFieldKey, string>;
+  bioLines: BioLine[];
+  customSkills: CustomBadge[];
+  customSocials: CustomBadge[];
+  customDonations: CustomBadge[];
+  customSections: CustomSection[];
+  showCredit: boolean;
 
   // Tour
   isTourActive: boolean;
@@ -93,8 +133,8 @@ interface ReadmeState {
     trophies: ServiceStatus;
     wakatime: ServiceStatus;
   };
-  layout: SectionId[];
-  
+  layout: LayoutId[];
+
   setLanguage: (language: Language) => void;
   setUITheme: (theme: UITheme) => void;
   toggleUITheme: () => void;
@@ -108,6 +148,23 @@ interface ReadmeState {
   setAskMeAbout: (val: string) => void;
   setPronouns: (val: string) => void;
   setFunFact: (val: string) => void;
+
+  // Champs libres
+  setGreeting: (val: string) => void;
+  setTitlePrefix: (val: string) => void;
+  setBioLabel: (key: BioFieldKey, val: string) => void;
+  addBioLine: () => void;
+  updateBioLine: (id: string, text: string) => void;
+  removeBioLine: (id: string) => void;
+  addCustomBadge: (list: BadgeListKey, preset?: Partial<Omit<CustomBadge, 'id'>>) => void;
+  updateCustomBadge: (list: BadgeListKey, id: string, patch: Partial<Omit<CustomBadge, 'id'>>) => void;
+  removeCustomBadge: (list: BadgeListKey, id: string) => void;
+  addCustomSection: () => CustomSectionId;
+  updateCustomSection: (id: CustomSectionId, patch: Partial<Omit<CustomSection, 'id'>>) => void;
+  removeCustomSection: (id: CustomSectionId) => void;
+  toggleCredit: () => void;
+  exportConfig: () => string;
+  importConfig: (json: string) => boolean;
 
   setTourStep: (step: number) => void;
   completeTour: () => void;
@@ -156,7 +213,7 @@ interface ReadmeState {
 
   setSocial: (platform: keyof ReadmeState['socials'], value: string) => void;
   setDonation: (platform: keyof ReadmeState['donations'], value: string) => void;
-  reorderLayout: (activeId: SectionId, overId: SectionId) => void;
+  reorderLayout: (activeId: LayoutId, overId: LayoutId) => void;
   checkServicesHealth: () => Promise<void>;
   fetchGithubUserData: (username: string) => Promise<void>;
   fetchSocialData: (username: string) => Promise<void>; // Nouvelle action
@@ -175,6 +232,22 @@ const initialState = {
   askMeAbout: '',
   pronouns: '',
   funFact: '',
+  greeting: '',
+  titlePrefix: '🚀',
+  bioLabels: {
+    currentWork: '',
+    learning: '',
+    collaboration: '',
+    askMeAbout: '',
+    pronouns: '',
+    funFact: '',
+  } as Record<BioFieldKey, string>,
+  bioLines: [] as BioLine[],
+  customSkills: [] as CustomBadge[],
+  customSocials: [] as CustomBadge[],
+  customDonations: [] as CustomBadge[],
+  customSections: [] as CustomSection[],
+  showCredit: true,
   isTourActive: false,
   currentTourStep: 0,
   hasCompletedTour: false,
@@ -248,7 +321,89 @@ const initialState = {
     trophies: 'checking' as ServiceStatus,
     wakatime: 'checking' as ServiceStatus,
   },
-  layout: DEFAULT_LAYOUT,
+  layout: DEFAULT_LAYOUT as LayoutId[],
+};
+
+// Champs jamais persistés ni exportés (état d'exécution)
+const TRANSIENT_KEYS: readonly string[] = ['servicesStatus', 'isLoadingGithubData', 'githubFetchError', 'isTourActive', 'currentTourStep'];
+
+// Garantit qu'un layout contient toutes les sections connues, sans doublon ni section orpheline
+const normalizeLayout = (layout: unknown, customSections: CustomSection[]): LayoutId[] => {
+  const customIds = customSections.map((s) => s.id);
+  const known = new Set<string>([...DEFAULT_LAYOUT, ...customIds]);
+  const seen = new Set<string>();
+  const result: LayoutId[] = [];
+  for (const id of Array.isArray(layout) ? layout : []) {
+    if (typeof id === 'string' && known.has(id) && !seen.has(id)) {
+      seen.add(id);
+      result.push(id as LayoutId);
+    }
+  }
+  for (const id of [...DEFAULT_LAYOUT, ...customIds]) {
+    if (!seen.has(id)) result.push(id);
+  }
+  return result;
+};
+
+const isRecord = (v: unknown): v is Record<string, unknown> => typeof v === 'object' && v !== null && !Array.isArray(v);
+const str = (v: unknown, max = 20000) => (typeof v === 'string' ? v.slice(0, max) : '');
+
+const sanitizeBadges = (v: unknown): CustomBadge[] =>
+  (Array.isArray(v) ? v : []).filter(isRecord).slice(0, 100).map((b) => ({
+    id: str(b.id, 40) || createId(),
+    label: str(b.label, 200),
+    url: str(b.url, 2000),
+    color: str(b.color, 20),
+    logo: str(b.logo, 100),
+  }));
+
+// Ne retient d'un JSON importé que les clés connues dont le type correspond à l'état initial
+const sanitizeImport = (raw: unknown): Partial<typeof initialState> | null => {
+  if (!isRecord(raw)) return null;
+  const out: Record<string, unknown> = {};
+  const base = initialState as Record<string, unknown>;
+
+  for (const key of Object.keys(base)) {
+    if (TRANSIENT_KEYS.includes(key) || !(key in raw)) continue;
+    const def = base[key];
+    const val = raw[key];
+
+    if (key === 'customSkills' || key === 'customSocials' || key === 'customDonations') {
+      out[key] = sanitizeBadges(val);
+    } else if (key === 'customSections') {
+      out[key] = (Array.isArray(val) ? val : []).filter(isRecord).slice(0, 50)
+        .filter((s) => typeof s.id === 'string' && isCustomSectionId(s.id))
+        .map((s) => ({ id: str(s.id, 60) as CustomSectionId, title: str(s.title, 300), content: str(s.content) }));
+    } else if (key === 'bioLines') {
+      out[key] = (Array.isArray(val) ? val : []).filter(isRecord).slice(0, 50)
+        .map((l) => ({ id: str(l.id, 40) || createId(), text: str(l.text, 1000) }));
+    } else if (key === 'followersList' || key === 'followingList') {
+      out[key] = (Array.isArray(val) ? val : []).filter(isRecord).slice(0, 100)
+        .map((u) => ({ login: str(u.login, 100), avatar_url: str(u.avatar_url, 500) }));
+    } else if (key === 'layout') {
+      out[key] = val; // normalisé plus bas
+    } else if (Array.isArray(def)) {
+      if (Array.isArray(val)) out[key] = val.filter((v) => typeof v === 'string').slice(0, 500);
+    } else if (isRecord(def)) {
+      // Objets à plat de chaînes (socials, donations, sectionTitles, bioLabels)
+      if (isRecord(val)) {
+        const merged: Record<string, unknown> = { ...def };
+        for (const k of Object.keys(def)) {
+          if (typeof val[k] === 'string') merged[k] = str(val[k], 2000);
+        }
+        out[key] = merged;
+      }
+    } else if (typeof val === typeof def) {
+      out[key] = typeof val === 'string' ? str(val) : val;
+    }
+  }
+
+  if (Object.keys(out).length === 0) return null;
+  // Un import remplace l'ensemble : layout et sections libres restent toujours cohérents
+  const sections = (out.customSections as CustomSection[] | undefined) ?? [];
+  out.customSections = sections;
+  out.layout = normalizeLayout(out.layout ?? DEFAULT_LAYOUT, sections);
+  return out as Partial<typeof initialState>;
 };
 
 
@@ -270,6 +425,60 @@ export const useReadmeStore = create<ReadmeState>()(
       setAskMeAbout: (askMeAbout: string) => set({ askMeAbout }),
       setPronouns: (pronouns: string) => set({ pronouns }),
       setFunFact: (funFact: string) => set({ funFact }),
+
+      // Champs libres
+      setGreeting: (greeting: string) => set({ greeting }),
+      setTitlePrefix: (titlePrefix: string) => set({ titlePrefix }),
+      setBioLabel: (key, val) => set((state) => ({ bioLabels: { ...state.bioLabels, [key]: val } })),
+      addBioLine: () => set((state) => ({ bioLines: [...state.bioLines, { id: createId(), text: '' }] })),
+      updateBioLine: (id, text) => set((state) => ({
+        bioLines: state.bioLines.map((l) => (l.id === id ? { ...l, text } : l)),
+      })),
+      removeBioLine: (id) => set((state) => ({ bioLines: state.bioLines.filter((l) => l.id !== id) })),
+      addCustomBadge: (list, preset) => set((state) => ({
+        [list]: [...state[list], { id: createId(), label: '', url: '', color: '6366F1', logo: '', ...preset }],
+      })),
+      updateCustomBadge: (list, id, patch) => set((state) => ({
+        [list]: state[list].map((b) => (b.id === id ? { ...b, ...patch } : b)),
+      })),
+      removeCustomBadge: (list, id) => set((state) => ({
+        [list]: state[list].filter((b) => b.id !== id),
+      })),
+      addCustomSection: () => {
+        const id: CustomSectionId = `custom-${createId()}`;
+        set((state) => ({
+          customSections: [...state.customSections, { id, title: '', content: '' }],
+          layout: [...state.layout, id],
+        }));
+        return id;
+      },
+      updateCustomSection: (id, patch) => set((state) => ({
+        customSections: state.customSections.map((s) => (s.id === id ? { ...s, ...patch } : s)),
+      })),
+      removeCustomSection: (id) => set((state) => ({
+        customSections: state.customSections.filter((s) => s.id !== id),
+        layout: state.layout.filter((l) => l !== id),
+      })),
+      toggleCredit: () => set((state) => ({ showCredit: !state.showCredit })),
+
+      exportConfig: () => {
+        const state = get() as unknown as Record<string, unknown>;
+        const data: Record<string, unknown> = {};
+        for (const key of Object.keys(initialState)) {
+          if (!TRANSIENT_KEYS.includes(key)) data[key] = state[key];
+        }
+        return JSON.stringify(data, null, 2);
+      },
+      importConfig: (json: string) => {
+        try {
+          const clean = sanitizeImport(JSON.parse(json));
+          if (!clean) return false;
+          set(clean);
+          return true;
+        } catch {
+          return false;
+        }
+      },
 
       setTourStep: (currentTourStep: number) => set({ currentTourStep }),
       completeTour: () => set({ isTourActive: false, currentTourStep: 0, hasCompletedTour: true }),
@@ -456,12 +665,7 @@ export const useReadmeStore = create<ReadmeState>()(
       onRehydrateStorage: () => {
         return (hydratedState) => {
           if (hydratedState) {
-            const missingSections = DEFAULT_LAYOUT.filter(
-              (section) => !hydratedState.layout.includes(section)
-            );
-            if (missingSections.length > 0) {
-              hydratedState.layout = [...hydratedState.layout, ...missingSections];
-            }
+            hydratedState.layout = normalizeLayout(hydratedState.layout, hydratedState.customSections ?? []);
           }
         };
       },

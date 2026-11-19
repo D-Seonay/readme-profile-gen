@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useRef, useState, useMemo, useEffect } from 'react';
-import { useReadmeStore, SectionId } from '@/store/useReadmeStore';
+import { useReadmeStore, LayoutId, CustomSectionId, isCustomSectionId } from '@/store/useReadmeStore';
 import { useHydration } from '@/hooks/useHydration';
 import { useTranslation } from '@/hooks/useTranslation';
 import { SkillSelector } from '@/components/SkillSelector';
@@ -18,6 +18,9 @@ import { FollowersConfig } from '@/components/FollowersConfig';
 import { StatStatsConfig } from '@/components/StatStatsConfig';
 import { LayoutManager } from '@/components/LayoutManager';
 import { StyleConfig } from '@/components/StyleConfig';
+import { BioForm } from '@/components/BioForm';
+import { CustomSectionEditor } from '@/components/CustomSectionEditor';
+import { ConfigTransfer } from '@/components/ConfigTransfer';
 import { PreviewPane, PreviewPaneHandle } from '@/components/PreviewPane';
 import { GithubProfileFetcher } from '@/components/GithubProfileFetcher';
 import { LanguageSwitcher } from '@/components/LanguageSwitcher';
@@ -35,7 +38,7 @@ export default function Home() {
 
   const previewRef = useRef<PreviewPaneHandle>(null);
   const onboardingInputRef = useRef<HTMLInputElement>(null);
-  
+
   // Options de raccourcis mémoïsées pour la stabilité
   const shortcutOptions = useMemo(() => ({
     onCopy: () => previewRef.current?.handleCopy(),
@@ -46,12 +49,9 @@ export default function Home() {
   // Activer les raccourcis clavier
   useKeyboardShortcuts(shortcutOptions);
 
-  const { 
-    name, title, description, setName, setTitle, setDescription, reset, 
-    currentWork, setCurrentWork, learning, setLearning,
-    collaboration, setCollaboration, askMeAbout, setAskMeAbout,
-    pronouns, setPronouns, funFact, setFunFact,
-    layout, sectionTitles, uiTheme, hasCompletedTour, startTour
+  const {
+    reset, layout, sectionTitles, customSections, addCustomSection,
+    uiTheme, hasCompletedTour, startTour
   } = store;
 
   // Déclencher le tour d'onboarding au premier chargement si non complété
@@ -62,6 +62,8 @@ export default function Home() {
   }, [hydrated, hasCompletedTour, startTour]);
 
   const [isResetModalOpen, setIsResetModalOpen] = useState(false);
+  // Dernière section libre créée : ouverte d'office pour pouvoir écrire tout de suite
+  const [lastAddedSection, setLastAddedSection] = useState<CustomSectionId | null>(null);
 
   if (!hydrated) {
     return (
@@ -78,7 +80,22 @@ export default function Home() {
     toast.success(language === 'fr' ? 'Toutes les données ont été réinitialisées' : 'All data has been reset');
   };
 
-  const renderSection = (id: SectionId) => {
+  const renderSection = (id: LayoutId) => {
+    if (isCustomSectionId(id)) {
+      const section = customSections.find((s) => s.id === id);
+      if (!section) return null;
+      return (
+        <CollapsibleSection
+          key={id}
+          title={`✏️ ${section.title.trim() || t.free.untitled}`}
+          subtitle={t.free.sectionHelp}
+          defaultOpen={id === lastAddedSection}
+        >
+          <CustomSectionEditor id={id} />
+        </CollapsibleSection>
+      );
+    }
+
     switch (id) {
       case 'banner':
         return (
@@ -95,105 +112,7 @@ export default function Home() {
       case 'bio':
         return (
           <CollapsibleSection key={id} title={sectionTitles.bio || t.layout.bio} subtitle={t.layout.help}>
-            <div className="space-y-6 pt-2">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="flex flex-col gap-2">
-                  <label className={`text-[10px] font-mono uppercase tracking-[0.2em] ${isDark ? 'text-zinc-500' : 'text-zinc-400'}`}>{t.baseInfo.name}</label>
-                  <input
-                    type="text"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    className={`${isDark ? 'bg-zinc-950 border-zinc-800 text-zinc-100' : 'bg-white border-zinc-200 text-zinc-900'} border p-3 rounded-xl font-mono text-xs focus:outline-none focus:border-indigo-500 transition-colors placeholder:opacity-20`}
-                    placeholder="Ex: John Doe"
-                  />
-                </div>
-                <div className="flex flex-col gap-2">
-                  <label className={`text-[10px] font-mono uppercase tracking-[0.2em] ${isDark ? 'text-zinc-500' : 'text-zinc-400'}`}>{t.baseInfo.job}</label>
-                  <input
-                    type="text"
-                    value={title}
-                    onChange={(e) => setTitle(e.target.value)}
-                    className={`${isDark ? 'bg-zinc-950 border-zinc-800 text-zinc-100' : 'bg-white border-zinc-200 text-zinc-900'} border p-3 rounded-xl font-mono text-xs focus:outline-none focus:border-indigo-500 transition-colors placeholder:opacity-20`}
-                    placeholder="Ex: Fullstack Developer"
-                  />
-                </div>
-              </div>
-
-              <div className="flex flex-col gap-2">
-                <label className={`text-[10px] font-mono uppercase tracking-[0.2em] ${isDark ? 'text-zinc-500' : 'text-zinc-400'}`}>{t.baseInfo.bio}</label>
-                <textarea
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
-                  rows={3}
-                  className={`${isDark ? 'bg-zinc-950 border-zinc-800 text-zinc-100' : 'bg-white border-zinc-200 text-zinc-900'} border p-3 rounded-xl font-mono text-xs focus:outline-none focus:border-indigo-500 transition-all resize-none placeholder:opacity-20`}
-                  placeholder={t.baseInfo.placeholderBio}
-                />
-              </div>
-
-              {/* Enhanced Bio Fields */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 border-t border-zinc-800 pt-6 mt-6">
-                <div className="flex flex-col gap-2">
-                  <label className={`text-[10px] font-mono uppercase tracking-[0.2em] ${isDark ? 'text-zinc-500' : 'text-zinc-400'}`}>{t.baseInfo.workingOn}</label>
-                  <input
-                    type="text"
-                    value={currentWork}
-                    onChange={(e) => setCurrentWork(e.target.value)}
-                    className={`${isDark ? 'bg-zinc-950 border-zinc-800 text-zinc-100' : 'bg-white border-zinc-200 text-zinc-900'} border p-2.5 rounded-xl font-mono text-[10px] focus:outline-none focus:border-indigo-500 transition-colors`}
-                    placeholder="Project name or URL"
-                  />
-                </div>
-                <div className="flex flex-col gap-2">
-                  <label className={`text-[10px] font-mono uppercase tracking-[0.2em] ${isDark ? 'text-zinc-500' : 'text-zinc-400'}`}>{t.baseInfo.learning}</label>
-                  <input
-                    type="text"
-                    value={learning}
-                    onChange={(e) => setLearning(e.target.value)}
-                    className={`${isDark ? 'bg-zinc-950 border-zinc-800 text-zinc-100' : 'bg-white border-zinc-200 text-zinc-900'} border p-2.5 rounded-xl font-mono text-[10px] focus:outline-none focus:border-indigo-500 transition-colors`}
-                    placeholder="New tech, language..."
-                  />
-                </div>
-                <div className="flex flex-col gap-2">
-                  <label className={`text-[10px] font-mono uppercase tracking-[0.2em] ${isDark ? 'text-zinc-500' : 'text-zinc-400'}`}>{t.baseInfo.collaboration}</label>
-                  <input
-                    type="text"
-                    value={collaboration}
-                    onChange={(e) => setCollaboration(e.target.value)}
-                    className={`${isDark ? 'bg-zinc-950 border-zinc-800 text-zinc-100' : 'bg-white border-zinc-200 text-zinc-900'} border p-2.5 rounded-xl font-mono text-[10px] focus:outline-none focus:border-indigo-500 transition-colors`}
-                    placeholder="Open source projects..."
-                  />
-                </div>
-                <div className="flex flex-col gap-2">
-                  <label className={`text-[10px] font-mono uppercase tracking-[0.2em] ${isDark ? 'text-zinc-500' : 'text-zinc-400'}`}>{t.baseInfo.askMeAbout}</label>
-                  <input
-                    type="text"
-                    value={askMeAbout}
-                    onChange={(e) => setAskMeAbout(e.target.value)}
-                    className={`${isDark ? 'bg-zinc-950 border-zinc-800 text-zinc-100' : 'bg-white border-zinc-200 text-zinc-900'} border p-2.5 rounded-xl font-mono text-[10px] focus:outline-none focus:border-indigo-500 transition-colors`}
-                    placeholder="Topics you know well"
-                  />
-                </div>
-                <div className="flex flex-col gap-2">
-                  <label className={`text-[10px] font-mono uppercase tracking-[0.2em] ${isDark ? 'text-zinc-500' : 'text-zinc-400'}`}>{t.baseInfo.pronouns}</label>
-                  <input
-                    type="text"
-                    value={pronouns}
-                    onChange={(e) => setPronouns(e.target.value)}
-                    className={`${isDark ? 'bg-zinc-950 border-zinc-800 text-zinc-100' : 'bg-white border-zinc-200 text-zinc-900'} border p-2.5 rounded-xl font-mono text-[10px] focus:outline-none focus:border-indigo-500 transition-colors`}
-                    placeholder="he/him, she/her..."
-                  />
-                </div>
-                <div className="flex flex-col gap-2">
-                  <label className={`text-[10px] font-mono uppercase tracking-[0.2em] ${isDark ? 'text-zinc-500' : 'text-zinc-400'}`}>{t.baseInfo.funFact}</label>
-                  <input
-                    type="text"
-                    value={funFact}
-                    onChange={(e) => setFunFact(e.target.value)}
-                    className={`${isDark ? 'bg-zinc-950 border-zinc-800 text-zinc-100' : 'bg-white border-zinc-200 text-zinc-900'} border p-2.5 rounded-xl font-mono text-[10px] focus:outline-none focus:border-indigo-500 transition-colors`}
-                    placeholder="I love pizza..."
-                  />
-                </div>
-              </div>
-            </div>
+            <BioForm />
           </CollapsibleSection>
         );
       case 'skills':
@@ -274,7 +193,7 @@ export default function Home() {
       />
       <OnboardingTour />
       <section className={`w-1/2 h-full flex flex-col border-r ${isDark ? 'border-zinc-800 bg-zinc-900/50' : 'border-zinc-200 bg-white/80'} backdrop-blur-sm overflow-y-auto custom-scrollbar`}>
-        <header className="p-8 pb-4 flex items-start justify-between">
+        <header className="p-8 pb-4 flex flex-wrap items-start justify-between gap-4">
           <div>
             <h1 className="text-3xl font-black italic uppercase tracking-tighter">
               {t.title} <span className={isDark ? 'text-zinc-500' : 'text-zinc-400'}>{t.subtitle}</span>
@@ -282,9 +201,9 @@ export default function Home() {
             <div className="flex items-center gap-2 mt-1">
               <p className={`${isDark ? 'text-zinc-500' : 'text-zinc-400'} font-mono text-sm italic`}>{t.tagline}</p>
               <span className="text-zinc-700">•</span>
-              <a 
-                href="https://matheodelaunay.studio" 
-                target="_blank" 
+              <a
+                href="https://matheodelaunay.studio"
+                target="_blank"
                 rel="noopener noreferrer"
                 className={`text-[10px] font-mono uppercase tracking-widest transition-colors ${isDark ? 'text-zinc-600 hover:text-indigo-400' : 'text-zinc-400 hover:text-indigo-600'}`}
               >
@@ -292,11 +211,12 @@ export default function Home() {
               </a>
             </div>
           </div>
-          
-          <div className="flex items-center gap-4">
+
+          <div className="flex flex-wrap items-center justify-end gap-x-4 gap-y-2">
             <ThemeSwitcher />
             <LanguageSwitcher />
-            <button 
+            <ConfigTransfer />
+            <button
               onClick={() => setIsResetModalOpen(true)}
               className={`text-[9px] font-mono border ${isDark ? 'border-zinc-800 text-zinc-600 hover:text-zinc-100 hover:border-zinc-500' : 'border-zinc-200 text-zinc-400 hover:text-zinc-900 hover:border-zinc-400'} px-3 py-1.5 rounded transition-all uppercase tracking-widest`}
             >
@@ -320,10 +240,20 @@ export default function Home() {
 
           {layout.map((sectionId) => renderSection(sectionId))}
 
+          <div className={`border-t px-8 pt-6 ${isDark ? 'border-zinc-800' : 'border-zinc-200'}`}>
+            <button
+              type="button"
+              onClick={() => setLastAddedSection(addCustomSection())}
+              className={`w-full p-4 border-2 border-dashed rounded-xl text-[10px] font-mono uppercase tracking-[0.2em] transition-all ${isDark ? 'border-zinc-800 text-zinc-500 hover:border-indigo-500 hover:text-zinc-100' : 'border-zinc-200 text-zinc-400 hover:border-indigo-500 hover:text-zinc-900'}`}
+            >
+              + {t.free.addSection}
+            </button>
+          </div>
+
           <div className={`mt-8 mx-8 pt-8 border-t ${isDark ? 'border-zinc-800' : 'border-zinc-200'} flex flex-col items-center gap-4`}>
-            <a 
-              href="https://github.com/D-Seonay/readme-profile-gen/issues/new" 
-              target="_blank" 
+            <a
+              href="https://github.com/D-Seonay/readme-profile-gen/issues/new"
+              target="_blank"
               rel="noopener noreferrer"
               className={`flex items-center gap-2 text-[10px] font-mono uppercase tracking-widest transition-colors ${isDark ? 'text-zinc-600 hover:text-indigo-400' : 'text-zinc-400 hover:text-indigo-600'}`}
             >

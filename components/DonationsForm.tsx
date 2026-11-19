@@ -3,6 +3,7 @@
 import React from 'react';
 import { useReadmeStore } from '@/store/useReadmeStore';
 import { useTranslation } from '@/hooks/useTranslation';
+import { CustomBadgeList, DONATION_PRESETS } from '@/components/CustomBadgeList';
 
 export const DonationsForm = () => {
   const { donations, setDonation, uiTheme } = useReadmeStore();
@@ -36,6 +37,8 @@ export const DonationsForm = () => {
           </div>
         ))}
       </div>
+
+      <CustomBadgeList list="customDonations" requireUrl presets={DONATION_PRESETS} />
     </div>
   );
 };
