@@ -10,20 +10,165 @@ export const translations = {
     light: "Light",
     
     landing: {
+      skip: "Skip to content",
+      nav: {
+        label: "Main",
+        builder: "Open the builder",
+        builderShort: "Builder",
+        language: "Language",
+        theme: "Theme",
+        ink: "Ink",
+        paper: "Paper",
+        inkLabel: "Dark theme",
+        paperLabel: "Light theme"
+      },
       hero: {
-        tagline: "The Ultimate GitHub Profile README Generator",
-        subtitle: "Design a professional profile in seconds with smart automation, interactive layouts, and beautiful stats cards.",
-        cta: "Start Building Now"
+        file: "you/you/README.md",
+        titleLead: "Your GitHub profile",
+        titleTail: "is a Markdown file.",
+        lede: "Ultimate README Gen writes it for you. Fill in a few fields, pick badges, stats cards and sections, drag them into order, and watch the profile take shape as you type.",
+        cta: "Open the builder",
+        try: "Try it on this page",
+        sticker: "Free, no sign-up",
+        source: "README.md",
+        proof: "On your profile",
+        stamp: "Proof",
+        caption: "Left, the Markdown the builder writes. Right, what GitHub shows on your profile."
       },
-      features: {
-        autofill: { title: "Smart Auto-fill", desc: "Fetch your GitHub data instantly." },
-        dragdrop: { title: "Drag & Drop", desc: "Reorder your profile sections easily." },
-        livepreview: { title: "Live Preview", desc: "See your changes in real-time as you build." }
+      samples: {
+        role: "Type designer & front-end developer",
+        bio: "I draw letters, then teach browsers how to set them.",
+        work: "a variable font for code",
+        learning: "Rust",
+        fact: "I own more fonts than socks",
+        skillsTitle: "🛠️ Tech Stack"
       },
-      howItWorks: {
-        step1: { title: "1. Enter Username", desc: "Type your GitHub handle." },
-        step2: { title: "2. Customize", desc: "Pick your tech stack and layout." },
-        step3: { title: "3. Export", desc: "Copy the code to your profile." }
+      compose: {
+        chapter: "Compose",
+        title: "Type your name. *Watch the README write itself.*",
+        lede: "This is the builder’s own engine, cut down to six fields. Every change rewrites the Markdown and the rendered profile together.",
+        file: "compose.md",
+        fields: {
+          name: "name",
+          role: "role",
+          bio: "bio",
+          stack: "stack",
+          align: "align",
+          badges: "badges",
+          left: "left",
+          center: "center"
+        },
+        views: {
+          label: "Show",
+          proof: "Rendered",
+          markdown: "Markdown"
+        },
+        sourceLabel: "Generated Markdown",
+        copy: "Copy Markdown",
+        copied: "Markdown copied",
+        copyError: "Couldn’t copy. Select the Markdown and copy it by hand.",
+        continue: "Continue in the builder",
+        continueNote: "Your six fields come with you. The builder has thirteen sections and free ones on top.",
+        replaceTitle: "Replace your saved draft?",
+        replaceBody: "The builder already holds a profile in progress. Continuing replaces its name, role, bio, stack, alignment and badge style.",
+        replace: "Replace and continue",
+        keep: "Keep my draft"
+      },
+      typeCase: {
+        chapter: "Type case",
+        title: "Every piece *a profile is made of.*",
+        lede: "Thirteen ready-made sections, free sections for anything else, and badges in five styles. Use what you need, leave the rest empty.",
+        anatomy: {
+          title: "Anatomy of a badge",
+          note: "Make your own for skills, socials or donations. This is the Markdown the builder writes for it.",
+          sample: "Hire me",
+          label: "label",
+          labelNote: "any text",
+          color: "colour",
+          colorNote: "any hex value",
+          logo: "logo",
+          logoNote: "any Simple Icons name",
+          style: "style",
+          styleNote: "one of five",
+          link: "link",
+          linkNote: "optional URL or email"
+        },
+        styles: {
+          title: "Five badge styles",
+          note: "Real renders from shields.io. One switch restyles every badge in your README.",
+          height: "px tall"
+        },
+        sections: {
+          title: "Thirteen sections and a free one",
+          note: "Listed in their default order. Drag them around in the builder; an empty section is left out.",
+          free: "✏️ Free section",
+          notes: {
+            banner: "any image URL",
+            typing: "animated lines of text",
+            bio: "greeting, role, bio, free lines",
+            skills: "48 technologies, plus your own badges",
+            statstats: "needs a GitHub username",
+            socials: "LinkedIn, X, portfolio, email, plus your own",
+            stats: "needs a GitHub username",
+            donations: "Buy Me a Coffee, Ko-fi, PayPal, plus your own",
+            projects: "needs a GitHub username",
+            wakatime: "needs a WakaTime username",
+            spotify: "needs a Spotify widget link",
+            rss: "needs a GitHub Action",
+            followers: "needs a GitHub username",
+            free: "Markdown or HTML, written as-is"
+          }
+        }
+      },
+      proofs: {
+        chapter: "Proofs",
+        title: "Three proofs, *pulled from the same press.*",
+        lede: "Each one is the builder’s real output for the settings on its tag. The people are made up.",
+        flip: "Show the Markdown",
+        unflip: "Show the profile",
+        sourceOf: "Markdown source of"
+      },
+      pressRun: {
+        chapter: "Press run",
+        title: "From an empty repo to your profile, *in three moves.*",
+        repo: {
+          title: "Create the repository",
+          body: "Create a public repository named exactly like your GitHub username. Its README.md is shown at the top of your profile.",
+          you: "you",
+          owner: "Owner",
+          name: "Repository name",
+          special: "A repository named after you is special: its README.md appears on your profile.",
+          visibility: "Public"
+        },
+        build: {
+          title: "Fill the builder",
+          body: "Start with your username: your name, bio, links and the stack already listed in your current profile are filled in. Then add sections and drag them into order.",
+          username: "your-username",
+          autofill: "Auto-Fill"
+        },
+        ship: {
+          title: "Copy, commit, done",
+          body: "Copy the Markdown or download README.md, then commit it to that repository. GitHub updates your profile as soon as it lands.",
+          shortcut: "Ctrl or ⌘ + S downloads the file from the builder."
+        }
+      },
+      closing: {
+        title: "Your profile is *one commit away.*",
+        cta: "Open the builder",
+        note: "Free, no account. Your draft is saved in this browser."
+      },
+      footer: {
+        signatureNote: "Every README made here can end with this line. It’s optional.",
+        signature: "Generated with Ultimate GitHub Profile README Generator",
+        colophonTitle: "Colophon",
+        colophon: "Set in Instrument Serif, Geist and JetBrains Mono. Built with Next.js, React, Tailwind CSS, Zustand and react-markdown.",
+        linksTitle: "Index",
+        builder: "Builder",
+        source: "Source on GitHub",
+        bug: "Report a bug",
+        author: "Made by Seonay",
+        settingsTitle: "Settings",
+        eof: "EOF"
       }
     },
 
@@ -257,20 +402,165 @@ export const translations = {
     light: "Clair",
 
     landing: {
+      skip: "Aller au contenu",
+      nav: {
+        label: "Principal",
+        builder: "Ouvrir l’éditeur",
+        builderShort: "Éditeur",
+        language: "Langue",
+        theme: "Thème",
+        ink: "Encre",
+        paper: "Papier",
+        inkLabel: "Thème sombre",
+        paperLabel: "Thème clair"
+      },
       hero: {
-        tagline: "Le Générateur de README GitHub Ultime",
-        subtitle: "Concevez un profil professionnel en quelques secondes avec une automatisation intelligente et des cartes de stats magnifiques.",
-        cta: "Commencer maintenant"
+        file: "pseudo/pseudo/README.md",
+        titleLead: "Votre profil GitHub",
+        titleTail: "est un fichier Markdown.",
+        lede: "Ultimate README Gen l’écrit pour vous. Remplissez quelques champs, choisissez badges, cartes de stats et sections, glissez-les dans l’ordre voulu, et regardez le profil prendre forme à mesure que vous tapez.",
+        cta: "Ouvrir l’éditeur",
+        try: "L’essayer sur cette page",
+        sticker: "Gratuit, sans inscription",
+        source: "README.md",
+        proof: "Sur votre profil",
+        stamp: "Épreuve",
+        caption: "À gauche, le Markdown écrit par l’éditeur. À droite, ce que GitHub affiche sur votre profil."
       },
-      features: {
-        autofill: { title: "Remplissage Magique", desc: "Récupérez vos données GitHub instantanément." },
-        dragdrop: { title: "Glisser-Déposer", desc: "Réorganisez les sections de votre profil facilement." },
-        livepreview: { title: "Prévisualisation Live", desc: "Voyez vos changements en temps réel pendant que vous construisez." }
+      samples: {
+        role: "Typographe & dev front-end",
+        bio: "Je dessine des lettres, puis j’apprends aux navigateurs à les composer.",
+        work: "une fonte variable pour le code",
+        learning: "Rust",
+        fact: "j’ai plus de polices que de chaussettes",
+        skillsTitle: "🛠️ Stack technique"
       },
-      howItWorks: {
-        step1: { title: "1. Pseudo", desc: "Entrez votre nom d'utilisateur GitHub." },
-        step2: { title: "2. Personnalisez", desc: "Choisissez votre stack et votre layout." },
-        step3: { title: "3. Exportez", desc: "Copiez le code sur votre profil." }
+      compose: {
+        chapter: "Composition",
+        title: "Tapez votre nom. *Le README s’écrit tout seul.*",
+        lede: "C’est le moteur de l’éditeur, réduit à six champs. Chaque modification réécrit à la fois le Markdown et le profil rendu.",
+        file: "composition.md",
+        fields: {
+          name: "nom",
+          role: "rôle",
+          bio: "bio",
+          stack: "stack",
+          align: "alignement",
+          badges: "badges",
+          left: "gauche",
+          center: "centré"
+        },
+        views: {
+          label: "Afficher",
+          proof: "Rendu",
+          markdown: "Markdown"
+        },
+        sourceLabel: "Markdown généré",
+        copy: "Copier le Markdown",
+        copied: "Markdown copié",
+        copyError: "Copie impossible. Sélectionnez le Markdown et copiez-le à la main.",
+        continue: "Continuer dans l’éditeur",
+        continueNote: "Vos six champs vous suivent. L’éditeur propose treize sections, plus des sections libres.",
+        replaceTitle: "Remplacer votre brouillon ?",
+        replaceBody: "L’éditeur contient déjà un profil en cours. Continuer remplace son nom, son rôle, sa bio, sa stack, son alignement et son style de badges.",
+        replace: "Remplacer et continuer",
+        keep: "Garder mon brouillon"
+      },
+      typeCase: {
+        chapter: "Casse",
+        title: "Toutes les pièces *qui composent un profil.*",
+        lede: "Treize sections prêtes à l’emploi, des sections libres pour tout le reste, et des badges en cinq styles. Prenez ce qu’il vous faut, laissez le reste vide.",
+        anatomy: {
+          title: "Anatomie d’un badge",
+          note: "Créez les vôtres pour vos compétences, vos réseaux ou vos dons. Voici le Markdown que l’éditeur écrit pour celui-ci.",
+          sample: "Disponible",
+          label: "libellé",
+          labelNote: "n’importe quel texte",
+          color: "couleur",
+          colorNote: "n’importe quelle valeur hexa",
+          logo: "logo",
+          logoNote: "n’importe quel nom Simple Icons",
+          style: "style",
+          styleNote: "un parmi cinq",
+          link: "lien",
+          linkNote: "URL ou e-mail, facultatif"
+        },
+        styles: {
+          title: "Cinq styles de badges",
+          note: "Rendus réels de shields.io. Un seul réglage change tous les badges de votre README.",
+          height: "px de haut"
+        },
+        sections: {
+          title: "Treize sections et une libre",
+          note: "Dans leur ordre par défaut. Réorganisez-les dans l’éditeur ; une section vide est ignorée.",
+          free: "✏️ Section libre",
+          notes: {
+            banner: "n’importe quelle URL d’image",
+            typing: "lignes de texte animées",
+            bio: "accueil, rôle, bio, lignes libres",
+            skills: "48 technologies, plus vos propres badges",
+            statstats: "demande un pseudo GitHub",
+            socials: "LinkedIn, X, portfolio, e-mail, plus les vôtres",
+            stats: "demande un pseudo GitHub",
+            donations: "Buy Me a Coffee, Ko-fi, PayPal, plus les vôtres",
+            projects: "demande un pseudo GitHub",
+            wakatime: "demande un pseudo WakaTime",
+            spotify: "demande un lien de widget Spotify",
+            rss: "demande une GitHub Action",
+            followers: "demande un pseudo GitHub",
+            free: "Markdown ou HTML, repris tel quel"
+          }
+        }
+      },
+      proofs: {
+        chapter: "Épreuves",
+        title: "Trois épreuves, *tirées de la même presse.*",
+        lede: "Chacune est la sortie réelle de l’éditeur pour les réglages de son étiquette. Les personnes sont inventées.",
+        flip: "Voir le Markdown",
+        unflip: "Voir le profil",
+        sourceOf: "Source Markdown de"
+      },
+      pressRun: {
+        chapter: "Tirage",
+        title: "D’un dépôt vide à votre profil, *en trois gestes.*",
+        repo: {
+          title: "Créez le dépôt",
+          body: "Créez un dépôt public qui porte exactement votre pseudo GitHub. Son README.md s’affiche en haut de votre profil.",
+          you: "pseudo",
+          owner: "Propriétaire",
+          name: "Nom du dépôt",
+          special: "Un dépôt qui porte votre nom est spécial : son README.md apparaît sur votre profil.",
+          visibility: "Public"
+        },
+        build: {
+          title: "Remplissez l’éditeur",
+          body: "Commencez par votre pseudo : nom, bio, liens et la stack déjà citée dans votre profil actuel sont préremplis. Ajoutez ensuite des sections et glissez-les dans l’ordre.",
+          username: "votre-pseudo",
+          autofill: "Auto-Fill"
+        },
+        ship: {
+          title: "Copiez, committez, c’est en ligne",
+          body: "Copiez le Markdown ou téléchargez README.md, puis committez-le dans ce dépôt. GitHub met votre profil à jour dès son arrivée.",
+          shortcut: "Ctrl ou ⌘ + S télécharge le fichier depuis l’éditeur."
+        }
+      },
+      closing: {
+        title: "Votre profil n’est plus *qu’à un commit.*",
+        cta: "Ouvrir l’éditeur",
+        note: "Gratuit, sans compte. Votre brouillon est enregistré dans ce navigateur."
+      },
+      footer: {
+        signatureNote: "Chaque README créé ici peut se terminer par cette ligne. Elle est facultative.",
+        signature: "Généré avec Ultimate GitHub Profile README Generator",
+        colophonTitle: "Colophon",
+        colophon: "Composé en Instrument Serif, Geist et JetBrains Mono. Construit avec Next.js, React, Tailwind CSS, Zustand et react-markdown.",
+        linksTitle: "Index",
+        builder: "Éditeur",
+        source: "Code source sur GitHub",
+        bug: "Signaler un bug",
+        author: "Fait par Seonay",
+        settingsTitle: "Réglages",
+        eof: "EOF"
       }
     },
 
