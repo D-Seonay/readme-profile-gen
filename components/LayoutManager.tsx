@@ -19,6 +19,8 @@ import {
 import { CSS } from '@dnd-kit/utilities';
 import { useReadmeStore, SectionId, LayoutId, isCustomSectionId } from '@/store/useReadmeStore';
 import { useTranslation } from '@/hooks/useTranslation';
+import { getFeatureLayoutLabels } from '@/lib/featureSections';
+import { isSectionActive } from '@/utils/sectionActivity';
 
 const SortableItem = ({ id, label, isDark, isUsed }: { id: string, label: string, isDark: boolean, isUsed: boolean }) => {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id });
@@ -93,7 +95,8 @@ export const LayoutManager = () => {
     rss: t.layout.rss,
     typing: t.layout.typing,
     followers: t.layout.followers,
-    statstats: t.layout.statstats
+    statstats: t.layout.statstats,
+    ...getFeatureLayoutLabels(t),
   };
 
   const getLabel = (id: LayoutId) => {
@@ -121,7 +124,7 @@ export const LayoutManager = () => {
       case 'typing': return !!store.typingText;
       case 'followers': return !!(store.githubUsername && (store.showFollowers || store.showFollowing));
       case 'statstats': return store.statStatsCards.length > 0;
-      default: return false;
+      default: return isSectionActive(store, id);
     }
   };
 
