@@ -5,7 +5,7 @@ import {
   DEFAULT_ACTIVITY_GRAPH, DEFAULT_FOOTER_BANNER, DEFAULT_HEADER_BANNER, DEFAULT_LAYOUT, DEFAULT_QUOTE_CARD,
   DEFAULT_SECTION_TITLES, DEFAULT_SUMMARY_CARDS, initialState, type StateKey,
 } from './defaults';
-import { TRANSIENT_KEYS, UI_PREF_KEYS, configDefaults } from './configKeys';
+import { TRANSIENT_KEYS, configDefaults } from './configKeys';
 import { createId } from './ids';
 import { isCustomSectionId, normalizeLayout } from './layout';
 import {
@@ -268,10 +268,8 @@ export const sanitizeImport = (raw: unknown, { allowTransient = false } = {}): R
 export const buildReplacement = (raw: unknown): Record<string, unknown> | null => {
   const clean = sanitizeImport(raw);
   if (!clean) return null;
+  // `configDefaults` ne contient pas les préférences d'interface : absentes de l'import, elles restent inchangées.
   const next: Record<string, unknown> = { ...configDefaults(), ...clean };
-  for (const key of UI_PREF_KEYS) {
-    if (!(key in clean)) delete next[key];
-  }
   const sections = (next.customSections as CustomSection[] | undefined) ?? [];
   next.customSections = sections;
   next.layout = normalizeLayout(clean.layout ?? DEFAULT_LAYOUT, sections);

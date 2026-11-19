@@ -78,6 +78,11 @@ describe('checkReadmeHealth', () => {
     expect(byId('url:').find((f) => f.message.includes('github-readme-activity-graph'))!.hint).toContain('workers.dev');
   });
 
+  it('does not treat a bare e-mail in a contact badge as a broken URL', () => {
+    const found = ids(good({ customSocials: [{ id: 'm', label: 'Mail', url: 'ada@example.com', color: 'FF0000', logo: '' }] }));
+    expect(found.filter((id) => id.startsWith('url:'))).toEqual([]);
+  });
+
   it('warns about badge overload and offers the icon grid', () => {
     const skills = ['javascript', 'typescript', 'python', 'go', 'rust', 'php', 'ruby', 'dart', 'scala', 'elixir', 'haskell', 'lua',
       'perl', 'react', 'vuedotjs', 'angular', 'svelte', 'astro', 'docker', 'kubernetes', 'git', 'github', 'npm', 'pnpm', 'yarn', 'vite',

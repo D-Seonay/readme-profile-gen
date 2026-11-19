@@ -170,7 +170,8 @@ const checkUrl = ({ field, url, image, section }: UrlCheck, m: Msg): HealthFindi
   const raw = url.trim();
   if (!raw) return null;
   const id = `url:${field}:${raw}`.slice(0, 200);
-  if (/^mailto:/i.test(raw)) return null;
+  // Adresse e-mail (le générateur la transforme en lien mailto:) : rien à vérifier ici.
+  if (/^mailto:/i.test(raw) || /^[^\s@/:]+@[^\s@/]+\.[^\s@/]+$/.test(raw)) return null;
   let parsed: URL;
   try {
     parsed = new URL(/^[a-z][a-z0-9+.-]*:/i.test(raw) ? raw : `https://${raw}`);
