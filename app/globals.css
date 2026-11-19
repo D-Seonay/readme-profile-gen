@@ -1,26 +1,138 @@
 @import "tailwindcss";
+@plugin "@tailwindcss/typography";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/*
+ * ATELIER — design system
+ * An editorial print-workshop meets a terminal: warm paper & deep ink,
+ * one electric accent, serif display type against monospace labels.
+ * Every colour is a token; themes swap via <html data-theme="dark|light">.
+ * Use the Tailwind utilities generated below (bg-canvas, text-ink, border-line,
+ * bg-accent, font-display, shadow-hard…) — never hard-coded zinc/indigo and
+ * never `isDark ? … : …` ternaries.
+ */
+
+:root,
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --canvas: #0b0b0c;        /* page background — ink */
+  --surface: #131315;       /* panels */
+  --raised: #1b1b1f;        /* cards, inputs, popovers */
+  --line: #2a2a30;          /* hairlines */
+  --line-strong: #45454d;   /* emphasised borders, hard shadows */
+  --ink: #f2efe8;           /* primary text — warm paper white */
+  --ink-soft: #c2beb4;      /* secondary text */
+  --muted: #86837b;         /* tertiary text, placeholders */
+  --accent: #c8f542;        /* electric lime */
+  --accent-ink: #0b0b0c;    /* text on accent fills */
+  --accent-text: #c8f542;   /* accent used as text on canvas */
+  --hot: #ff5c39;           /* coral — destructive, highlights */
+  --hot-ink: #0b0b0c;
+  --ok: #4ade80;
+  --grid: rgba(242, 239, 232, 0.045);
+}
+
+:root[data-theme="light"] {
+  color-scheme: light;
+  --canvas: #f3efe6;        /* page background — paper */
+  --surface: #faf7f0;
+  --raised: #ffffff;
+  --line: #ddd6c7;
+  --line-strong: #16150f;
+  --ink: #16150f;
+  --ink-soft: #45423a;
+  --muted: #7a766b;
+  --accent: #c8f542;
+  --accent-ink: #16150f;
+  --accent-text: #4d6a00;   /* lime is unreadable as text on paper */
+  --hot: #e8431f;
+  --hot-ink: #ffffff;
+  --ok: #15803d;
+  --grid: rgba(22, 21, 15, 0.06);
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+  --color-canvas: var(--canvas);
+  --color-surface: var(--surface);
+  --color-raised: var(--raised);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-ink: var(--ink);
+  --color-ink-soft: var(--ink-soft);
+  --color-muted: var(--muted);
+  --color-accent: var(--accent);
+  --color-accent-ink: var(--accent-ink);
+  --color-accent-text: var(--accent-text);
+  --color-hot: var(--hot);
+  --color-hot-ink: var(--hot-ink);
+  --color-ok: var(--ok);
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-jetbrains-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
+  --font-display: var(--font-instrument-serif), "Iowan Old Style", Georgia, serif;
+
+  /* Hard, offset, print-like shadows — no blur */
+  --shadow-hard-sm: 2px 2px 0 0 var(--line-strong);
+  --shadow-hard: 4px 4px 0 0 var(--line-strong);
+  --shadow-hard-lg: 8px 8px 0 0 var(--line-strong);
+  --shadow-accent: 4px 4px 0 0 var(--accent);
+
+  --ease-snap: cubic-bezier(0.16, 1, 0.3, 1);
+
+  --animate-rise: rise 0.5s var(--ease-snap) both;
+  --animate-fade: fade 0.3s ease-out both;
+  --animate-blink: blink 1.1s steps(1) infinite;
+
+  @keyframes rise {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fade {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  @keyframes blink {
+    50% { opacity: 0; }
   }
 }
 
+html {
+  background: var(--canvas);
+}
+
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--canvas);
+  color: var(--ink);
+  font-family: var(--font-sans);
+}
+
+::selection {
+  background: var(--accent);
+  color: var(--accent-ink);
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent-text);
+  outline-offset: 2px;
+}
+
+@utility bg-grid {
+  /* Blueprint dot grid for hero areas and empty states */
+  background-image: radial-gradient(var(--grid) 1px, transparent 1px);
+  background-size: 22px 22px;
+}
+
+@utility custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: var(--line-strong) transparent;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
