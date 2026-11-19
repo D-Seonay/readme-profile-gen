@@ -1,63 +1,46 @@
-'use client';
+import type { Metadata } from 'next';
+import { Closing } from '@/components/landing/Closing';
+import { Colophon } from '@/components/landing/Colophon';
+import { Compose } from '@/components/landing/Compose';
+import { Hero } from '@/components/landing/Hero';
+import { LangScope, T } from '@/components/landing/i18n';
+import { ThemeBootScript } from '@/components/landing/InlineScript';
+import { Marquee } from '@/components/landing/Marquee';
+import { Masthead } from '@/components/landing/Masthead';
+import { PressRun } from '@/components/landing/PressRun';
+import { Proofs } from '@/components/landing/Proofs';
+import { TypeCase } from '@/components/landing/TypeCase';
 
-import React from 'react';
-import { LandingNavbar } from '@/components/landing/LandingNavbar';
-import { HeroSection } from '@/components/landing/HeroSection';
-import { VisualPreview } from '@/components/landing/VisualPreview';
-import { FeaturesGrid } from '@/components/landing/FeaturesGrid';
-import { HowItWorks } from '@/components/landing/HowItWorks';
-import { useHydration } from '@/hooks/useHydration';
-import { useKeyboardShortcuts } from '@/hooks/useKeyboardShortcuts';
-import { useReadmeStore } from '@/store/useReadmeStore';
+export const metadata: Metadata = {
+  alternates: { canonical: '/' },
+};
 
+/**
+ * The landing page is a Server Component: every section is in the HTML.
+ * Client islands are limited to the translated words, the language/theme
+ * switches, the hero press, the Compose demo and the proof flip.
+ */
 export default function LandingPage() {
-  const hydrated = useHydration();
-  const { uiTheme } = useReadmeStore();
-  const isDark = uiTheme === 'dark';
-  
-  // Activer les raccourcis clavier globalement
-  useKeyboardShortcuts();
-
-  if (!hydrated) {
-    return (
-      <div className="h-screen w-full bg-zinc-950 flex items-center justify-center">
-        <div className="w-4 h-4 rounded-full bg-zinc-100 animate-pulse" />
-      </div>
-    );
-  }
-
   return (
-    <div className={`min-h-screen transition-colors duration-500 font-sans selection:bg-indigo-500/30 selection:text-indigo-200 ${isDark ? 'bg-zinc-950 text-zinc-100' : 'bg-zinc-50 text-zinc-900'}`}>
-      <LandingNavbar />
-      
-      <main>
-        <HeroSection />
-        <VisualPreview />
-        <FeaturesGrid />
-        <HowItWorks />
+    <LangScope className="flex min-h-screen flex-1 flex-col bg-canvas text-ink">
+      <ThemeBootScript />
+      <a
+        href="#main"
+        className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-sm focus:border focus:border-line-strong focus:bg-accent focus:px-3 focus:py-2 focus:font-mono focus:text-sm focus:text-accent-ink"
+      >
+        <T k="skip" />
+      </a>
+      <Masthead />
+      <main id="main" tabIndex={-1} className="flex-1 focus:outline-none">
+        <Hero />
+        <Marquee />
+        <Compose />
+        <TypeCase />
+        <Proofs />
+        <PressRun />
+        <Closing />
       </main>
-
-      <footer className={`py-20 px-8 border-t transition-colors duration-500 flex flex-col items-center ${isDark ? 'border-zinc-900 bg-zinc-950' : 'border-zinc-200 bg-white'}`}>
-        <div className="text-xl font-black italic tracking-tighter uppercase mb-8">
-          Readme <span className={isDark ? 'text-zinc-500' : 'text-zinc-400'}>Gen</span>
-        </div>
-        
-        <div className="flex flex-wrap justify-center gap-8 mb-12">
-          <a href="https://github.com/D-Seonay/readme-profile-gen" target="_blank" rel="noopener noreferrer" className={`text-[10px] font-mono uppercase tracking-[0.2em] transition-colors ${isDark ? 'text-zinc-500 hover:text-indigo-400' : 'text-zinc-400 hover:text-indigo-600'}`}>
-            Source_Code
-          </a>
-          <a href="https://matheodelaunay.studio" target="_blank" rel="noopener noreferrer" className={`text-[10px] font-mono uppercase tracking-[0.2em] transition-colors ${isDark ? 'text-zinc-500 hover:text-indigo-400' : 'text-zinc-400 hover:text-indigo-600'}`}>
-            Developer
-          </a>
-          <span className={`text-[10px] font-mono uppercase tracking-[0.2em] ${isDark ? 'text-zinc-800' : 'text-zinc-200'}`}>
-            v1.0.0
-          </span>
-        </div>
-
-        <p className={`text-[10px] font-mono uppercase tracking-widest text-center ${isDark ? 'text-zinc-600' : 'text-zinc-400'}`}>
-          Designed with <span className="text-indigo-500 animate-pulse">Intent</span> &copy; {new Date().getFullYear()}
-        </p>
-      </footer>
-    </div>
+      <Colophon />
+    </LangScope>
   );
 }

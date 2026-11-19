@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { useReadmeStore } from './useReadmeStore';
+import { useReadmeStore, DEFAULT_LAYOUT } from './useReadmeStore';
 
 describe('useReadmeStore free-form fields', () => {
   beforeEach(() => {
@@ -88,6 +88,6 @@ describe('useReadmeStore free-form fields', () => {
     expect(state.layout[0]).toBe('bio');
     expect(state.layout.filter((id) => id === 'bio')).toHaveLength(1);
     expect(state.layout).not.toContain('custom-ghost');
-    expect(state.layout).toHaveLength(13);
+    expect(state.layout).toHaveLength(DEFAULT_LAYOUT.length);
   });
 });

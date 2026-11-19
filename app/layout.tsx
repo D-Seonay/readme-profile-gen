@@ -1,71 +1,67 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist, Instrument_Serif, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { BMCWidget } from "@/components/BMCWidget";
-import { Toaster } from "sonner";
+import { Toaster } from "@/components/Toaster";
 import { ThemeWrapper } from "@/components/ThemeWrapper";
+import { AUTHOR, REPO_URL, SITE_NAME, SITE_URL } from "@/lib/site";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const jetbrainsMono = JetBrains_Mono({
+  variable: "--font-jetbrains-mono",
   subsets: ["latin"],
 });
 
-const SITE_URL = "https://readme-profile-gen.matheodelaunay.studio";
+const instrumentSerif = Instrument_Serif({
+  variable: "--font-instrument-serif",
+  subsets: ["latin"],
+  weight: "400",
+  style: ["normal", "italic"],
+});
+
+const DESCRIPTION =
+  "Build your GitHub profile README in minutes: auto-fill from your username, add badges, stats cards and sections, drag them into order, then copy the Markdown. Free, no sign-up.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: "Ultimate GitHub Profile README Generator | Free Tool",
-    template: "%s | Ultimate README Gen"
+    default: "Ultimate README Gen: free GitHub profile README generator",
+    template: `%s | ${SITE_NAME}`,
   },
-  description: "Elevate your GitHub profile with Ultimate README Gen. Design a stunning developer brand in seconds with smart auto-fill, drag-and-drop customization, and dynamic stats. The most powerful free README generator.",
+  description: DESCRIPTION,
+  applicationName: SITE_NAME,
+  category: "technology",
   keywords: [
     "github profile readme generator",
-    "developer branding",
-    "github bio generator",
+    "github profile readme",
+    "readme.md generator",
     "markdown generator",
     "github stats cards",
-    "github trophies",
-    "awesome readme generator",
+    "shields.io badges",
     "github profile design",
-    "dynamic github stats",
-    "readme.md generator",
-    "profile customization",
-    "best github readme tool",
-    "software engineer portfolio",
-    "github personalization"
+    "developer portfolio",
   ],
-  alternates: {
-    canonical: SITE_URL,
-  },
-  authors: [{ name: "D-Seonay", url: "https://github.com/D-Seonay" }],
+  authors: [{ name: AUTHOR.handle, url: AUTHOR.github }],
+  creator: AUTHOR.handle,
+  publisher: AUTHOR.handle,
+  // The Open Graph / Twitter image comes from app/opengraph-image.tsx.
   openGraph: {
-    title: "Ultimate GitHub Profile README Generator",
-    description: "The most powerful tool to design your GitHub profile. Auto-fill from your profile, reorder sections with drag & drop, and choose between beautiful themes.",
+    title: "Your GitHub profile is a Markdown file. Ultimate README Gen writes it.",
+    description: DESCRIPTION,
     url: SITE_URL,
-    siteName: "Ultimate README Gen",
-    images: [
-      {
-        url: "/og-image.png",
-        width: 1200,
-        height: 630,
-        alt: "Ultimate GitHub Profile README Generator Preview",
-      },
-    ],
+    siteName: SITE_NAME,
     locale: "en_US",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Ultimate GitHub Profile README Generator",
-    description: "Design an exceptional GitHub profile in seconds with our smart generator.",
+    title: "Your GitHub profile is a Markdown file. Ultimate README Gen writes it.",
+    description: DESCRIPTION,
     creator: "@DSeonay",
-    images: ["/og-image.png"],
   },
   robots: {
     index: true,
@@ -90,38 +86,57 @@ export default function RootLayout({
 }>) {
   const jsonLd = {
     "@context": "https://schema.org",
-    "@type": "SoftwareApplication",
-    "name": "Ultimate GitHub Profile README Generator",
-    "description": "A powerful web tool to generate professional GitHub profile READMEs with dynamic stats and smart auto-fill.",
+    "@type": "WebApplication",
+    "name": SITE_NAME,
+    "alternateName": "Ultimate GitHub Profile README Generator",
+    "url": SITE_URL,
+    "image": `${SITE_URL}/opengraph-image`,
+    "description": DESCRIPTION,
     "applicationCategory": "DeveloperApplication",
-    "operatingSystem": "Web",
+    "operatingSystem": "Any",
+    "browserRequirements": "Requires JavaScript",
+    "inLanguage": ["en", "fr"],
+    "isAccessibleForFree": true,
     "offers": {
       "@type": "Offer",
       "price": "0",
       "priceCurrency": "USD"
     },
+    "featureList": [
+      "Auto-fill from a GitHub username",
+      "Drag-and-drop section order",
+      "13 ready-made sections and free Markdown or HTML sections",
+      "Custom shields.io badges in five styles",
+      "GitHub stats, streak, top languages, trophies and STAT-STATS cards",
+      "Live preview and raw Markdown, copy or download README.md",
+      "JSON export and import of the whole setup"
+    ],
     "author": {
       "@type": "Person",
-      "name": "D-Seonay"
-    }
+      "name": AUTHOR.handle,
+      "url": AUTHOR.github
+    },
+    "sameAs": [REPO_URL]
   };
 
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      data-theme="dark"
+      suppressHydrationWarning
+      className={`${geistSans.variable} ${jetbrainsMono.variable} ${instrumentSerif.variable} h-full antialiased`}
     >
       <head>
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }}
         />
       </head>
-      <body className="min-h-full flex flex-col transition-colors duration-500">
+      <body className="min-h-full flex flex-col">
         <ThemeWrapper>
           {children}
           <BMCWidget />
-          <Toaster richColors closeButton position="bottom-right" />
+          <Toaster />
         </ThemeWrapper>
       </body>
     </html>

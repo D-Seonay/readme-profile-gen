@@ -3,6 +3,8 @@
 import React from 'react';
 import { useReadmeStore, BadgeListKey, CustomBadge } from '@/store/useReadmeStore';
 import { useTranslation } from '@/hooks/useTranslation';
+import { buildCustomBadge } from '@/utils/generateMarkdown';
+import { Button, ColorField, Field, Group, Icon, IconButton, Input } from '@/components/ui';
 
 export type BadgePreset = Pick<CustomBadge, 'label' | 'color' | 'logo'>;
 
@@ -34,11 +36,11 @@ interface CustomBadgeListProps {
   presets?: BadgePreset[];
 }
 
-const toColorInputValue = (color: string) => {
-  const hex = color.trim().replace(/^#/, '');
-  if (/^[0-9a-f]{6}$/i.test(hex)) return `#${hex}`;
-  if (/^[0-9a-f]{3}$/i.test(hex)) return `#${hex.split('').map((c) => c + c).join('')}`;
-  return '#555555';
+/** The badge image URL exactly as the generator will write it, or null if incomplete. */
+const previewUrl = (badge: CustomBadge, style: Parameters<typeof buildCustomBadge>[1], requireUrl: boolean) => {
+  const markdown = buildCustomBadge(badge, style, requireUrl);
+  const match = markdown.match(/!\[[^\]]*\]\((https:\/\/img\.shields\.io[^)\s]+)\)/);
+  return match ? match[1] : null;
 };
 
 /**
@@ -47,97 +49,116 @@ const toColorInputValue = (color: string) => {
  */
 export const CustomBadgeList = ({ list, requireUrl = false, presets = [] }: CustomBadgeListProps) => {
   const badges = useReadmeStore((state) => state[list]);
+  const badgeStyle = useReadmeStore((state) => state.badgeStyle);
   const addCustomBadge = useReadmeStore((state) => state.addCustomBadge);
   const updateCustomBadge = useReadmeStore((state) => state.updateCustomBadge);
   const removeCustomBadge = useReadmeStore((state) => state.removeCustomBadge);
-  const uiTheme = useReadmeStore((state) => state.uiTheme);
   const { t } = useTranslation();
-  const isDark = uiTheme === 'dark';
-
-  const inputClass = `w-full border p-2 rounded-lg font-mono text-[10px] focus:outline-none focus:border-indigo-500 transition-all ${isDark ? 'bg-zinc-950 border-zinc-800 text-zinc-100 placeholder:text-zinc-700' : 'bg-white border-zinc-200 text-zinc-900 placeholder:text-zinc-300'}`;
-  const labelClass = `text-[9px] font-mono uppercase tracking-wider ${isDark ? 'text-zinc-500' : 'text-zinc-400'}`;
-  const chipClass = `px-2.5 py-1 rounded-full border text-[9px] font-mono transition-all ${isDark ? 'border-zinc-800 text-zinc-500 hover:border-indigo-500 hover:text-zinc-100' : 'border-zinc-200 text-zinc-500 hover:border-indigo-500 hover:text-zinc-900'}`;
 
   return (
-    <div className={`space-y-3 pt-6 mt-6 border-t ${isDark ? 'border-zinc-800' : 'border-zinc-200'}`}>
-      <span className={labelClass}>{t.free.customBadges}</span>
+    <Group
+      title={t.free.customBadges}
+      hint={requireUrl ? t.builder.badges.hintWithLink : t.builder.badges.hint}
+      action={
+        <Button size="xs" icon="plus" onClick={() => addCustomBadge(list)}>
+          {t.free.addBadge}
+        </Button>
+      }
+    >
+      {badges.length > 0 && (
+        <ul className="space-y-3">
+          {badges.map((badge, index) => {
+            const src = previewUrl(badge, badgeStyle, requireUrl);
+            return (
+              <li key={badge.id} className="rounded-[4px] border border-line bg-surface p-3.5 animate-pop">
+                <div className="mb-3.5 flex min-h-8 items-center justify-between gap-3">
+                  <div className="flex min-w-0 items-center gap-2.5">
+                    <span className="font-mono text-[11px] text-ink-soft tabular-nums">{String(index + 1).padStart(2, '0')}</span>
+                    {src ? (
+                      // eslint-disable-next-line @next/next/no-img-element -- live shields.io badge
+                      <img src={src} alt={badge.label} className="h-auto max-h-7 max-w-full" />
+                    ) : (
+                      <span className="truncate text-[12.5px] text-ink-soft">
+                        {requireUrl ? t.builder.badges.incompleteWithLink : t.builder.badges.incomplete}
+                      </span>
+                    )}
+                  </div>
+                  <IconButton
+                    icon="trash"
+                    label={t.free.remove}
+                    variant="danger-ghost"
+                    size="sm"
+                    tooltipSide="left"
+                    onClick={() => removeCustomBadge(list, badge.id)}
+                  />
+                </div>
+                <div className="grid gap-x-4 gap-y-4 sm:grid-cols-2">
+                  <Field label={t.free.badgeLabel}>
+                    <Input
+                      inputSize="sm"
+                      value={badge.label}
+                      onChange={(e) => updateCustomBadge(list, badge.id, { label: e.target.value })}
+                    />
+                  </Field>
+                  <Field label={requireUrl ? t.free.badgeUrl : t.free.badgeUrlOptional}>
+                    <Input
+                      inputSize="sm"
+                      mono
+                      spellCheck={false}
+                      autoComplete="off"
+                      value={badge.url}
+                      onChange={(e) => updateCustomBadge(list, badge.id, { url: e.target.value })}
+                      placeholder="https://"
+                    />
+                  </Field>
+                  <Field label={t.free.badgeLogo}>
+                    <Input
+                      inputSize="sm"
+                      mono
+                      spellCheck={false}
+                      autoComplete="off"
+                      value={badge.logo}
+                      onChange={(e) => updateCustomBadge(list, badge.id, { logo: e.target.value })}
+                      placeholder="github"
+                    />
+                  </Field>
+                  <Field label={t.free.badgeColor}>
+                    <ColorField
+                      inputSize="sm"
+                      value={badge.color}
+                      uppercase
+                      onChange={(hex) => updateCustomBadge(list, badge.id, { color: hex })}
+                      pickerLabel={t.builder.typing.pickColor}
+                    />
+                  </Field>
+                </div>
+              </li>
+            );
+          })}
+        </ul>
+      )}
 
-      {badges.map((badge) => (
-        <div
-          key={badge.id}
-          className={`grid grid-cols-1 sm:grid-cols-2 gap-2 p-3 border rounded-xl ${isDark ? 'bg-zinc-900/50 border-zinc-800' : 'bg-white border-zinc-200'}`}
-        >
-          <input
-            type="text"
-            value={badge.label}
-            onChange={(e) => updateCustomBadge(list, badge.id, { label: e.target.value })}
-            className={inputClass}
-            placeholder={t.free.badgeLabel}
-            aria-label={t.free.badgeLabel}
-          />
-          <input
-            type="text"
-            value={badge.url}
-            onChange={(e) => updateCustomBadge(list, badge.id, { url: e.target.value })}
-            className={inputClass}
-            placeholder={requireUrl ? t.free.badgeUrl : t.free.badgeUrlOptional}
-            aria-label={requireUrl ? t.free.badgeUrl : t.free.badgeUrlOptional}
-          />
-          <input
-            type="text"
-            value={badge.logo}
-            onChange={(e) => updateCustomBadge(list, badge.id, { logo: e.target.value })}
-            className={inputClass}
-            placeholder={t.free.badgeLogo}
-            aria-label={t.free.badgeLogo}
-          />
-          <div className="flex items-center gap-2">
-            <input
-              type="color"
-              value={toColorInputValue(badge.color)}
-              onChange={(e) => updateCustomBadge(list, badge.id, { color: e.target.value.replace('#', '').toUpperCase() })}
-              className="h-8 w-10 shrink-0 cursor-pointer rounded border-0 bg-transparent p-0"
-              aria-label={t.free.badgeColor}
-            />
-            <input
-              type="text"
-              value={badge.color}
-              onChange={(e) => updateCustomBadge(list, badge.id, { color: e.target.value.replace('#', '') })}
-              className={inputClass}
-              placeholder={t.free.badgeColor}
-              aria-label={`${t.free.badgeColor} (hex)`}
-              maxLength={6}
-            />
+      {presets.length > 0 && (
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="mr-1 font-mono text-[11.5px] text-ink-soft">{t.free.quickAdd}</span>
+          {presets.map((preset) => (
             <button
+              key={preset.label}
               type="button"
-              onClick={() => removeCustomBadge(list, badge.id)}
-              className="shrink-0 p-1 text-zinc-600 hover:text-red-400 transition-colors"
-              aria-label={t.free.remove}
-              title={t.free.remove}
+              onClick={() => addCustomBadge(list, preset)}
+              className="inline-flex h-7 items-center gap-1.5 rounded-[3px] border border-dashed border-field bg-raised px-2 font-mono text-[11.5px] text-ink-soft transition duration-150 ease-snap hover:-rotate-1 hover:border-solid hover:border-line-strong hover:bg-accent hover:text-accent-ink active:translate-y-px"
             >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-                <path d="M6 18L18 6M6 6l12 12" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
+              <span
+                aria-hidden="true"
+                className="h-2 w-2 rounded-full ring-1 ring-line-strong/40"
+                style={{ backgroundColor: `#${preset.color}` }}
+              />
+              {preset.label}
+              <Icon name="plus" size={12} />
             </button>
-          </div>
+          ))}
         </div>
-      ))}
-
-      <div className="flex flex-wrap items-center gap-2">
-        <button
-          type="button"
-          onClick={() => addCustomBadge(list)}
-          className={`px-3 py-1.5 rounded-lg text-[10px] font-mono uppercase tracking-widest transition-all ${isDark ? 'bg-zinc-100 text-zinc-950 hover:bg-white' : 'bg-zinc-900 text-white hover:bg-zinc-800'}`}
-        >
-          + {t.free.addBadge}
-        </button>
-        {presets.length > 0 && <span className={`${labelClass} ml-1`}>{t.free.quickAdd}</span>}
-        {presets.map((preset) => (
-          <button key={preset.label} type="button" onClick={() => addCustomBadge(list, preset)} className={chipClass}>
-            {preset.label}
-          </button>
-        ))}
-      </div>
-    </div>
+      )}
+    </Group>
   );
 };

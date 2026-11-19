@@ -1,161 +1,175 @@
 'use client';
 
-import React, { useState, forwardRef, useImperativeHandle } from 'react';
-import ReactMarkdown from 'react-markdown';
-import remarkGfm from 'remark-gfm';
-import rehypeRaw from 'rehype-raw';
-import { useReadmeStore } from '@/store/useReadmeStore';
-import { generateMarkdown } from '@/utils/generateMarkdown';
-import { useTranslation } from '@/hooks/useTranslation';
+import React, { forwardRef, useEffect, useImperativeHandle, useRef } from 'react';
 import { toast } from 'sonner';
+import { useReadmeStore, LayoutId } from '@/store/useReadmeStore';
+import { useTranslation } from '@/hooks/useTranslation';
+import { usePersistentState } from '@/hooks/usePersistentState';
+import { IconButton, Segmented, cx } from '@/components/ui';
+import { useReadmeDocument } from '@/components/builder/ReadmeDocument';
+import { GithubProof, GhTheme } from '@/components/builder/GithubProof';
+import { RawView } from '@/components/builder/RawView';
 
 type ViewMode = 'preview' | 'raw';
 
 export interface PreviewPaneHandle {
-  handleCopy: () => void;
+  /** Copies the README; resolves to true when the clipboard accepted it. */
+  handleCopy: () => Promise<boolean>;
   handleDownload: () => void;
+  /** Switches between the rendered proof and the Markdown source. */
+  setViewMode: (mode: ViewMode) => void;
+  toggleGithubTheme: () => void;
 }
 
-export const PreviewPane = forwardRef<PreviewPaneHandle>((props, ref) => {
-  const store = useReadmeStore();
-  const { statsAlign, uiTheme, isTourActive, currentTourStep } = store;
-  const { t } = useTranslation();
-  const [viewMode, setViewMode] = useState<ViewMode>('preview');
-  const [isCopied, setIsCopied] = useState(false);
+interface PreviewPaneProps {
+  /** Section being edited: marked in the margin and scrolled into view. */
+  selectedId?: LayoutId;
+  onEditSection: (id: LayoutId) => void;
+  /** Desktop only: folded to a thin spine. */
+  collapsed?: boolean;
+  onToggleCollapsed?: () => void;
+  className?: string;
+  style?: React.CSSProperties;
+}
 
-  const isDark = uiTheme === 'dark';
-  const isHighlighted = isTourActive && currentTourStep === 2;
+const isGhTheme = (value: unknown): value is GhTheme => value === 'light' || value === 'dark';
+const isViewMode = (value: unknown): value is ViewMode => value === 'preview' || value === 'raw';
 
-  // Génération du Markdown final basé sur le store
-  const markdown = generateMarkdown(store);
+export const PreviewPane = forwardRef<PreviewPaneHandle, PreviewPaneProps>(
+  ({ selectedId, onEditSection, collapsed = false, onToggleCollapsed, className, style }, ref) => {
+    const { t } = useTranslation();
+    const { markdown, isLive } = useReadmeDocument();
+    // Also re-run the scroll when the selected section first appears in the proof.
+    const selectedIsLive = selectedId ? isLive(selectedId) : false;
+    const uiTheme = useReadmeStore((state) => state.uiTheme);
+    // The GitHub theme is independent from the app theme; it starts out matching it.
+    const [ghTheme, setGhTheme] = usePersistentState<GhTheme>('readme-builder:gh-theme', uiTheme, isGhTheme);
+    const [viewMode, setViewMode] = usePersistentState<ViewMode>('readme-builder:preview-mode', 'preview', isViewMode);
+    const scrollRef = useRef<HTMLDivElement>(null);
 
-  const handleCopy = async () => {
-    try {
-      await navigator.clipboard.writeText(markdown);
-      setIsCopied(true);
-      toast.success(t.preview.copied);
-      setTimeout(() => setIsCopied(false), 2000);
-    } catch (err) {
-      toast.error('Failed to copy to clipboard');
-      console.error('Failed to copy!', err);
-    }
-  };
+    const handleCopy = async () => {
+      try {
+        await navigator.clipboard.writeText(markdown);
+        toast.success(t.preview.copied);
+        return true;
+      } catch (err) {
+        toast.error(t.builder.preview.copyError);
+        console.error('Failed to copy!', err);
+        return false;
+      }
+    };
 
-  const handleDownload = () => {
-    try {
-      const blob = new Blob([markdown], { type: 'text/markdown' });
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = 'README.md';
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      URL.revokeObjectURL(url);
-      toast.success('README.md downloaded successfully');
-    } catch (err) {
-      toast.error('Failed to download file');
-      console.error('Failed to download!', err);
-    }
-  };
+    const handleDownload = () => {
+      try {
+        const blob = new Blob([markdown], { type: 'text/markdown' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = 'README.md';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+        toast.success(t.builder.preview.downloaded);
+      } catch (err) {
+        toast.error(t.builder.preview.downloadError);
+        console.error('Failed to download!', err);
+      }
+    };
 
-  useImperativeHandle(ref, () => ({
-    handleCopy,
-    handleDownload
-  }));
+    const toggleGithubTheme = () => setGhTheme((current) => (current === 'dark' ? 'light' : 'dark'));
 
-  return (
-    <section className={`w-1/2 h-full flex flex-col border-l transition-all duration-500 ${isDark ? 'bg-zinc-950 border-zinc-900 text-zinc-100' : 'bg-white border-zinc-200 text-zinc-900'} ${isHighlighted ? 'ring-4 ring-inset ring-indigo-500 shadow-[0_0_40px_rgba(99,102,241,0.5)] z-50' : ''}`}>
-      
-      {/* --- TOOLBAR --- */}
-      <header className={`flex items-center justify-between px-6 py-4 backdrop-blur-md border-b z-10 transition-colors ${isDark ? 'bg-zinc-950/80 border-zinc-900' : 'bg-white/80 border-zinc-200'}`}>
-        <div className={`flex p-1 rounded-lg border transition-colors ${isDark ? 'bg-zinc-900 border-zinc-800' : 'bg-zinc-100 border-zinc-200'}`}>
-          <button
-            onClick={() => setViewMode('preview')}
-            className={`px-4 py-1.5 text-[10px] font-mono uppercase tracking-widest rounded-md transition-all ${
-              viewMode === 'preview' 
-                ? (isDark ? 'bg-zinc-100 text-zinc-950' : 'bg-white text-zinc-950 shadow-sm') 
-                : (isDark ? 'text-zinc-500 hover:text-zinc-300' : 'text-zinc-400 hover:text-zinc-600')
-            }`}
+    useImperativeHandle(ref, () => ({
+      handleCopy,
+      handleDownload,
+      setViewMode,
+      toggleGithubTheme,
+    }));
+
+    // Bring the section being edited into view (only if it is out of sight).
+    useEffect(() => {
+      const container = scrollRef.current;
+      if (!selectedId || viewMode !== 'preview' || !container || container.offsetParent === null) return;
+      const node = container.querySelector<HTMLElement>(`[data-chunk="${CSS.escape(selectedId)}"]`);
+      if (!node) return;
+      const box = container.getBoundingClientRect();
+      const target = node.getBoundingClientRect();
+      const inView = target.top >= box.top + 8 && target.top <= box.bottom - 80;
+      if (inView) return;
+      const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      container.scrollTo({ top: container.scrollTop + target.top - box.top - 28, behavior: reduce ? 'auto' : 'smooth' });
+    }, [selectedId, selectedIsLive, viewMode]);
+
+    const p = t.builder.preview;
+
+    return (
+      <>
+        {collapsed && (
+          <aside
+            className={cx('hidden w-11 shrink-0 flex-col items-center gap-4 border-l border-line bg-surface bg-hatch py-3 lg:flex')}
+            aria-label={p.title}
           >
-            {t.preview.label}
-          </button>
-          <button
-            onClick={() => setViewMode('raw')}
-            className={`px-4 py-1.5 text-[10px] font-mono uppercase tracking-widest rounded-md transition-all ${
-              viewMode === 'raw' 
-                ? (isDark ? 'bg-zinc-100 text-zinc-950' : 'bg-white text-zinc-950 shadow-sm') 
-                : (isDark ? 'text-zinc-500 hover:text-zinc-300' : 'text-zinc-400 hover:text-zinc-600')
-            }`}
-          >
-            {t.preview.raw}
-          </button>
-        </div>
-
-        <div className="flex items-center gap-2">
-          <button
-            onClick={handleDownload}
-            className={`flex items-center gap-2 px-3 py-1.5 border rounded-md font-mono text-[10px] uppercase transition-all ${
-              isDark ? 'bg-zinc-900 border-zinc-800 text-zinc-400 hover:text-zinc-100' : 'bg-white border-zinc-200 text-zinc-500 hover:text-zinc-900'
-            }`}
-          >
-            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M4 16v1a2 2 0 002 2h12a2 2 0 002-2v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
-            {t.preview.download}
-          </button>
-          <button
-            onClick={handleCopy}
-            className={`px-4 py-1.5 border rounded-md font-mono text-[10px] uppercase transition-all ${
-              isCopied 
-                ? 'bg-emerald-500/10 border-emerald-500/50 text-emerald-500' 
-                : (isDark ? 'bg-zinc-900 border-zinc-800 text-zinc-400 hover:text-zinc-100' : 'bg-white border-zinc-200 text-zinc-500 hover:text-zinc-900')
-            }`}
-          >
-            {isCopied ? t.preview.copied : t.preview.copy}
-          </button>
-        </div>
-      </header>
-
-      {/* --- CONTENU --- */}
-      <div className={`flex-1 overflow-y-auto p-12 custom-scrollbar ${!isDark ? 'bg-zinc-50/30' : ''}`}>
-        <div className="max-w-3xl mx-auto w-full">
-          
-          {viewMode === 'preview' ? (
-            <article className={`prose max-w-none 
-              ${isDark ? 'prose-invert prose-zinc' : 'prose-zinc'}
-              prose-h1:tracking-tighter prose-h1:italic prose-h1:font-black
-              prose-h2:border-b prose-h2:pb-2
-              ${isDark ? 'prose-h2:border-zinc-900' : 'prose-h2:border-zinc-200'}
-              prose-img:inline-block prose-img:m-0 prose-img:mr-2
-              ${statsAlign === 'row' ? '[&_img]:inline-block [&_p]:overflow-x-auto [&_p]:whitespace-nowrap [&_div]:overflow-x-auto [&_div]:whitespace-nowrap' : ''}
-              animate-in fade-in slide-in-from-bottom-2 duration-500`}
+            <IconButton icon="panel-right" label={p.expand} variant="secondary" tooltipSide="left" onClick={onToggleCollapsed} />
+            <button
+              type="button"
+              onClick={onToggleCollapsed}
+              className="rotate-180 font-mono text-[11.5px] text-ink-soft [writing-mode:vertical-rl] hover:text-ink"
             >
-              <ReactMarkdown 
-                remarkPlugins={[remarkGfm]} 
-                rehypePlugins={[rehypeRaw]}
-              >
-                {markdown}
-              </ReactMarkdown>
-            </article>
-          ) : (
-            <div className="relative animate-in fade-in zoom-in-95 duration-300">
-              <pre className={`border p-6 rounded-xl font-mono text-sm leading-relaxed overflow-x-auto shadow-2xl ${isDark ? 'bg-zinc-900/50 border-zinc-800 text-zinc-400' : 'bg-white border-zinc-200 text-zinc-600'}`}>
-                <code className="block whitespace-pre-wrap selection:bg-indigo-500 selection:text-white">
-                  {markdown}
-                </code>
-              </pre>
-            </div>
-          )}
+              {p.title}
+            </button>
+          </aside>
+        )}
+        <section
+          aria-label={p.title}
+          data-tour="preview"
+          style={style}
+          className={cx('min-h-0 min-w-0 flex-col bg-canvas', collapsed && 'lg:hidden', className)}
+        >
+          <div className="flex h-12 shrink-0 items-center gap-2 border-b border-line bg-surface px-3">
+            <Segmented
+              size="sm"
+              value={viewMode}
+              onChange={setViewMode}
+              aria-label={p.title}
+              options={[
+                { value: 'preview', label: p.rendered, icon: 'eye' },
+                { value: 'raw', label: p.markdown, icon: 'code' },
+              ]}
+            />
+            <div className="flex-1" />
+            {viewMode === 'preview' && (
+              <Segmented
+                size="sm"
+                iconOnly
+                value={ghTheme}
+                onChange={setGhTheme}
+                aria-label={p.ghTheme}
+                options={[
+                  { value: 'light', label: p.ghLight, icon: 'sun' },
+                  { value: 'dark', label: p.ghDark, icon: 'moon' },
+                ]}
+              />
+            )}
+            {onToggleCollapsed && (
+              <div className="hidden lg:block">
+                <IconButton icon="panel-right" label={p.collapse} tooltipAlign="end" onClick={onToggleCollapsed} />
+              </div>
+            )}
+          </div>
 
-        </div>
-      </div>
-      
-      <footer className={`px-8 py-4 border-t text-center transition-colors ${isDark ? 'bg-zinc-950 border-zinc-900' : 'bg-white border-zinc-200'}`}>
-        <p className={`text-[9px] font-mono italic uppercase tracking-widest ${isDark ? 'text-zinc-700' : 'text-zinc-400'}`}>
-          {viewMode === 'preview' ? t.preview.engine : t.preview.source}
-        </p>
-      </footer>
-    </section>
-  );
-});
+          <div ref={scrollRef} className="custom-scrollbar min-h-0 flex-1 overflow-y-auto bg-grid px-3 py-5 sm:px-6 sm:py-8">
+            <div className="mx-auto w-full max-w-[880px]">
+              {viewMode === 'preview' ? (
+                <GithubProof theme={ghTheme} selectedId={selectedId} onEdit={onEditSection} />
+              ) : (
+                <RawView markdown={markdown} onCopy={handleCopy} />
+              )}
+            </div>
+          </div>
+        </section>
+      </>
+    );
+  },
+);
 
 PreviewPane.displayName = 'PreviewPane';

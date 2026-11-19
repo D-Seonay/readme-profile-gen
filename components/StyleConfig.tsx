@@ -1,136 +1,103 @@
 'use client';
 
 import React from 'react';
-import { useReadmeStore, SectionId, BadgeStyle } from '@/store/useReadmeStore';
+import { useReadmeStore, BadgeStyle, SectionId, isCustomSectionId } from '@/store/useReadmeStore';
 import { useTranslation } from '@/hooks/useTranslation';
+import { Field, Group, Input, Segmented, SwitchRow } from '@/components/ui';
+import { SECTION_META } from '@/components/builder/sections';
+import { cleanLabel } from '@/components/builder/labels';
+
+const BADGE_STYLES: BadgeStyle[] = ['for-the-badge', 'flat', 'flat-square', 'plastic', 'social'];
 
 export const StyleConfig = () => {
-  const { 
-    alignment, setAlignment, 
+  const {
+    alignment, setAlignment,
     statsAlign, setStatsAlign,
     badgeStyle, setBadgeStyle,
     sectionTitles, setSectionTitle,
     showCredit, toggleCredit,
-    uiTheme
+    layout,
   } = useReadmeStore();
   const { t } = useTranslation();
-  const isDark = uiTheme === 'dark';
 
-  const sections: { id: SectionId; label: string }[] = [
-    { id: 'banner', label: t.layout.banner },
-    { id: 'bio', label: t.layout.bio },
-    { id: 'skills', label: t.layout.skills },
-    { id: 'projects', label: t.layout.projects },
-    { id: 'stats', label: t.layout.stats },
-    { id: 'socials', label: t.layout.socials },
-    { id: 'donations', label: t.layout.donations },
-    { id: 'spotify', label: t.layout.spotify },
-    { id: 'rss', label: t.layout.rss },
-    { id: 'typing', label: t.layout.typing },
-    { id: 'followers', label: t.layout.followers },
-    { id: 'wakatime', label: t.layout.wakatime },
-    { id: 'statstats', label: t.layout.statstats },
-  ];
-
-  const badgeStyles: BadgeStyle[] = ['for-the-badge', 'flat', 'flat-square', 'plastic', 'social'];
+  // Every section whose title the generator actually writes, in README order.
+  const headingSections = layout
+    .filter((id): id is SectionId => !isCustomSectionId(id) && !!SECTION_META[id]?.heading)
+    .map((id) => ({ id, label: cleanLabel(SECTION_META[id].label(t)), heading: SECTION_META[id].heading }));
 
   return (
-    <div className={`space-y-8 transition-colors ${isDark ? 'text-zinc-100' : 'text-zinc-900'}`}>
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-        {/* Alignement Global */}
-        <div className="space-y-3">
-          <label className={`text-[9px] font-mono uppercase tracking-wider ${isDark ? 'text-zinc-500' : 'text-zinc-400'}`}>{t.style.alignment}</label>
-          <div className={`flex p-1 rounded-xl border transition-colors ${isDark ? 'bg-zinc-900 border-zinc-800' : 'bg-zinc-100 border-zinc-200'}`}>
-            <button
-              onClick={() => setAlignment('left')}
-              className={`flex-1 px-3 py-2 text-[10px] font-mono uppercase rounded-lg transition-all ${
-                alignment === 'left' ? (isDark ? 'bg-zinc-100 text-zinc-950 shadow-sm' : 'bg-white text-zinc-950 shadow-sm') : (isDark ? 'text-zinc-500 hover:text-zinc-300' : 'text-zinc-400 hover:text-zinc-600')
-              }`}
-            >
-              {t.style.left}
-            </button>
-            <button
-              onClick={() => setAlignment('center')}
-              className={`flex-1 px-3 py-2 text-[10px] font-mono uppercase rounded-lg transition-all ${
-                alignment === 'center' ? (isDark ? 'bg-zinc-100 text-zinc-950 shadow-sm' : 'bg-white text-zinc-950 shadow-sm') : (isDark ? 'text-zinc-500 hover:text-zinc-300' : 'text-zinc-400 hover:text-zinc-600')
-              }`}
-            >
-              {t.style.center}
-            </button>
-          </div>
+    <div className="space-y-9">
+      <Group first title={t.builder.style.layout}>
+        <div className="grid gap-x-5 gap-y-5 sm:grid-cols-2">
+          <Field kind="group" label={t.style.alignment}>
+            <Segmented
+              fullWidth
+              value={alignment}
+              onChange={setAlignment}
+              options={[
+                { value: 'left', label: t.style.left, icon: 'align-left' },
+                { value: 'center', label: t.style.center, icon: 'align-center' },
+              ]}
+            />
+          </Field>
+          <Field kind="group" label={t.style.orientation}>
+            <Segmented
+              fullWidth
+              value={statsAlign}
+              onChange={setStatsAlign}
+              options={[
+                { value: 'column', label: t.style.vertical, icon: 'rows' },
+                { value: 'row', label: t.style.horizontal, icon: 'columns' },
+              ]}
+            />
+          </Field>
         </div>
+      </Group>
 
-        {/* Orientation des Stats */}
-        <div className="space-y-3">
-          <label className={`text-[9px] font-mono uppercase tracking-wider ${isDark ? 'text-zinc-500' : 'text-zinc-400'}`}>{t.style.orientation}</label>
-          <div className={`flex p-1 rounded-xl border transition-colors ${isDark ? 'bg-zinc-900 border-zinc-800' : 'bg-zinc-100 border-zinc-200'}`}>
-            <button
-              onClick={() => setStatsAlign('column')}
-              className={`flex-1 px-3 py-2 text-[10px] font-mono uppercase rounded-lg transition-all ${
-                statsAlign === 'column' ? (isDark ? 'bg-zinc-100 text-zinc-950 shadow-sm' : 'bg-white text-zinc-950 shadow-sm') : (isDark ? 'text-zinc-500 hover:text-zinc-300' : 'text-zinc-400 hover:text-zinc-600')
-              }`}
-            >
-              {t.style.vertical}
-            </button>
-            <button
-              onClick={() => setStatsAlign('row')}
-              className={`flex-1 px-3 py-2 text-[10px] font-mono uppercase rounded-lg transition-all ${
-                statsAlign === 'row' ? (isDark ? 'bg-zinc-100 text-zinc-950 shadow-sm' : 'bg-white text-zinc-950 shadow-sm') : (isDark ? 'text-zinc-500 hover:text-zinc-300' : 'text-zinc-400 hover:text-zinc-600')
-              }`}
-            >
-              {t.style.horizontal}
-            </button>
-          </div>
-        </div>
-      </div>
-
-      {/* Badge Style */}
-      <div className="space-y-3">
-        <label className={`text-[9px] font-mono uppercase tracking-wider ${isDark ? 'text-zinc-500' : 'text-zinc-400'}`}>{t.style.badgeStyle}</label>
-        <div className={`grid grid-cols-2 sm:grid-cols-5 gap-2 p-1 rounded-xl border transition-colors ${isDark ? 'bg-zinc-900 border-zinc-800' : 'bg-zinc-100 border-zinc-200'}`}>
-          {badgeStyles.map((style) => (
-            <button
-              key={style}
-              onClick={() => setBadgeStyle(style)}
-              className={`px-2 py-2 text-[8px] font-mono uppercase rounded-lg transition-all truncate ${
-                badgeStyle === style ? (isDark ? 'bg-zinc-100 text-zinc-950 shadow-sm' : 'bg-white text-zinc-950 shadow-sm') : (isDark ? 'text-zinc-500 hover:text-zinc-300' : 'text-zinc-400 hover:text-zinc-600')
-              }`}
-            >
-              {style.replace(/-/g, ' ')}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* Footer credit */}
-      <label className={`flex items-center gap-3 cursor-pointer text-[10px] font-mono uppercase tracking-wider ${isDark ? 'text-zinc-400' : 'text-zinc-500'}`}>
-        <input
-          type="checkbox"
-          checked={showCredit}
-          onChange={toggleCredit}
-          className="accent-indigo-500 w-3.5 h-3.5 cursor-pointer"
+      <Group title={t.style.badgeStyle} hint={t.builder.style.badgeHint}>
+        <Segmented
+          layout="grid"
+          className="grid-cols-2 sm:grid-cols-3"
+          value={badgeStyle}
+          onChange={setBadgeStyle}
+          aria-label={t.style.badgeStyle}
+          options={BADGE_STYLES.map((style) => ({
+            value: style,
+            ariaLabel: style.replace(/-/g, ' '),
+            label: (
+              <span className="flex flex-col items-center gap-1.5">
+                {/* eslint-disable-next-line @next/next/no-img-element -- live shields.io sample */}
+                <img
+                  src={`https://img.shields.io/badge/README-c8f542?style=${style}&logo=github&logoColor=16150f`}
+                  alt=""
+                  className="h-5 w-auto"
+                />
+                <span>{style.replace(/-/g, ' ')}</span>
+              </span>
+            ),
+          }))}
         />
-        {t.free.credit}
-      </label>
+      </Group>
 
-      {/* Section Titles */}
-      <div className="space-y-4">
-        <label className={`text-[9px] font-mono uppercase tracking-wider ${isDark ? 'text-zinc-500' : 'text-zinc-400'}`}>{t.style.sectionTitles}</label>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          {sections.map((section) => (
-            <div key={section.id} className="space-y-1.5">
-              <span className={`text-[8px] font-mono uppercase ml-1 truncate block ${isDark ? 'text-zinc-600' : 'text-zinc-400'}`}>{section.label}</span>
-              <input
-                type="text"
+      <Group title={t.builder.style.footer}>
+        <SwitchRow checked={showCredit} onCheckedChange={toggleCredit} label={t.free.credit} />
+      </Group>
+
+      <Group title={t.style.sectionTitles} hint={t.builder.style.headingsHint}>
+        <div className="grid gap-x-5 gap-y-4 sm:grid-cols-2">
+          {headingSections.map((section) => (
+            <Field key={section.id} label={section.label} id={`heading-${section.id}`}>
+              <Input
+                inputSize="sm"
+                leading={section.heading}
                 value={sectionTitles[section.id]}
                 onChange={(e) => setSectionTitle(section.id, e.target.value)}
-                className={`w-full border p-2.5 rounded-xl font-mono text-[10px] focus:outline-none focus:border-indigo-500 transition-all ${isDark ? 'bg-zinc-950 border-zinc-800 text-zinc-100 placeholder:text-zinc-700' : 'bg-white border-zinc-200 text-zinc-900 placeholder:text-zinc-300'}`}
                 placeholder={section.label}
               />
-            </div>
+            </Field>
           ))}
         </div>
-      </div>
+      </Group>
     </div>
   );
 };
