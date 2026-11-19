@@ -17,17 +17,24 @@ export function Wordmark({ className = '' }: { className?: string }) {
   );
 }
 
-export function Masthead() {
+export function Masthead({ current }: { current?: 'home' | 'templates' }) {
   return (
     <header className="border-b border-line-strong">
       <div className={`${WRAP} flex h-16 items-center justify-between gap-3`}>
-        <Link href="/" className="-m-1 rounded-sm p-1" aria-current="page">
+        <Link href="/" className="-m-1 rounded-sm p-1" aria-current={current === 'home' ? 'page' : undefined}>
           <Wordmark />
         </Link>
         <nav aria-labelledby="masthead-nav-label" className="flex items-center gap-2 sm:gap-3">
           <span id="masthead-nav-label" className="sr-only">
             <T k="nav.label" />
           </span>
+          <Link
+            href="/templates"
+            aria-current={current === 'templates' ? 'page' : undefined}
+            className="link-mark hidden px-1 font-mono text-xs text-ink sm:inline-flex aria-[current=page]:text-accent-text"
+          >
+            <T k="nav.templates" />
+          </Link>
           <LanguageToggle />
           <ThemeToggle />
           <Link

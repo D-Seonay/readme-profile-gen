@@ -22,6 +22,7 @@ import { ReadmeImporter } from '@/components/features/ReadmeImporter';
 import { HealthCheckPanel } from '@/components/features/HealthCheckPanel';
 import { WorkflowExport } from '@/components/features/WorkflowExport';
 import { ShareLinkLoader } from '@/components/features/ShareLink';
+import { TemplateParamLoader } from '@/components/features/TemplateParamLoader';
 import { getSlotInfo, renderSlotEditor } from '@/components/builder/sections';
 import { Plate, PlateLink } from '@/components/builder/Plate';
 import { Outline } from '@/components/builder/Outline';
@@ -466,6 +467,7 @@ function BuilderShell() {
 
         <OnboardingTour steps={tourSteps} />
         <ShareLinkLoader />
+        <TemplateParamLoader />
         {fileInput}
       </div>
     </BuilderNavContext.Provider>

@@ -1,11 +1,31 @@
 import type { Metadata } from 'next';
+import { JsonLd } from '@/components/JsonLd';
+import { SITE_NAME } from '@/lib/site';
+import { breadcrumbNode } from '@/lib/structuredData';
+
+const TITLE = 'GitHub Profile README Builder';
+const DESCRIPTION =
+  'Build your GitHub profile README section by section: auto-fill from your username, badges, stats cards, banners and templates, a live GitHub-style preview, then copy README.md.';
 
 export const metadata: Metadata = {
-  title: 'Builder',
-  description:
-    'Build your GitHub profile README section by section, with a live GitHub-style preview, drag-and-drop ordering and one-click export.',
+  title: TITLE,
+  description: DESCRIPTION,
   alternates: {
     canonical: '/builder',
+  },
+  openGraph: {
+    title: TITLE,
+    description: DESCRIPTION,
+    url: '/builder',
+    siteName: SITE_NAME,
+    locale: 'en_US',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: TITLE,
+    description: DESCRIPTION,
+    creator: '@DSeonay',
   },
 };
 
@@ -21,6 +41,12 @@ export default function BuilderLayout({ children }: { children: React.ReactNode 
   return (
     <>
       <script dangerouslySetInnerHTML={{ __html: THEME_SCRIPT }} />
+      <JsonLd
+        data={breadcrumbNode([
+          { name: SITE_NAME, path: '/' },
+          { name: 'Builder', path: '/builder' },
+        ])}
+      />
       {children}
     </>
   );
