@@ -3,128 +3,88 @@
 import React from 'react';
 import { useReadmeStore } from '@/store/useReadmeStore';
 import { useTranslation } from '@/hooks/useTranslation';
+import { ColorField, Field, Input, Slider, Textarea } from '@/components/ui';
+
+/** Same default as the generator, so the preview never lies. */
+const DEFAULT_COLOR = 'F1F1F1';
+
+const toNumber = (value: string) => {
+  const parsed = parseInt(value, 10);
+  return Number.isNaN(parsed) ? 0 : parsed;
+};
 
 export const TypingConfig = () => {
-  const { 
-    typingText, setTypingText, 
+  const {
+    typingText, setTypingText,
     typingColor, setTypingColor,
     typingSize, setTypingSize,
     typingDuration, setTypingDuration,
     typingPause, setTypingPause,
-    uiTheme 
   } = useReadmeStore();
   const { t } = useTranslation();
-  const isDark = uiTheme === 'dark';
 
-  const defaultColor = isDark ? 'F1F1F1' : '171717';
-  const displayColor = typingColor || defaultColor;
-
-  const previewLines = typingText.split('\n').filter(l => l.trim() !== '').join(';');
+  const displayColor = typingColor || DEFAULT_COLOR;
+  const previewLines = typingText.split('\n').filter((l) => l.trim() !== '').join(';');
+  const previewUrl = `https://readme-typing-svg.herokuapp.com?font=Fira+Code&size=${typingSize}&duration=${typingDuration}&pause=${typingPause}&color=${displayColor}&center=true&vCenter=true&width=435&lines=${encodeURIComponent(previewLines)}`;
 
   return (
-    <div className={`space-y-6 pt-6 border-t border-zinc-800 transition-colors ${isDark ? 'text-zinc-100' : 'text-zinc-900'}`}>
-      <div className="flex flex-col gap-6">
-        
-        {/* Multi-line Input */}
-        <div className="flex flex-col gap-2">
-          <label className={`text-[9px] font-mono uppercase tracking-wider px-1 ${isDark ? 'text-zinc-500' : 'text-zinc-400'}`}>
-            {t.typing.textLabel}
-          </label>
-          <textarea
-            value={typingText}
-            onChange={(e) => setTypingText(e.target.value)}
-            rows={4}
-            className={`w-full border p-3 rounded-xl font-mono text-xs focus:outline-none focus:border-indigo-500 transition-all resize-none ${isDark ? 'bg-zinc-950 border-zinc-800 text-zinc-100 placeholder:text-zinc-700' : 'bg-white border-zinc-200 text-zinc-900 placeholder:text-zinc-300'}`}
-            placeholder={t.typing.placeholder}
+    <div className="space-y-7">
+      <Field label={t.typing.textLabel}>
+        <Textarea rows={4} value={typingText} onChange={(e) => setTypingText(e.target.value)} placeholder={t.typing.placeholder} />
+      </Field>
+
+      <div className="grid gap-x-5 gap-y-6 sm:grid-cols-2">
+        <Field label={t.typing.size}>
+          <Slider min={10} max={50} value={typingSize} onChange={setTypingSize} format={(v) => `${v}px`} />
+        </Field>
+        <Field label={t.typing.color} hint={t.builder.typing.colorHint}>
+          <ColorField
+            value={typingColor}
+            onChange={setTypingColor}
+            fallback={`#${DEFAULT_COLOR}`}
+            placeholder={DEFAULT_COLOR}
+            pickerLabel={t.builder.typing.pickColor}
           />
-        </div>
-
-        {/* Effects Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          {/* Font Size */}
-          <div className="flex flex-col gap-2">
-            <label className={`text-[9px] font-mono uppercase tracking-wider px-1 ${isDark ? 'text-zinc-500' : 'text-zinc-400'}`}>
-              {t.typing.size} ({typingSize}px)
-            </label>
-            <input
-              type="range"
-              min="10"
-              max="50"
-              value={typingSize}
-              onChange={(e) => setTypingSize(parseInt(e.target.value))}
-              className="accent-indigo-500 h-1 bg-zinc-800 rounded-lg cursor-pointer"
-            />
-          </div>
-
-          {/* Custom Color */}
-          <div className="flex flex-col gap-2">
-            <label className={`text-[9px] font-mono uppercase tracking-wider px-1 ${isDark ? 'text-zinc-500' : 'text-zinc-400'}`}>
-              {t.typing.color}
-            </label>
-            <div className="flex gap-2">
-              <input
-                type="text"
-                value={typingColor}
-                onChange={(e) => setTypingColor(e.target.value.replace('#', ''))}
-                className={`flex-1 border px-3 py-1.5 rounded-lg font-mono text-[10px] focus:outline-none focus:border-indigo-500 transition-all ${isDark ? 'bg-zinc-950 border-zinc-800 text-zinc-100' : 'bg-white border-zinc-200 text-zinc-900'}`}
-                placeholder="Ex: FF0000"
-              />
-              <div className="relative w-8 h-8 rounded-lg border border-zinc-800 shadow-inner overflow-hidden">
-                <div 
-                  className="w-full h-full" 
-                  style={{ backgroundColor: `#${displayColor}` }} 
-                />
-                <input 
-                  type="color"
-                  value={`#${displayColor.length === 6 ? displayColor : (isDark ? 'F1F1F1' : '171717')}`}
-                  onChange={(e) => setTypingColor(e.target.value.replace('#', ''))}
-                  className="absolute inset-0 opacity-0 cursor-pointer w-full h-full"
-                  title="Pick a color"
-                />
-              </div>
-            </div>
-          </div>
-
-          {/* Duration (Speed) */}
-          <div className="flex flex-col gap-2">
-            <label className={`text-[9px] font-mono uppercase tracking-wider px-1 ${isDark ? 'text-zinc-500' : 'text-zinc-400'}`}>
-              {t.typing.duration}
-            </label>
-            <input
-              type="number"
-              step="500"
-              value={typingDuration}
-              onChange={(e) => setTypingDuration(parseInt(e.target.value))}
-              className={`border px-3 py-1.5 rounded-lg font-mono text-[10px] focus:outline-none focus:border-indigo-500 transition-all ${isDark ? 'bg-zinc-950 border-zinc-800 text-zinc-100' : 'bg-white border-zinc-200 text-zinc-900'}`}
-            />
-          </div>
-
-          {/* Pause */}
-          <div className="flex flex-col gap-2">
-            <label className={`text-[9px] font-mono uppercase tracking-wider px-1 ${isDark ? 'text-zinc-500' : 'text-zinc-400'}`}>
-              {t.typing.pause}
-            </label>
-            <input
-              type="number"
-              step="100"
-              value={typingPause}
-              onChange={(e) => setTypingPause(parseInt(e.target.value))}
-              className={`border px-3 py-1.5 rounded-lg font-mono text-[10px] focus:outline-none focus:border-indigo-500 transition-all ${isDark ? 'bg-zinc-950 border-zinc-800 text-zinc-100' : 'bg-white border-zinc-200 text-zinc-900'}`}
-            />
-          </div>
-        </div>
-
-        {/* Live Preview */}
-        {previewLines && (
-          <div className={`mt-4 p-6 rounded-2xl border flex items-center justify-center overflow-hidden min-h-[100px] ${isDark ? 'bg-zinc-950/50 border-zinc-100/10' : 'bg-white border-zinc-200 shadow-inner'}`}>
-             <img 
-               src={`https://readme-typing-svg.herokuapp.com?font=Fira+Code&size=${typingSize}&duration=${typingDuration}&pause=${typingPause}&color=${displayColor}&center=true&vCenter=true&width=435&lines=${encodeURIComponent(previewLines)}`} 
-               alt="Typing Preview" 
-               className="max-w-full"
-             />
-          </div>
-        )}
+        </Field>
+        <Field label={t.typing.duration}>
+          <Input
+            type="number"
+            inputMode="numeric"
+            mono
+            min={0}
+            step={500}
+            value={typingDuration}
+            onChange={(e) => setTypingDuration(toNumber(e.target.value))}
+          />
+        </Field>
+        <Field label={t.typing.pause}>
+          <Input
+            type="number"
+            inputMode="numeric"
+            mono
+            min={0}
+            step={100}
+            value={typingPause}
+            onChange={(e) => setTypingPause(toNumber(e.target.value))}
+          />
+        </Field>
       </div>
+
+      {previewLines && (
+        <div className="grid gap-3 sm:grid-cols-2">
+          {(['light', 'dark'] as const).map((theme, index) => (
+            <figure key={theme} data-gh-theme={theme} className="gh-frame overflow-hidden rounded-[4px] border border-line">
+              <div className="flex min-h-24 items-center justify-center px-3 py-4">
+                {/* eslint-disable-next-line @next/next/no-img-element -- remote animated SVG */}
+                <img src={previewUrl} alt={index === 0 ? t.builder.typing.previewAlt : ''} className="max-w-full" />
+              </div>
+              <figcaption className="gh-muted border-t border-[var(--gh-border)] px-3 py-1.5 font-mono text-[11px]">
+                {theme === 'light' ? t.builder.preview.ghLight : t.builder.preview.ghDark}
+              </figcaption>
+            </figure>
+          ))}
+        </div>
+      )}
     </div>
   );
 };
