@@ -17,7 +17,7 @@ import {
   useSortable
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { useReadmeStore, SectionId } from '@/store/useReadmeStore';
+import { useReadmeStore, SectionId, LayoutId, isCustomSectionId } from '@/store/useReadmeStore';
 import { useTranslation } from '@/hooks/useTranslation';
 
 const SortableItem = ({ id, label, isDark, isUsed }: { id: string, label: string, isDark: boolean, isUsed: boolean }) => {
@@ -96,14 +96,24 @@ export const LayoutManager = () => {
     statstats: t.layout.statstats
   };
 
-  const isSectionUsed = (id: SectionId) => {
+  const getLabel = (id: LayoutId) => {
+    if (!isCustomSectionId(id)) return labels[id];
+    const section = store.customSections.find((s) => s.id === id);
+    return `✏️ ${section?.title.trim() || t.free.untitled}`;
+  };
+
+  const isSectionUsed = (id: LayoutId) => {
+    if (isCustomSectionId(id)) {
+      const section = store.customSections.find((s) => s.id === id);
+      return !!section && !!(section.title.trim() || section.content.trim());
+    }
     switch (id) {
       case 'banner': return !!store.bannerUrl;
       case 'bio': return true; // Bio is always visible
-      case 'skills': return store.skills.length > 0;
-      case 'socials': return !!(store.socials.linkedin || store.socials.twitter || store.socials.portfolio || store.socials.email);
+      case 'skills': return store.skills.length > 0 || store.customSkills.some((b) => b.label.trim());
+      case 'socials': return !!(store.socials.linkedin || store.socials.twitter || store.socials.portfolio || store.socials.email) || store.customSocials.some((b) => b.label.trim() && b.url.trim());
       case 'stats': return !!(store.githubUsername && (store.showStatsCard || store.showStreakCard || store.showTopLanguages || store.showTrophies || store.showSnake || store.showVisitorCounter));
-      case 'donations': return !!(store.donations.buymeacoffee || store.donations.kofi || store.donations.paypal);
+      case 'donations': return !!(store.donations.buymeacoffee || store.donations.kofi || store.donations.paypal) || store.customDonations.some((b) => b.label.trim() && b.url.trim());
       case 'projects': return !!(store.githubUsername && store.featuredRepos.length > 0);
       case 'wakatime': return !!(store.wakatimeUsername || store.wakatimeBadgeId);
       case 'spotify': return !!store.spotifyUrl;
@@ -121,7 +131,7 @@ export const LayoutManager = () => {
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
     if (over && active.id !== over.id) {
-      reorderLayout(active.id as SectionId, over.id as SectionId);
+      reorderLayout(active.id as LayoutId, over.id as LayoutId);
     }
   };
 
@@ -147,7 +157,7 @@ export const LayoutManager = () => {
               <SortableItem 
                 key={id} 
                 id={id} 
-                label={labels[id]} 
+                label={getLabel(id)}
                 isDark={isDark} 
                 isUsed={true} 
               />

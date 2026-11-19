@@ -10,6 +10,7 @@ export const StyleConfig = () => {
     statsAlign, setStatsAlign,
     badgeStyle, setBadgeStyle,
     sectionTitles, setSectionTitle,
+    showCredit, toggleCredit,
     uiTheme
   } = useReadmeStore();
   const { t } = useTranslation();
@@ -27,6 +28,8 @@ export const StyleConfig = () => {
     { id: 'rss', label: t.layout.rss },
     { id: 'typing', label: t.layout.typing },
     { id: 'followers', label: t.layout.followers },
+    { id: 'wakatime', label: t.layout.wakatime },
+    { id: 'statstats', label: t.layout.statstats },
   ];
 
   const badgeStyles: BadgeStyle[] = ['for-the-badge', 'flat', 'flat-square', 'plastic', 'social'];
@@ -98,6 +101,17 @@ export const StyleConfig = () => {
           ))}
         </div>
       </div>
+
+      {/* Footer credit */}
+      <label className={`flex items-center gap-3 cursor-pointer text-[10px] font-mono uppercase tracking-wider ${isDark ? 'text-zinc-400' : 'text-zinc-500'}`}>
+        <input
+          type="checkbox"
+          checked={showCredit}
+          onChange={toggleCredit}
+          className="accent-indigo-500 w-3.5 h-3.5 cursor-pointer"
+        />
+        {t.free.credit}
+      </label>
 
       {/* Section Titles */}
       <div className="space-y-4">

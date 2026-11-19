@@ -3,6 +3,7 @@
 import React from 'react';
 import { useReadmeStore } from '@/store/useReadmeStore';
 import { useTranslation } from '@/hooks/useTranslation';
+import { CustomBadgeList, SOCIAL_PRESETS } from '@/components/CustomBadgeList';
 
 export const SocialLinksForm = () => {
   const { socials, setSocial, uiTheme } = useReadmeStore();
@@ -47,6 +48,8 @@ export const SocialLinksForm = () => {
           </div>
         ))}
       </div>
+
+      <CustomBadgeList list="customSocials" requireUrl presets={SOCIAL_PRESETS} />
     </div>
   );
 };
