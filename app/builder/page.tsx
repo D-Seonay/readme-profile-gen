@@ -1,273 +1,447 @@
 'use client';
 
-import React, { useRef, useState, useMemo, useEffect } from 'react';
-import { useReadmeStore, LayoutId, CustomSectionId, isCustomSectionId } from '@/store/useReadmeStore';
+import React, { useEffect, useRef, useState } from 'react';
+import { toast } from 'sonner';
+import { useReadmeStore, LayoutId, SectionId } from '@/store/useReadmeStore';
 import { useHydration } from '@/hooks/useHydration';
 import { useTranslation } from '@/hooks/useTranslation';
-import { SkillSelector } from '@/components/SkillSelector';
-import { GithubStatsConfig } from '@/components/GithubStatsConfig';
-import { SocialLinksForm } from '@/components/SocialLinksForm';
-import { DonationsForm } from '@/components/DonationsForm';
-import { ProjectShowcase } from '@/components/ProjectShowcase';
-import { WakatimeConfig } from '@/components/WakatimeConfig';
-import { BannerConfig } from '@/components/BannerConfig';
-import { TypingConfig } from '@/components/TypingConfig';
-import { SpotifyConfig } from '@/components/SpotifyConfig';
-import { RssConfig } from '@/components/RssConfig';
-import { FollowersConfig } from '@/components/FollowersConfig';
-import { StatStatsConfig } from '@/components/StatStatsConfig';
-import { LayoutManager } from '@/components/LayoutManager';
+import { useKeyboardShortcuts } from '@/hooks/useKeyboardShortcuts';
+import { useIsMac, useMediaQuery } from '@/hooks/useMediaQuery';
+import { usePersistentState } from '@/hooks/usePersistentState';
+import { useConfigTransfer } from '@/hooks/useConfigTransfer';
 import { StyleConfig } from '@/components/StyleConfig';
-import { BioForm } from '@/components/BioForm';
-import { CustomSectionEditor } from '@/components/CustomSectionEditor';
-import { ConfigTransfer } from '@/components/ConfigTransfer';
 import { PreviewPane, PreviewPaneHandle } from '@/components/PreviewPane';
 import { GithubProfileFetcher } from '@/components/GithubProfileFetcher';
-import { LanguageSwitcher } from '@/components/LanguageSwitcher';
-import { ThemeSwitcher } from '@/components/ThemeSwitcher';
-import { CollapsibleSection } from '@/components/CollapsibleSection';
 import { ConfirmModal } from '@/components/ConfirmModal';
-import { OnboardingTour } from '@/components/OnboardingTour';
-import { useKeyboardShortcuts } from '@/hooks/useKeyboardShortcuts';
-import { toast } from 'sonner';
+import { OnboardingTour, TourStep } from '@/components/OnboardingTour';
+import { Button, Dialog, Field, Group, Input, Kbd, MenuEntry, cx } from '@/components/ui';
+import { ReadmeDocumentProvider, useReadmeDocument } from '@/components/builder/ReadmeDocument';
+import { BuilderNavContext, PlateId } from '@/components/builder/BuilderNav';
+import { getSlotInfo, renderSlotEditor } from '@/components/builder/sections';
+import { Plate, PlateLink } from '@/components/builder/Plate';
+import { Outline } from '@/components/builder/Outline';
+import { Toolbar } from '@/components/builder/Toolbar';
+import { MobileActionBar, MobileView } from '@/components/builder/MobileActionBar';
+import { CommandPalette, Command } from '@/components/builder/CommandPalette';
+import { SplitHandle } from '@/components/builder/SplitHandle';
+import { HydrationScreen } from '@/components/builder/HydrationScreen';
 
-export default function Home() {
-  const store = useReadmeStore();
-  const hydrated = useHydration();
+const ISSUES_URL = 'https://github.com/D-Seonay/readme-profile-gen/issues/new';
+const PREVIEW_MIN = 360;
+const PREVIEW_DEFAULT = 560;
+
+const pad = (n: number) => String(n).padStart(2, '0');
+const isString = (value: unknown): value is string => typeof value === 'string';
+const isNumber = (value: unknown): value is number => typeof value === 'number' && Number.isFinite(value);
+const isBoolean = (value: unknown): value is boolean => typeof value === 'boolean';
+
+/** "Heading in README" field shown at the top of plates whose title is rendered. */
+const HeadingField = ({ id, heading, label }: { id: SectionId; heading: string; label: string }) => {
+  const { t } = useTranslation();
+  const value = useReadmeStore((state) => state.sectionTitles[id]);
+  const setSectionTitle = useReadmeStore((state) => state.setSectionTitle);
+  return (
+    <Field label={t.builder.plate.heading} hint={t.builder.plate.headingHint} id={`plate-heading-${id}`}>
+      <Input leading={heading} value={value} onChange={(e) => setSectionTitle(id, e.target.value)} placeholder={label} />
+    </Field>
+  );
+};
+
+function BuilderShell() {
   const { t, language } = useTranslation();
+  const layout = useReadmeStore((state) => state.layout);
+  const customSections = useReadmeStore((state) => state.customSections);
+  const uiTheme = useReadmeStore((state) => state.uiTheme);
+  const hasCompletedTour = useReadmeStore((state) => state.hasCompletedTour);
+  const { startTour, addCustomSection, toggleUITheme, setLanguage, checkServicesHealth } = useReadmeStore.getState();
+  const { isLive } = useReadmeDocument();
+  const { handleExport, openImport, fileInput } = useConfigTransfer();
+  const isMac = useIsMac();
+  const isMdUp = useMediaQuery('(min-width: 768px)');
+  const isXl = useMediaQuery('(min-width: 1280px)');
+  const mod = isMac ? '⌘' : 'Ctrl';
 
   const previewRef = useRef<PreviewPaneHandle>(null);
-  const onboardingInputRef = useRef<HTMLInputElement>(null);
+  const autofillRef = useRef<HTMLInputElement>(null);
+  const editorRef = useRef<HTMLElement>(null);
+  const rowRef = useRef<HTMLDivElement>(null);
 
-  // Options de raccourcis mémoïsées pour la stabilité
-  const shortcutOptions = useMemo(() => ({
-    onCopy: () => previewRef.current?.handleCopy(),
-    onDownload: () => previewRef.current?.handleDownload(),
-    onFocusOnboarding: () => onboardingInputRef.current?.focus(),
-  }), []);
+  const [storedPlate, setStoredPlate] = usePersistentState<string>('readme-builder:plate', 'start', isString);
+  const [previewWidth, setPreviewWidth] = usePersistentState<number>('readme-builder:preview-width', PREVIEW_DEFAULT, isNumber);
+  const [previewCollapsed, setPreviewCollapsed] = usePersistentState<boolean>('readme-builder:preview-collapsed', false, isBoolean);
+  const [view, setView] = useState<MobileView>('edit');
+  const [outlineOpen, setOutlineOpen] = useState(false);
+  const [paletteOpen, setPaletteOpen] = useState(false);
+  const [resetOpen, setResetOpen] = useState(false);
+  const [viewport, setViewport] = useState(() => window.innerWidth);
 
-  // Activer les raccourcis clavier
-  useKeyboardShortcuts(shortcutOptions);
+  // A stored plate can point at a free section that no longer exists.
+  const selected: PlateId =
+    storedPlate === 'start' || storedPlate === 'style' || layout.includes(storedPlate as LayoutId)
+      ? (storedPlate as PlateId)
+      : 'start';
+  const selectedLayoutId = selected === 'start' || selected === 'style' ? undefined : selected;
 
-  const {
-    reset, layout, sectionTitles, customSections, addCustomSection,
-    uiTheme, hasCompletedTour, startTour
-  } = store;
+  // Preview width: never squeeze the editor below a comfortable measure.
+  const previewMax = viewport - (isXl ? 272 + 460 : 440);
+  const effectivePreviewWidth = Math.round(Math.min(Math.max(previewWidth, PREVIEW_MIN), Math.max(PREVIEW_MIN, previewMax)));
 
-  // Déclencher le tour d'onboarding au premier chargement si non complété
   useEffect(() => {
-    if (hydrated && !hasCompletedTour) {
-      startTour();
-    }
-  }, [hydrated, hasCompletedTour, startTour]);
+    const onResize = () => setViewport(window.innerWidth);
+    window.addEventListener('resize', onResize);
+    return () => window.removeEventListener('resize', onResize);
+  }, []);
 
-  const [isResetModalOpen, setIsResetModalOpen] = useState(false);
-  // Dernière section libre créée : ouverte d'office pour pouvoir écrire tout de suite
-  const [lastAddedSection, setLastAddedSection] = useState<CustomSectionId | null>(null);
+  // Service health lights (stats cards, WakaTime): checked once per visit.
+  useEffect(() => {
+    checkServicesHealth();
+  }, [checkServicesHealth]);
 
-  if (!hydrated) {
-    return (
-      <div className="h-screen w-full bg-zinc-950 flex items-center justify-center">
-        <div className="w-4 h-4 rounded-full bg-zinc-100 animate-pulse" />
-      </div>
-    );
-  }
+  // First visit: start the coach marks.
+  useEffect(() => {
+    if (!hasCompletedTour) startTour();
+  }, [hasCompletedTour, startTour]);
 
-  const isDark = uiTheme === 'dark';
-
-  const handleConfirmReset = () => {
-    reset();
-    toast.success(language === 'fr' ? 'Toutes les données ont été réinitialisées' : 'All data has been reset');
+  const select = (id: PlateId) => {
+    setStoredPlate(id);
+    setOutlineOpen(false);
+    setView('edit');
+    editorRef.current?.scrollTo({ top: 0 });
   };
 
-  const renderSection = (id: LayoutId) => {
-    if (isCustomSectionId(id)) {
-      const section = customSections.find((s) => s.id === id);
-      if (!section) return null;
+  const addFree = () => {
+    const id = addCustomSection();
+    select(id);
+    requestAnimationFrame(() => document.getElementById(`${id}-title`)?.focus());
+  };
+
+  const copy = async () => (await previewRef.current?.handleCopy()) ?? false;
+  const download = () => previewRef.current?.handleDownload();
+
+  const showPreview = () => {
+    setView('preview');
+    setPreviewCollapsed(false);
+  };
+
+  const focusAutofill = () => {
+    select('start');
+    window.setTimeout(() => autofillRef.current?.focus(), 80);
+  };
+
+  const confirmReset = () => {
+    const before = useReadmeStore.getState();
+    const snapshot = before.exportConfig();
+    const prefs = { uiTheme: before.uiTheme, language: before.language, tourDone: before.hasCompletedTour };
+    before.reset();
+    // Interface preferences are not README data: keep them.
+    const after = useReadmeStore.getState();
+    after.setUITheme(prefs.uiTheme);
+    after.setLanguage(prefs.language);
+    if (prefs.tourDone) after.completeTour();
+    setStoredPlate('start');
+    toast(t.builder.reset.done, {
+      action: {
+        label: t.builder.reset.undo,
+        onClick: () => {
+          useReadmeStore.getState().importConfig(snapshot);
+          toast.success(t.builder.reset.restored);
+        },
+      },
+    });
+  };
+
+  useKeyboardShortcuts({
+    onCopy: () => {
+      void copy();
+    },
+    onDownload: download,
+    // Open only: every way of closing goes through the palette's own close (which resets it).
+    onCommandPalette: () => setPaletteOpen(true),
+  });
+
+  /* ---------------------------------------------------------------- tour */
+  const steps = t.builder.tour.steps;
+  const tourSteps: TourStep[] = [
+    {
+      id: 'autofill',
+      target: '[data-tour="autofill"]',
+      ...steps.autofill,
+      prepare: () => {
+        setStoredPlate('start');
+        setView('edit');
+      },
+    },
+    {
+      id: 'outline',
+      target: '[data-tour="outline"], [data-tour="outline-toggle"]',
+      title: steps.outline.title,
+      // Below 1280px the outline is a drawer: the step points at its button.
+      body: isXl ? steps.outline.body : steps.outline.bodyCompact,
+    },
+    { id: 'plate', target: '[data-tour="plate"]', ...steps.plate, prepare: () => setView('edit') },
+    { id: 'preview', target: '[data-tour="preview"]', ...steps.preview, prepare: showPreview },
+    { id: 'export', target: '[data-tour="export"]', ...steps.export },
+  ];
+
+  const replayTour = () => {
+    tourSteps[0].prepare?.();
+    startTour();
+  };
+
+  /* -------------------------------------------------- palette and menu */
+  const slotLabel = (id: LayoutId) => getSlotInfo(id, t, customSections).label;
+  const p = t.builder.palette;
+
+  const commands: Command[] = [
+    { id: 'jump-start', group: 'jump', label: t.builder.outline.start, icon: 'flag', keywords: 'github auto-fill autofill start', run: () => select('start') },
+    { id: 'jump-style', group: 'jump', label: t.builder.outline.style, icon: 'sliders', keywords: 'style design alignment badges headings', run: () => select('style') },
+    ...layout.map((id, index): Command => {
+      const info = getSlotInfo(id, t, customSections);
+      return {
+        id: `jump-${id}`,
+        group: 'jump',
+        label: info.label,
+        icon: info.icon,
+        keywords: info.isCustom ? 'custom free' : id,
+        meta: (
+          <span className="flex items-center gap-2">
+            {pad(index + 1)}
+            <span aria-hidden="true" className={cx('h-2 w-2 rounded-full border', isLive(id) ? 'border-line-strong bg-accent' : 'border-field')} />
+            <span className="sr-only">{isLive(id) ? t.builder.outline.live : t.builder.outline.empty}</span>
+          </span>
+        ),
+        run: () => select(id),
+      };
+    }),
+    { id: 'new-free', group: 'actions', label: p.newSection, icon: 'plus', keywords: 'add section custom', run: addFree },
+    { id: 'autofill', group: 'actions', label: p.autofill, icon: 'github', keywords: 'import profile', run: focusAutofill },
+    { id: 'copy', group: 'actions', label: t.builder.toolbar.copy, icon: 'copy', shortcut: [mod, 'C'], run: () => void copy() },
+    { id: 'download', group: 'actions', label: t.builder.toolbar.downloadLabel, icon: 'download', shortcut: [mod, 'S'], run: download },
+    { id: 'export', group: 'actions', label: p.exportConfig, icon: 'braces', keywords: 'json backup save', run: handleExport },
+    { id: 'import', group: 'actions', label: p.importConfig, icon: 'upload', keywords: 'json restore load', run: openImport },
+    { id: 'reset', group: 'actions', label: p.reset, icon: 'rotate', keywords: 'clear delete', run: () => setResetOpen(true) },
+    {
+      id: 'theme',
+      group: 'view',
+      label: uiTheme === 'dark' ? t.builder.toolbar.themeToLight : t.builder.toolbar.themeToDark,
+      icon: uiTheme === 'dark' ? 'sun' : 'moon',
+      keywords: 'theme dark light',
+      shortcut: [mod, 'T'],
+      run: toggleUITheme,
+    },
+    {
+      id: 'language',
+      group: 'view',
+      label: p.switchLanguage,
+      icon: 'languages',
+      keywords: 'language langue english francais',
+      shortcut: [mod, 'L'],
+      run: () => setLanguage(language === 'en' ? 'fr' : 'en'),
+    },
+    { id: 'gh-theme', group: 'view', label: p.ghTheme, icon: 'github', keywords: 'preview dark light', run: () => previewRef.current?.toggleGithubTheme() },
+    {
+      id: 'raw',
+      group: 'view',
+      label: p.viewRaw,
+      icon: 'code',
+      keywords: 'markdown source raw',
+      run: () => {
+        previewRef.current?.setViewMode('raw');
+        showPreview();
+      },
+    },
+    {
+      id: 'rendered',
+      group: 'view',
+      label: p.viewRendered,
+      icon: 'eye',
+      keywords: 'preview rendered',
+      run: () => {
+        previewRef.current?.setViewMode('preview');
+        showPreview();
+      },
+    },
+    { id: 'tour', group: 'help', label: p.tour, icon: 'help', keywords: 'help onboarding', run: replayTour },
+    { id: 'bug', group: 'help', label: p.bug, icon: 'bug', keywords: 'issue feedback idea', run: () => window.open(ISSUES_URL, '_blank', 'noopener,noreferrer') },
+  ];
+
+  const menuItems: MenuEntry[] = [
+    { id: 'export', label: p.exportConfig, icon: 'braces', onSelect: handleExport },
+    { id: 'import', label: p.importConfig, icon: 'upload', onSelect: openImport },
+    ...(!isMdUp
+      ? ([
+          { type: 'separator', id: 'sep-prefs' },
+          {
+            id: 'theme',
+            label: uiTheme === 'dark' ? t.builder.toolbar.themeToLight : t.builder.toolbar.themeToDark,
+            icon: uiTheme === 'dark' ? 'sun' : 'moon',
+            onSelect: toggleUITheme,
+          },
+          { id: 'language', label: p.switchLanguage, icon: 'languages', onSelect: () => setLanguage(language === 'en' ? 'fr' : 'en') },
+        ] satisfies MenuEntry[])
+      : []),
+    { type: 'separator', id: 'sep-help' },
+    { id: 'palette', label: p.label, icon: 'search', shortcut: `${mod} K`, onSelect: () => setPaletteOpen(true) },
+    { id: 'tour', label: p.tour, icon: 'help', onSelect: replayTour },
+    { id: 'bug', label: p.bug, icon: 'bug', external: true, onSelect: () => window.open(ISSUES_URL, '_blank', 'noopener,noreferrer') },
+    { type: 'separator', id: 'sep-danger' },
+    { id: 'reset', label: p.reset, icon: 'rotate', tone: 'danger', onSelect: () => setResetOpen(true) },
+  ];
+
+  /* -------------------------------------------------------------- plates */
+  const sequence: PlateId[] = ['start', 'style', ...layout];
+  const position = sequence.indexOf(selected);
+  const linkTo = (id: PlateId | undefined): PlateLink | undefined => {
+    if (!id) return undefined;
+    if (id === 'start') return { label: t.builder.outline.start, onSelect: () => select('start') };
+    if (id === 'style') return { label: t.builder.outline.style, onSelect: () => select('style') };
+    return { label: slotLabel(id), number: pad(layout.indexOf(id) + 1), onSelect: () => select(id) };
+  };
+  const prev = linkTo(sequence[position - 1]);
+  const next = linkTo(sequence[position + 1]);
+
+  const renderPlate = () => {
+    if (selected === 'start') {
       return (
-        <CollapsibleSection
-          key={id}
-          title={`✏️ ${section.title.trim() || t.free.untitled}`}
-          subtitle={t.free.sectionHelp}
-          defaultOpen={id === lastAddedSection}
-        >
-          <CustomSectionEditor id={id} />
-        </CollapsibleSection>
+        <Plate key="start" title={t.builder.start.title} help={t.builder.start.help} icon="flag" next={next}>
+          <div className="space-y-10">
+            <GithubProfileFetcher ref={autofillRef} onContinue={() => select('bio')} continueLabel={t.builder.start.continue} />
+            <Group title={t.builder.start.elsewhere}>
+              <div className="flex flex-wrap gap-2">
+                <Button variant="secondary" size="md" iconRight="arrow-right" onClick={() => select('bio')}>
+                  {t.builder.start.writeIntro}
+                </Button>
+                <Button variant="secondary" size="md" icon="upload" onClick={openImport}>
+                  {t.builder.start.importConfig}
+                </Button>
+              </div>
+              <p className="flex flex-wrap items-center gap-1.5 text-[13px] text-ink-soft">
+                <Kbd>{mod}</Kbd>
+                <Kbd>K</Kbd>
+                <span>{t.builder.start.paletteTip}</span>
+              </p>
+            </Group>
+          </div>
+        </Plate>
       );
     }
-
-    switch (id) {
-      case 'banner':
-        return (
-          <CollapsibleSection key={id} title={sectionTitles.banner || t.layout.banner} subtitle={t.banner.help}>
-            <BannerConfig />
-          </CollapsibleSection>
-        );
-      case 'typing':
-        return (
-          <CollapsibleSection key={id} title={sectionTitles.typing || t.layout.typing} subtitle={t.typing.help}>
-            <TypingConfig />
-          </CollapsibleSection>
-        );
-      case 'bio':
-        return (
-          <CollapsibleSection key={id} title={sectionTitles.bio || t.layout.bio} subtitle={t.layout.help}>
-            <BioForm />
-          </CollapsibleSection>
-        );
-      case 'skills':
-        return (
-          <CollapsibleSection key={id} title={sectionTitles.skills || t.layout.skills} subtitle={t.skills.help}>
-            <SkillSelector />
-          </CollapsibleSection>
-        );
-      case 'projects':
-        return (
-          <CollapsibleSection key={id} title={sectionTitles.projects || t.layout.projects} subtitle={t.projects.help}>
-            <ProjectShowcase />
-          </CollapsibleSection>
-        );
-      case 'stats':
-        return (
-          <CollapsibleSection key={id} title={sectionTitles.stats || t.layout.stats} subtitle={t.github.help}>
-            <GithubStatsConfig />
-          </CollapsibleSection>
-        );
-      case 'wakatime':
-        return (
-          <CollapsibleSection key={id} title={sectionTitles.wakatime || t.layout.wakatime} subtitle={t.wakatime.help}>
-            <WakatimeConfig />
-          </CollapsibleSection>
-        );
-      case 'spotify':
-        return (
-          <CollapsibleSection key={id} title={sectionTitles.spotify || t.layout.spotify} subtitle={t.spotify.help}>
-            <SpotifyConfig />
-          </CollapsibleSection>
-        );
-      case 'rss':
-        return (
-          <CollapsibleSection key={id} title={sectionTitles.rss || t.layout.rss} subtitle={t.rss.help}>
-            <RssConfig />
-          </CollapsibleSection>
-        );
-      case 'followers':
-        return (
-          <CollapsibleSection key={id} title={sectionTitles.followers || t.layout.followers} subtitle={t.followers.help}>
-            <FollowersConfig />
-          </CollapsibleSection>
-        );
-      case 'socials':
-        return (
-          <CollapsibleSection key={id} title={sectionTitles.socials || t.layout.socials} subtitle={t.socials.help}>
-            <SocialLinksForm />
-          </CollapsibleSection>
-        );
-      case 'statstats':
-        return (
-          <CollapsibleSection key={id} title={sectionTitles.statstats || t.layout.statstats} subtitle={t.statstats.help}>
-            <StatStatsConfig />
-          </CollapsibleSection>
-        );
-      case 'donations':
-        return (
-          <CollapsibleSection key={id} title={sectionTitles.donations || t.layout.donations} subtitle={t.donations.help}>
-            <DonationsForm />
-          </CollapsibleSection>
-        );
-      default:
-        return null;
+    if (selected === 'style') {
+      return (
+        <Plate key="style" title={t.builder.outline.style} help={t.builder.style.help} icon="sliders" prev={prev} next={next}>
+          <StyleConfig />
+        </Plate>
+      );
     }
+    const info = getSlotInfo(selected, t, customSections);
+    return (
+      <Plate
+        key={selected}
+        title={info.label}
+        help={info.help}
+        icon={info.icon}
+        number={pad(layout.indexOf(selected) + 1)}
+        total={layout.length}
+        live={isLive(selected)}
+        lead={info.heading && !info.isCustom ? <HeadingField id={selected as SectionId} heading={info.heading} label={info.label} /> : undefined}
+        prev={prev}
+        next={next}
+      >
+        {renderSlotEditor(selected)}
+      </Plate>
+    );
   };
 
   return (
-    <main className={`flex h-screen w-full overflow-hidden font-sans transition-colors duration-500 ${isDark ? 'bg-zinc-950 text-zinc-100' : 'bg-zinc-50 text-zinc-900'}`}>
-      <ConfirmModal
-        isOpen={isResetModalOpen}
-        onClose={() => setIsResetModalOpen(false)}
-        onConfirm={handleConfirmReset}
-        title={t.resetBtn}
-        description={t.resetConfirm}
-        confirmText={t.resetBtn}
-        cancelText={language === 'fr' ? "Annuler" : "Cancel"}
-      />
-      <OnboardingTour />
-      <section className={`w-1/2 h-full flex flex-col border-r ${isDark ? 'border-zinc-800 bg-zinc-900/50' : 'border-zinc-200 bg-white/80'} backdrop-blur-sm overflow-y-auto custom-scrollbar`}>
-        <header className="p-8 pb-4 flex flex-wrap items-start justify-between gap-4">
-          <div>
-            <h1 className="text-3xl font-black italic uppercase tracking-tighter">
-              {t.title} <span className={isDark ? 'text-zinc-500' : 'text-zinc-400'}>{t.subtitle}</span>
-            </h1>
-            <div className="flex items-center gap-2 mt-1">
-              <p className={`${isDark ? 'text-zinc-500' : 'text-zinc-400'} font-mono text-sm italic`}>{t.tagline}</p>
-              <span className="text-zinc-700">•</span>
-              <a
-                href="https://matheodelaunay.studio"
-                target="_blank"
-                rel="noopener noreferrer"
-                className={`text-[10px] font-mono uppercase tracking-widest transition-colors ${isDark ? 'text-zinc-600 hover:text-indigo-400' : 'text-zinc-400 hover:text-indigo-600'}`}
-              >
-                by Seonay
-              </a>
-            </div>
-          </div>
+    <BuilderNavContext.Provider value={{ selected, select }}>
+      <div data-builder-root className="flex h-dvh flex-col overflow-hidden bg-canvas text-ink">
+        <a
+          href="#editor"
+          className="sr-only z-50 rounded-[4px] bg-accent px-3 py-2 font-mono text-[12px] text-accent-ink focus:not-sr-only focus:fixed focus:left-3 focus:top-3"
+        >
+          {t.builder.skip}
+        </a>
 
-          <div className="flex flex-wrap items-center justify-end gap-x-4 gap-y-2">
-            <ThemeSwitcher />
-            <LanguageSwitcher />
-            <ConfigTransfer />
-            <button
-              onClick={() => setIsResetModalOpen(true)}
-              className={`text-[9px] font-mono border ${isDark ? 'border-zinc-800 text-zinc-600 hover:text-zinc-100 hover:border-zinc-500' : 'border-zinc-200 text-zinc-400 hover:text-zinc-900 hover:border-zinc-400'} px-3 py-1.5 rounded transition-all uppercase tracking-widest`}
-            >
-              {t.resetBtn}
-            </button>
-          </div>
-        </header>
+        <Toolbar
+          onOpenOutline={() => setOutlineOpen(true)}
+          onOpenPalette={() => setPaletteOpen(true)}
+          onSelect={select}
+          onCopy={copy}
+          onDownload={download}
+          menuItems={menuItems}
+        />
 
-        <div className="pb-20">
-          <div className="px-8 mb-8 mt-4">
-            <GithubProfileFetcher ref={onboardingInputRef} />
-          </div>
+        <div ref={rowRef} className="relative flex min-h-0 flex-1" style={{ '--preview-w': `${effectivePreviewWidth}px` } as React.CSSProperties}>
+          <aside className="hidden w-[17rem] shrink-0 border-r border-line bg-surface xl:block">
+            <Outline selected={selected} onSelect={select} onAddFree={addFree} />
+          </aside>
 
-          <CollapsibleSection title={t.style.label} subtitle={t.style.help}>
-            <StyleConfig />
-          </CollapsibleSection>
+          <main
+            id="editor"
+            ref={editorRef}
+            tabIndex={-1}
+            data-tour="plate"
+            className={cx('focus-ring-none custom-scrollbar min-w-0 flex-1 overflow-y-auto outline-none', view === 'preview' && 'max-lg:hidden')}
+          >
+            <div className="mx-auto w-full max-w-[760px] px-4 pb-32 pt-7 sm:px-8 sm:pt-10 lg:pb-20">{renderPlate()}</div>
+          </main>
 
-          <CollapsibleSection title={t.layout.label} subtitle={t.layout.help}>
-            <LayoutManager />
-          </CollapsibleSection>
+          {!previewCollapsed && (
+            <SplitHandle
+              className="hidden lg:block"
+              targetRef={rowRef}
+              width={effectivePreviewWidth}
+              min={PREVIEW_MIN}
+              max={previewMax}
+              defaultWidth={PREVIEW_DEFAULT}
+              onCommit={setPreviewWidth}
+              label={t.builder.preview.resize}
+            />
+          )}
 
-          {layout.map((sectionId) => renderSection(sectionId))}
-
-          <div className={`border-t px-8 pt-6 ${isDark ? 'border-zinc-800' : 'border-zinc-200'}`}>
-            <button
-              type="button"
-              onClick={() => setLastAddedSection(addCustomSection())}
-              className={`w-full p-4 border-2 border-dashed rounded-xl text-[10px] font-mono uppercase tracking-[0.2em] transition-all ${isDark ? 'border-zinc-800 text-zinc-500 hover:border-indigo-500 hover:text-zinc-100' : 'border-zinc-200 text-zinc-400 hover:border-indigo-500 hover:text-zinc-900'}`}
-            >
-              + {t.free.addSection}
-            </button>
-          </div>
-
-          <div className={`mt-8 mx-8 pt-8 border-t ${isDark ? 'border-zinc-800' : 'border-zinc-200'} flex flex-col items-center gap-4`}>
-            <a
-              href="https://github.com/D-Seonay/readme-profile-gen/issues/new"
-              target="_blank"
-              rel="noopener noreferrer"
-              className={`flex items-center gap-2 text-[10px] font-mono uppercase tracking-widest transition-colors ${isDark ? 'text-zinc-600 hover:text-indigo-400' : 'text-zinc-400 hover:text-indigo-600'}`}
-            >
-              <svg className="w-3 h-3" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-                <path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-              Report Bug / Request Idea
-            </a>
-            <p className="text-xs font-mono italic opacity-20 pointer-events-none">{"// End of Editor"}</p>
-          </div>
+          <PreviewPane
+            ref={previewRef}
+            selectedId={selectedLayoutId}
+            onEditSection={select}
+            collapsed={previewCollapsed}
+            onToggleCollapsed={() => setPreviewCollapsed((value) => !value)}
+            className={cx(
+              view === 'edit' ? 'hidden lg:flex' : 'flex',
+              'w-full max-lg:pb-[68px] lg:w-[var(--preview-w)] lg:shrink-0 lg:border-l lg:border-line',
+            )}
+          />
         </div>
-      </section>
 
-      <PreviewPane ref={previewRef} />
-    </main>
+        <MobileActionBar view={view} onViewChange={setView} onOpenOutline={() => setOutlineOpen(true)} onCopy={copy} onDownload={download} />
+
+        <Dialog open={outlineOpen} onClose={() => setOutlineOpen(false)} placement="left" aria-label={t.builder.outline.title}>
+          <Outline selected={selected} onSelect={select} onAddFree={addFree} onClose={() => setOutlineOpen(false)} />
+        </Dialog>
+
+        <CommandPalette open={paletteOpen} onClose={() => setPaletteOpen(false)} commands={commands} />
+
+        <ConfirmModal
+          isOpen={resetOpen}
+          onClose={() => setResetOpen(false)}
+          onConfirm={confirmReset}
+          title={t.resetBtn}
+          description={t.resetConfirm}
+          confirmText={t.resetBtn}
+          cancelText={t.builder.confirm.cancel}
+        />
+
+        <OnboardingTour steps={tourSteps} />
+        {fileInput}
+      </div>
+    </BuilderNavContext.Provider>
+  );
+}
+
+export default function BuilderPage() {
+  const hydrated = useHydration();
+  if (!hydrated) return <HydrationScreen />;
+  return (
+    <ReadmeDocumentProvider>
+      <BuilderShell />
+    </ReadmeDocumentProvider>
   );
 }

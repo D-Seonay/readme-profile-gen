@@ -1,7 +1,7 @@
 'use client';
 
-import React from 'react';
-import { useReadmeStore } from '@/store/useReadmeStore';
+import React, { useId, useRef } from 'react';
+import { Button, Dialog } from '@/components/ui';
 
 interface ConfirmModalProps {
   isOpen: boolean;
@@ -11,6 +11,8 @@ interface ConfirmModalProps {
   description: string;
   confirmText: string;
   cancelText: string;
+  /** `danger` paints the confirm button coral. */
+  tone?: 'danger' | 'default';
 }
 
 export const ConfirmModal = ({
@@ -20,53 +22,44 @@ export const ConfirmModal = ({
   title,
   description,
   confirmText,
-  cancelText
+  cancelText,
+  tone = 'danger',
 }: ConfirmModalProps) => {
-  const uiTheme = useReadmeStore((state) => state.uiTheme);
-  const isDark = uiTheme === 'dark';
-
-  if (!isOpen) return null;
+  const titleId = useId();
+  const descriptionId = useId();
+  // Destructive dialogs open on the safe choice.
+  const cancelRef = useRef<HTMLButtonElement>(null);
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-      {/* Overlay */}
-      <div 
-        className="absolute inset-0 bg-black/60 backdrop-blur-sm animate-in fade-in duration-300"
-        onClick={onClose}
-      />
-      
-      {/* Modal Card */}
-      <div className={`
-        relative w-full max-w-md p-8 rounded-3xl border shadow-2xl animate-in zoom-in-95 fade-in duration-300
-        ${isDark ? 'bg-zinc-900 border-zinc-100/10 text-zinc-100' : 'bg-white border-zinc-200 text-zinc-900'}
-      `}>
-        <h3 className="text-xl font-black italic uppercase tracking-tighter mb-2">
-          {title}
-        </h3>
-        <p className={`text-sm font-mono mb-8 ${isDark ? 'text-zinc-400' : 'text-zinc-500'}`}>
-          {description}
-        </p>
-        
-        <div className="flex gap-3">
-          <button
-            onClick={onClose}
-            className={`flex-1 px-4 py-3 rounded-xl font-mono text-[10px] uppercase tracking-widest transition-all ${
-              isDark ? 'bg-zinc-800 text-zinc-400 hover:bg-zinc-700' : 'bg-zinc-100 text-zinc-500 hover:bg-zinc-200'
-            }`}
-          >
-            {cancelText}
-          </button>
-          <button
-            onClick={() => {
-              onConfirm();
-              onClose();
-            }}
-            className="flex-1 px-4 py-3 rounded-xl bg-red-600 text-white font-mono text-[10px] uppercase tracking-widest hover:bg-red-500 transition-all shadow-[0_0_20px_rgba(220,38,38,0.3)] active:scale-95"
-          >
-            {confirmText}
-          </button>
-        </div>
+    <Dialog
+      open={isOpen}
+      onClose={onClose}
+      aria-labelledby={titleId}
+      aria-describedby={descriptionId}
+      initialFocusRef={cancelRef}
+      panelClassName="max-w-md p-6 sm:p-7"
+    >
+      <h2 id={titleId} className="font-display text-[30px] leading-[1.1] text-ink">
+        {title}
+      </h2>
+      <p id={descriptionId} className="mt-3 text-[14.5px] leading-relaxed text-ink-soft">
+        {description}
+      </p>
+      <div className="mt-7 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+        <Button ref={cancelRef} variant="secondary" size="md" onClick={onClose}>
+          {cancelText}
+        </Button>
+        <Button
+          variant={tone === 'danger' ? 'danger' : 'accent'}
+          size="md"
+          onClick={() => {
+            onConfirm();
+            onClose();
+          }}
+        >
+          {confirmText}
+        </Button>
       </div>
-    </div>
+    </Dialog>
   );
 };

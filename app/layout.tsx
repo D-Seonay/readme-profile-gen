@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Instrument_Serif, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { BMCWidget } from "@/components/BMCWidget";
-import { Toaster } from "sonner";
+import { Toaster } from "@/components/Toaster";
 import { ThemeWrapper } from "@/components/ThemeWrapper";
 
 const geistSans = Geist({
@@ -130,7 +130,7 @@ export default function RootLayout({
         <ThemeWrapper>
           {children}
           <BMCWidget />
-          <Toaster richColors closeButton position="bottom-right" />
+          <Toaster />
         </ThemeWrapper>
       </body>
     </html>

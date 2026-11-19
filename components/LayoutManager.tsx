@@ -1,177 +1,166 @@
 'use client';
 
-import React from 'react';
-import { 
-  DndContext, 
-  closestCenter, 
-  KeyboardSensor, 
-  PointerSensor, 
-  useSensor, 
+import React, { useState } from 'react';
+import {
+  DndContext,
+  DragOverlay,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
   useSensors,
-  DragEndEvent 
+  DragEndEvent,
+  DragStartEvent,
+  Announcements,
 } from '@dnd-kit/core';
-import { 
-  SortableContext, 
-  sortableKeyboardCoordinates, 
-  verticalListSortingStrategy,
-  useSortable
-} from '@dnd-kit/sortable';
+import { SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy, useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { useReadmeStore, SectionId, LayoutId, isCustomSectionId } from '@/store/useReadmeStore';
+import { useReadmeStore, LayoutId } from '@/store/useReadmeStore';
 import { useTranslation } from '@/hooks/useTranslation';
+import { Icon, StatusDot, cx, fmt } from '@/components/ui';
+import { useReadmeDocument } from '@/components/builder/ReadmeDocument';
+import { getSlotInfo, SlotInfo } from '@/components/builder/sections';
+import type { PlateId } from '@/components/builder/BuilderNav';
 
-const SortableItem = ({ id, label, isDark, isUsed }: { id: string, label: string, isDark: boolean, isUsed: boolean }) => {
-  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id });
+const pad = (n: number) => String(n).padStart(2, '0');
 
-  const style = {
-    transform: CSS.Transform.toString(transform),
-    transition,
-    zIndex: isDragging ? 10 : 1,
-  };
+interface RowProps {
+  slot: SlotInfo;
+  index: number;
+  live: boolean;
+  selected: boolean;
+  onSelect: () => void;
+}
+
+const SortableRow = ({ slot, index, live, selected, onSelect }: RowProps) => {
+  const { t } = useTranslation();
+  const { attributes, listeners, setNodeRef, setActivatorNodeRef, transform, transition, isDragging } = useSortable({ id: slot.id });
 
   return (
-    <div
-      ref={setNodeRef}
-      style={style}
-      className={`
-        flex items-center gap-4 p-3 border rounded-lg mb-2 transition-all
-        ${isDragging 
-          ? (isDark ? 'opacity-50 border-indigo-500 bg-zinc-800' : 'opacity-50 border-indigo-500 bg-zinc-100') 
-          : (isDark ? 'bg-zinc-900 border-zinc-800 hover:border-zinc-700' : 'bg-white border-zinc-200 hover:border-zinc-300 shadow-sm')
-        }
-        ${!isUsed ? 'opacity-40 grayscale pointer-events-none' : ''}
-      `}
-    >
-      <div 
-        {...attributes} 
-        {...listeners} 
-        className={`cursor-grab active:cursor-grabbing p-1 transition-colors ${isDark ? 'text-zinc-600 hover:text-zinc-400' : 'text-zinc-300 hover:text-zinc-500'}`}
-      >
-        <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-          <path d="M4 8h16M4 16h16" strokeLinecap="round" strokeLinejoin="round" />
-        </svg>
-      </div>
-      
-      <div className="flex-1 flex items-center justify-between gap-2">
-        <span className={`text-[10px] font-mono uppercase tracking-wider ${isDark ? (isUsed ? 'text-zinc-100' : 'text-zinc-500') : (isUsed ? 'text-zinc-900' : 'text-zinc-400')}`}>
-          {label}
-        </span>
-        {isUsed && (
-          <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20">
-            <div className="w-1 h-1 rounded-full bg-emerald-500 animate-pulse" />
-            <span className="text-[8px] font-mono text-emerald-500 uppercase tracking-tighter">Active</span>
-          </div>
+    <li ref={setNodeRef} style={{ transform: CSS.Transform.toString(transform), transition }} className="relative">
+      <div
+        className={cx(
+          'relative flex items-center gap-0.5 rounded-[4px] pr-2.5 transition-colors duration-150',
+          isDragging ? 'bg-hatch outline-1 outline-dashed outline-field' : selected ? 'bg-raised' : 'hover:bg-raised',
         )}
+      >
+        {selected && !isDragging && (
+          <span aria-hidden="true" className="absolute inset-y-1.5 left-0 w-[3px] rounded-r-[1px] bg-accent shadow-[0_0_0_1px_var(--line-strong)]" />
+        )}
+        <button
+          ref={setActivatorNodeRef}
+          {...attributes}
+          {...listeners}
+          aria-label={fmt(t.builder.outline.reorder, { label: slot.label })}
+          className={cx(
+            'flex h-9 w-7 shrink-0 cursor-grab touch-none items-center justify-center rounded-[3px] text-muted transition-colors active:cursor-grabbing',
+            'hover:text-ink focus-visible:text-ink',
+            isDragging && 'opacity-0',
+          )}
+        >
+          <Icon name="grip" size={14} />
+        </button>
+        <button
+          type="button"
+          onClick={onSelect}
+          aria-current={selected ? 'page' : undefined}
+          className={cx('flex min-w-0 flex-1 items-center gap-2.5 py-2 text-left', isDragging && 'opacity-0')}
+        >
+          <span className="w-5 shrink-0 font-mono text-[11px] tabular-nums text-ink-soft">{pad(index + 1)}</span>
+          <Icon name={slot.icon} size={15} className={live ? 'text-ink' : 'text-ink-soft'} />
+          <span className={cx('min-w-0 flex-1 truncate text-[13.5px]', live || selected ? 'text-ink' : 'text-ink-soft')}>
+            {slot.label}
+          </span>
+          <span className="sr-only">, {live ? t.builder.outline.live : t.builder.outline.empty}</span>
+          <StatusDot live={live} className={isDragging ? 'opacity-0' : undefined} />
+        </button>
       </div>
-    </div>
+    </li>
   );
 };
 
-export const LayoutManager = () => {
-  const store = useReadmeStore();
-  const { layout, reorderLayout, uiTheme, isTourActive, currentTourStep } = store;
-  const { t } = useTranslation();
-  const isDark = uiTheme === 'dark';
+/** The lifted copy that follows the pointer: a paper slip picked up off the table. */
+const RowGhost = ({ slot, index, live }: { slot: SlotInfo; index: number; live: boolean }) => (
+  <div className="flex -rotate-[1.5deg] items-center gap-2.5 rounded-[4px] border border-line-strong bg-surface py-2 pl-2 pr-2.5 shadow-hard">
+    <Icon name="grip" size={14} className="text-ink" />
+    <span className="w-5 shrink-0 font-mono text-[11px] tabular-nums text-ink-soft">{pad(index + 1)}</span>
+    <Icon name={slot.icon} size={15} className="text-ink" />
+    <span className="min-w-0 flex-1 truncate text-[13.5px] text-ink">{slot.label}</span>
+    <StatusDot live={live} />
+  </div>
+);
 
-  const isHighlighted = isTourActive && currentTourStep === 1;
-  
+interface LayoutManagerProps {
+  selectedId: PlateId;
+  onSelect: (id: LayoutId) => void;
+}
+
+/**
+ * The README's order, as a sortable list. Every slot is listed (built-in and
+ * free sections, live or empty) so a section can be placed before it is filled.
+ */
+export const LayoutManager = ({ selectedId, onSelect }: LayoutManagerProps) => {
+  const { layout, reorderLayout, customSections } = useReadmeStore();
+  const { t } = useTranslation();
+  const { isLive } = useReadmeDocument();
+  const [activeId, setActiveId] = useState<LayoutId | null>(null);
+
   const sensors = useSensors(
-    useSensor(PointerSensor),
-    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
+    useSensor(PointerSensor, { activationConstraint: { distance: 4 } }),
+    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates }),
   );
 
-  const labels: Record<SectionId, string> = {
-    banner: t.layout.banner,
-    bio: t.layout.bio,
-    skills: t.layout.skills,
-    socials: t.layout.socials,
-    stats: t.layout.stats,
-    donations: t.layout.donations,
-    projects: t.layout.projects,
-    wakatime: t.layout.wakatime,
-    spotify: t.layout.spotify,
-    rss: t.layout.rss,
-    typing: t.layout.typing,
-    followers: t.layout.followers,
-    statstats: t.layout.statstats
+  const slots = layout.map((id) => getSlotInfo(id, t, customSections));
+  const labelOf = (id: string | number) => slots.find((slot) => slot.id === id)?.label ?? String(id);
+  const a = t.builder.outline.announce;
+
+  const announcements: Announcements = {
+    onDragStart: ({ active }) => fmt(a.start, { label: labelOf(active.id) }),
+    onDragOver: ({ active, over }) => (over ? fmt(a.over, { label: labelOf(active.id), over: labelOf(over.id) }) : undefined),
+    onDragEnd: ({ active, over }) =>
+      over ? fmt(a.end, { label: labelOf(active.id), over: labelOf(over.id) }) : fmt(a.endNoTarget, { label: labelOf(active.id) }),
+    onDragCancel: ({ active }) => fmt(a.cancel, { label: labelOf(active.id) }),
   };
 
-  const getLabel = (id: LayoutId) => {
-    if (!isCustomSectionId(id)) return labels[id];
-    const section = store.customSections.find((s) => s.id === id);
-    return `✏️ ${section?.title.trim() || t.free.untitled}`;
-  };
-
-  const isSectionUsed = (id: LayoutId) => {
-    if (isCustomSectionId(id)) {
-      const section = store.customSections.find((s) => s.id === id);
-      return !!section && !!(section.title.trim() || section.content.trim());
-    }
-    switch (id) {
-      case 'banner': return !!store.bannerUrl;
-      case 'bio': return true; // Bio is always visible
-      case 'skills': return store.skills.length > 0 || store.customSkills.some((b) => b.label.trim());
-      case 'socials': return !!(store.socials.linkedin || store.socials.twitter || store.socials.portfolio || store.socials.email) || store.customSocials.some((b) => b.label.trim() && b.url.trim());
-      case 'stats': return !!(store.githubUsername && (store.showStatsCard || store.showStreakCard || store.showTopLanguages || store.showTrophies || store.showSnake || store.showVisitorCounter));
-      case 'donations': return !!(store.donations.buymeacoffee || store.donations.kofi || store.donations.paypal) || store.customDonations.some((b) => b.label.trim() && b.url.trim());
-      case 'projects': return !!(store.githubUsername && store.featuredRepos.length > 0);
-      case 'wakatime': return !!(store.wakatimeUsername || store.wakatimeBadgeId);
-      case 'spotify': return !!store.spotifyUrl;
-      case 'rss': return !!store.rssUrl;
-      case 'typing': return !!store.typingText;
-      case 'followers': return !!(store.githubUsername && (store.showFollowers || store.showFollowing));
-      case 'statstats': return store.statStatsCards.length > 0;
-      default: return false;
-    }
-  };
-
-  // Filtrer les sections pour ne garder que les "utilisées"
-  const usedSections = layout.filter(id => isSectionUsed(id));
+  const handleDragStart = (event: DragStartEvent) => setActiveId(event.active.id as LayoutId);
 
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
+    setActiveId(null);
     if (over && active.id !== over.id) {
       reorderLayout(active.id as LayoutId, over.id as LayoutId);
     }
   };
 
+  const activeIndex = activeId ? layout.indexOf(activeId) : -1;
+  const activeSlot = activeIndex >= 0 ? slots[activeIndex] : null;
+
   return (
-    <div className={`space-y-4 ${isDark ? 'text-zinc-100' : 'text-zinc-900'} ${isHighlighted ? 'ring-2 ring-indigo-500 shadow-[0_0_20px_rgba(99,102,241,0.5)] z-50 p-2 rounded-xl scale-[1.02] transition-all' : 'transition-all'}`}>
-      <div className="flex items-center justify-between px-1">
-        <label className={`text-[10px] font-mono uppercase tracking-[0.2em] ${isDark ? 'text-zinc-500' : 'text-zinc-400'}`}>
-          {"// "} Active Sections Only
-        </label>
-        <span className={`text-[10px] font-mono italic ${isDark ? 'text-zinc-700' : 'text-zinc-400'}`}>
-          {usedSections.length} active
-        </span>
-      </div>
-
-      <DndContext 
-        sensors={sensors} 
-        collisionDetection={closestCenter} 
-        onDragEnd={handleDragEnd}
-      >
-        <SortableContext items={usedSections} strategy={verticalListSortingStrategy}>
-          <div className="flex flex-col">
-            {usedSections.map((id) => (
-              <SortableItem 
-                key={id} 
-                id={id} 
-                label={getLabel(id)}
-                isDark={isDark} 
-                isUsed={true} 
-              />
-            ))}
-          </div>
-        </SortableContext>
-      </DndContext>
-
-      {usedSections.length === 0 && (
-        <div className={`p-8 border-2 border-dashed rounded-xl text-center ${isDark ? 'border-zinc-800 text-zinc-600' : 'border-zinc-200 text-zinc-400'}`}>
-          <p className="text-xs font-mono italic">No active sections to reorder.</p>
-          <p className="text-[10px] mt-1">Fill some data above to see sections here.</p>
-        </div>
-      )}
-    </div>
+    <DndContext
+      sensors={sensors}
+      collisionDetection={closestCenter}
+      onDragStart={handleDragStart}
+      onDragEnd={handleDragEnd}
+      onDragCancel={() => setActiveId(null)}
+      accessibility={{ announcements, screenReaderInstructions: { draggable: t.builder.outline.instructions } }}
+    >
+      <SortableContext items={layout} strategy={verticalListSortingStrategy}>
+        <ol className="space-y-px">
+          {slots.map((slot, index) => (
+            <SortableRow
+              key={slot.id}
+              slot={slot}
+              index={index}
+              live={isLive(slot.id)}
+              selected={selectedId === slot.id}
+              onSelect={() => onSelect(slot.id)}
+            />
+          ))}
+        </ol>
+      </SortableContext>
+      <DragOverlay>
+        {activeSlot ? <RowGhost slot={activeSlot} index={activeIndex} live={isLive(activeSlot.id)} /> : null}
+      </DragOverlay>
+    </DndContext>
   );
 };
