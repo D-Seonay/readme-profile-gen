@@ -69,18 +69,23 @@ Add as many **free sections** as you like: Markdown or HTML, written as-is, reor
 - Live preview and raw Markdown; copy to the clipboard or download `README.md`.
 - Your draft is saved in the browser (`localStorage`); export and import the whole setup as JSON.
 - Drag-and-drop section order and a short guided tour on the first visit.
-- Keyboard shortcuts in the builder: <kbd>Ctrl</kbd>/<kbd>⌘</kbd> + <kbd>S</kbd> download, <kbd>C</kbd> copy, <kbd>K</kbd> focus auto-fill, <kbd>T</kbd> theme, <kbd>L</kbd> language.
+- Keyboard shortcuts in the builder: <kbd>Ctrl</kbd>/<kbd>⌘</kbd> + <kbd>S</kbd> download, <kbd>C</kbd> copy, <kbd>K</kbd> command palette, <kbd>T</kbd> theme, <kbd>L</kbd> language.
 - A status light for each third-party stats service, so you know when a card is down rather than broken.
 - Interface in English and French, in an ink (dark) or paper (light) theme.
 
-> [!NOTE]
-> **To complete after the merge.** Other work in progress adds features this list does not cover yet:
->
-> - [ ] Templates: _describe once merged_
-> - [ ] New sections: _list them once merged_
-> - [ ] Share links: _describe once merged_
-> - [ ] Undo / redo: _describe once merged, with shortcuts_
-> - [ ] Refresh `public/readme/userInterface.png` with the redesigned builder
+### More sections
+
+Alongside the sections above: an **animated header and footer** (capsule-render), a **contribution activity graph**, **profile summary cards**, a **dev quote or joke card**, an **experience timeline**, a **"currently" block**, and **pinned repos or gists** with your own descriptions. The tech stack can also be shown as a [skillicons.dev](https://skillicons.dev) icon grid, from a catalogue of 400+ skills.
+
+### Templates, checks and tools
+
+- **Templates**: ten opinionated layouts (minimal, terminal hacker, open-source maintainer, designer who codes…). A template changes presentation only; your name, links, skills and texts stay.
+- **Health check**: a 0–100 score with findings and one-click fixes (no contact link, offline service, missing workflow…).
+- **Workflow export**: the exact `.github/workflows/*.yml` files for the sections that need a GitHub Action (snake, blog posts, WakaTime, summary cards), with setup steps.
+- **README import**: bring the content of an existing profile README in as free sections.
+- **Undo / redo**: <kbd>Ctrl</kbd>/<kbd>⌘</kbd> + <kbd>Z</kbd> and <kbd>Ctrl</kbd>/<kbd>⌘</kbd> + <kbd>Shift</kbd> + <kbd>Z</kbd>, including after a reset or a template.
+- **Share by link**: the whole setup, compressed into the URL hash. No account, no backend.
+- **Command palette**: <kbd>Ctrl</kbd>/<kbd>⌘</kbd> + <kbd>K</kbd> to jump to a section or run any action.
 
 ![The landing page, paper theme](./public/readme/landingPage-paper.png)
 
