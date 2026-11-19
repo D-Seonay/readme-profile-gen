@@ -9,3 +9,6 @@ export const useTranslation = () => {
 
   return { t, language };
 };
+
+/** The dictionary for the active language (union of every locale's shape). */
+export type Dict = (typeof translations)[keyof typeof translations];

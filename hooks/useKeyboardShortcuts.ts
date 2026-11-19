@@ -4,60 +4,73 @@ import { useReadmeStore } from '@/store/useReadmeStore';
 interface ShortcutOptions {
   onCopy?: () => void;
   onDownload?: () => void;
+  /** Legacy ⌘K target, used when no command palette is wired. */
   onFocusOnboarding?: () => void;
+  /** ⌘K / Ctrl+K: open (or close) the command palette. */
+  onCommandPalette?: () => void;
 }
 
+const hasTextSelection = () => {
+  const selection = typeof window !== 'undefined' ? window.getSelection() : null;
+  return !!selection && !selection.isCollapsed && selection.toString().trim().length > 0;
+};
+
+/**
+ * Global shortcuts. Every option is optional so pages can opt in to what they
+ * support (the landing page calls it with no options).
+ *
+ *  ⌘/Ctrl + K  command palette (falls back to focusing the auto-fill field)
+ *  ⌘/Ctrl + S  download README.md (works in fields too)
+ *  ⌘/Ctrl + C  copy the Markdown, unless the user selected text or is typing
+ *  ⌘/Ctrl + T  toggle the theme · ⌘/Ctrl + L  toggle the language
+ */
 export const useKeyboardShortcuts = (options: ShortcutOptions = {}) => {
   const { toggleUITheme, setLanguage, language } = useReadmeStore();
-  
-  // Utiliser une ref pour les options afin d'éviter de redéclencher l'effet inutilement
-  // tout en ayant toujours accès aux dernières versions des fonctions
+
+  // Options live in a ref so callers don't have to memoise them.
   const optionsRef = useRef(options);
-  
+
   useEffect(() => {
     optionsRef.current = options;
   }, [options]);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      const isInput = e.target instanceof HTMLInputElement || 
-                      e.target instanceof HTMLTextAreaElement || 
-                      (e.target as HTMLElement).isContentEditable;
-      
+      const target = e.target as HTMLElement | null;
+      const isInput =
+        target instanceof HTMLInputElement ||
+        target instanceof HTMLTextAreaElement ||
+        target instanceof HTMLSelectElement ||
+        !!target?.isContentEditable;
+
       const key = e.key.toLowerCase();
       const isCmdOrCtrl = e.metaKey || e.ctrlKey;
+      if (!isCmdOrCtrl || e.altKey) return;
 
-      // Global shortcuts
-      if (isInput && key !== 'enter' && key !== 's' && key !== 'k') return;
+      // In fields, only the global save/palette shortcuts apply.
+      if (isInput && key !== 's' && key !== 'k') return;
 
-      // CMD/CTRL + T to toggle theme
-      if (isCmdOrCtrl && key === 't' && !isInput) {
+      if (key === 't') {
         e.preventDefault();
         toggleUITheme();
-      }
-
-      // CMD/CTRL + L to toggle language
-      if (isCmdOrCtrl && key === 'l' && !isInput) {
+      } else if (key === 'l') {
         e.preventDefault();
         setLanguage(language === 'en' ? 'fr' : 'en');
-      }
-
-      // CMD/CTRL + C to copy markdown
-      if (isCmdOrCtrl && key === 'c' && !isInput) {
+      } else if (key === 'c' && !e.shiftKey) {
+        // Never hijack a normal copy of selected text.
+        if (hasTextSelection() || !optionsRef.current.onCopy) return;
         e.preventDefault();
-        optionsRef.current.onCopy?.();
-      }
-
-      // CMD/CTRL + S to download
-      if (isCmdOrCtrl && key === 's') {
+        optionsRef.current.onCopy();
+      } else if (key === 's') {
+        if (!optionsRef.current.onDownload) return;
         e.preventDefault();
-        optionsRef.current.onDownload?.();
-      }
-
-      // CMD/CTRL + K to focus search/onboarding
-      if (isCmdOrCtrl && key === 'k') {
+        optionsRef.current.onDownload();
+      } else if (key === 'k') {
+        const { onCommandPalette, onFocusOnboarding } = optionsRef.current;
+        const handler = onCommandPalette ?? onFocusOnboarding;
+        if (!handler) return;
         e.preventDefault();
-        optionsRef.current.onFocusOnboarding?.();
+        handler();
       }
     };
 

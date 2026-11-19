@@ -136,3 +136,442 @@ body {
     scroll-behavior: auto !important;
   }
 }
+
+/* ==========================================================================
+ * BUILDER WORKSPACE — additions for the /builder redesign.
+ * Extends the system above; no existing token is renamed or removed.
+ * ========================================================================== */
+
+/*
+ * Two semantic tokens the builder needs for WCAG AA in both themes:
+ *  --field     form-control borders (>= 3:1 against raised surfaces, WCAG 1.4.11)
+ *  --hot-text  coral that stays readable as small text on paper; also the
+ *              danger fill under text-hot-ink. Mirrors the accent/accent-text pair.
+ */
+:root,
+:root[data-theme="dark"] {
+  --field: var(--muted);
+  --hot-text: var(--hot);
+}
+
+:root[data-theme="light"] {
+  --field: var(--line-strong);
+  --hot-text: #b93a1a;
+}
+
+@theme inline {
+  --color-field: var(--field);
+  --color-hot-text: var(--hot-text);
+
+  --animate-plate: plate-in 0.34s var(--ease-snap) both;
+  --animate-pop: pop 0.2s var(--ease-snap) both;
+  --animate-stamp: stamp 0.42s var(--ease-snap) both;
+  --animate-drawer: drawer-in 0.3s var(--ease-snap) both;
+
+  @keyframes plate-in {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: none; }
+  }
+  @keyframes pop {
+    from { opacity: 0; transform: translateY(6px) scale(0.985); }
+    to { opacity: 1; transform: none; }
+  }
+  /* A rubber stamp landing: overshoot, settle. Composes with `rotate-*`. */
+  @keyframes stamp {
+    0% { opacity: 0; transform: scale(1.7) rotate(-9deg); }
+    55% { opacity: 1; transform: scale(0.94) rotate(-1deg); }
+    100% { opacity: 1; transform: none; }
+  }
+  @keyframes drawer-in {
+    from { transform: translateX(-104%); }
+    to { transform: none; }
+  }
+}
+
+@utility bg-hatch {
+  /* Diagonal hatching: drop targets, collapsed panes, empty slots */
+  background-image: repeating-linear-gradient(-45deg, var(--line) 0 1px, transparent 1px 7px);
+}
+
+@utility scrollbar-none {
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+@layer components {
+  /* --- Native <dialog> reset: the panel inside positions itself ---------- */
+  dialog.atelier-dialog {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    max-width: none;
+    max-height: none;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: inherit;
+    overflow: hidden;
+  }
+  dialog.atelier-dialog::backdrop {
+    background: transparent;
+  }
+
+  /* --- Range input -------------------------------------------------------- */
+  .range-atelier {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 22px;
+    background: transparent;
+    cursor: pointer;
+  }
+  .range-atelier::-webkit-slider-runnable-track {
+    height: 4px;
+    border-radius: 1px;
+    background: linear-gradient(to right, var(--ink) 0 var(--fill, 50%), var(--line) var(--fill, 50%) 100%);
+  }
+  .range-atelier::-moz-range-track {
+    height: 4px;
+    border-radius: 1px;
+    background: var(--line);
+  }
+  .range-atelier::-moz-range-progress {
+    height: 4px;
+    border-radius: 1px;
+    background: var(--ink);
+  }
+  .range-atelier::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 14px;
+    height: 18px;
+    margin-top: -7px;
+    border-radius: 2px;
+    background: var(--accent);
+    border: 1px solid var(--line-strong);
+    box-shadow: 2px 2px 0 0 var(--line-strong);
+  }
+  .range-atelier::-moz-range-thumb {
+    width: 14px;
+    height: 18px;
+    border-radius: 2px;
+    background: var(--accent);
+    border: 1px solid var(--line-strong);
+    box-shadow: 2px 2px 0 0 var(--line-strong);
+  }
+  .range-atelier:focus-visible {
+    outline: none;
+  }
+  .range-atelier:focus-visible::-webkit-slider-thumb {
+    outline: 2px solid var(--accent-text);
+    outline-offset: 2px;
+  }
+  .range-atelier:focus-visible::-moz-range-thumb {
+    outline: 2px solid var(--accent-text);
+    outline-offset: 2px;
+  }
+
+  /* --- GitHub proof frame --------------------------------------------------
+   * The preview imitates github.com, so it uses GitHub's own palette and
+   * typography, scoped here as --gh-* variables. They never leak into the
+   * app chrome, which stays on the Atelier tokens.
+   */
+  .gh-frame {
+    color-scheme: light;
+    --gh-font: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+    --gh-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+    --gh-fg: #1f2328;
+    --gh-muted: #59636e;
+    --gh-bg: #ffffff;
+    --gh-subtle: #f6f8fa;
+    --gh-border: #d1d9e0;
+    --gh-border-muted: #d1d9e0b3;
+    --gh-neutral: #818b981f;
+    --gh-link: #0969da;
+    background: var(--gh-bg);
+    color: var(--gh-fg);
+    font-family: var(--gh-font);
+  }
+  .gh-frame[data-gh-theme="dark"] {
+    color-scheme: dark;
+    --gh-fg: #f0f6fc;
+    --gh-muted: #9198a1;
+    --gh-bg: #0d1117;
+    --gh-subtle: #151b23;
+    --gh-border: #3d444d;
+    --gh-border-muted: #3d444db3;
+    --gh-neutral: #656c7633;
+    --gh-link: #4493f8;
+  }
+  .gh-box {
+    border: 1px solid var(--gh-border);
+    border-radius: 6px;
+    background: var(--gh-bg);
+  }
+  .gh-box-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 44px;
+    padding: 0 16px;
+    border-bottom: 1px solid var(--gh-border);
+    font-size: 14px;
+    line-height: 20px;
+    color: var(--gh-fg);
+  }
+  .gh-box-header a {
+    color: var(--gh-link);
+  }
+  .gh-muted {
+    color: var(--gh-muted);
+  }
+
+  .gh-markdown {
+    font-size: 16px;
+    line-height: 1.5;
+    word-wrap: break-word;
+    color: var(--gh-fg);
+  }
+  .gh-markdown > .gh-chunk:first-child > :first-child {
+    margin-top: 0 !important;
+  }
+  .gh-markdown > .gh-chunk:last-child > :last-child {
+    margin-bottom: 0 !important;
+  }
+  .gh-markdown a {
+    color: var(--gh-link);
+    text-decoration: none;
+  }
+  .gh-markdown a:hover {
+    text-decoration: underline;
+  }
+  .gh-markdown b,
+  .gh-markdown strong {
+    font-weight: 600;
+  }
+  .gh-markdown em {
+    font-style: italic;
+  }
+  .gh-markdown p,
+  .gh-markdown blockquote,
+  .gh-markdown ul,
+  .gh-markdown ol,
+  .gh-markdown dl,
+  .gh-markdown table,
+  .gh-markdown pre,
+  .gh-markdown details {
+    margin-top: 0;
+    margin-bottom: 16px;
+  }
+  .gh-markdown h1,
+  .gh-markdown h2,
+  .gh-markdown h3,
+  .gh-markdown h4,
+  .gh-markdown h5,
+  .gh-markdown h6 {
+    margin-top: 24px;
+    margin-bottom: 16px;
+    font-weight: 600;
+    line-height: 1.25;
+  }
+  .gh-markdown h1 {
+    font-size: 2em;
+    padding-bottom: 0.3em;
+    border-bottom: 1px solid var(--gh-border-muted);
+  }
+  .gh-markdown h2 {
+    font-size: 1.5em;
+    padding-bottom: 0.3em;
+    border-bottom: 1px solid var(--gh-border-muted);
+  }
+  .gh-markdown h3 { font-size: 1.25em; }
+  .gh-markdown h4 { font-size: 1em; }
+  .gh-markdown h5 { font-size: 0.875em; }
+  .gh-markdown h6 { font-size: 0.85em; color: var(--gh-muted); }
+  .gh-markdown ul,
+  .gh-markdown ol {
+    padding-left: 2em;
+  }
+  .gh-markdown ul { list-style: disc; }
+  .gh-markdown ol { list-style: decimal; }
+  .gh-markdown ul ul,
+  .gh-markdown ol ul { list-style: circle; }
+  .gh-markdown ul ul,
+  .gh-markdown ul ol,
+  .gh-markdown ol ol,
+  .gh-markdown ol ul {
+    margin-top: 0;
+    margin-bottom: 0;
+  }
+  .gh-markdown li + li { margin-top: 0.25em; }
+  .gh-markdown li > p { margin-top: 16px; }
+  .gh-markdown .contains-task-list {
+    padding-left: 0;
+    list-style: none;
+  }
+  .gh-markdown .task-list-item {
+    list-style: none;
+  }
+  .gh-markdown .task-list-item input[type="checkbox"] {
+    margin: 0 0.35em 0.25em 0;
+    vertical-align: middle;
+  }
+  .gh-markdown blockquote {
+    margin-left: 0;
+    margin-right: 0;
+    padding: 0 1em;
+    color: var(--gh-muted);
+    border-left: 0.25em solid var(--gh-border);
+  }
+  .gh-markdown hr {
+    box-sizing: content-box;
+    height: 0.25em;
+    padding: 0;
+    margin: 24px 0;
+    overflow: hidden;
+    background-color: var(--gh-border);
+    border: 0;
+  }
+  .gh-markdown img {
+    display: inline;
+    max-width: 100%;
+    height: auto;
+    box-sizing: content-box;
+    vertical-align: baseline;
+    border-style: none;
+  }
+  .gh-markdown code,
+  .gh-markdown kbd,
+  .gh-markdown pre,
+  .gh-markdown samp {
+    font-family: var(--gh-mono);
+  }
+  .gh-markdown code {
+    padding: 0.2em 0.4em;
+    margin: 0;
+    font-size: 85%;
+    white-space: break-spaces;
+    background-color: var(--gh-neutral);
+    border-radius: 6px;
+  }
+  .gh-markdown pre {
+    padding: 16px;
+    overflow: auto;
+    font-size: 85%;
+    line-height: 1.45;
+    color: var(--gh-fg);
+    background-color: var(--gh-subtle);
+    border-radius: 6px;
+    word-wrap: normal;
+  }
+  .gh-markdown pre code {
+    display: inline;
+    padding: 0;
+    margin: 0;
+    font-size: 100%;
+    line-height: inherit;
+    white-space: pre;
+    word-wrap: normal;
+    background: transparent;
+    border: 0;
+  }
+  .gh-markdown kbd {
+    display: inline-block;
+    padding: 4px;
+    font-size: 11px;
+    line-height: 10px;
+    color: var(--gh-fg);
+    vertical-align: middle;
+    background-color: var(--gh-subtle);
+    border: 1px solid var(--gh-border-muted);
+    border-radius: 6px;
+    box-shadow: inset 0 -1px 0 var(--gh-border-muted);
+  }
+  .gh-markdown table {
+    display: block;
+    width: max-content;
+    max-width: 100%;
+    overflow: auto;
+    border-spacing: 0;
+    border-collapse: collapse;
+    font-variant: tabular-nums;
+  }
+  .gh-markdown table th {
+    font-weight: 600;
+  }
+  .gh-markdown table th,
+  .gh-markdown table td {
+    padding: 6px 13px;
+    border: 1px solid var(--gh-border);
+  }
+  .gh-markdown table tr {
+    background-color: var(--gh-bg);
+    border-top: 1px solid var(--gh-border-muted);
+  }
+  .gh-markdown table tr:nth-child(2n) {
+    background-color: var(--gh-subtle);
+  }
+  .gh-markdown details summary {
+    display: list-item;
+    cursor: pointer;
+  }
+  .gh-markdown sup,
+  .gh-markdown sub {
+    font-size: 75%;
+  }
+
+  /* Proof marks: the block being edited gets a bar in the margin. They are
+   * app chrome laid over the proof, hence the Atelier accent. */
+  .gh-chunk {
+    position: relative;
+  }
+  .gh-chunk::before {
+    content: "";
+    position: absolute;
+    top: 2px;
+    bottom: 2px;
+    left: -12px;
+    width: 3px;
+    border-radius: 1px;
+    background: var(--accent);
+    box-shadow: 0 0 0 1px var(--line-strong);
+    opacity: 0;
+    transform: scaleY(0.3);
+    transition: opacity 0.15s ease-out, transform 0.3s var(--ease-snap);
+    pointer-events: none;
+  }
+  .gh-chunk:hover::before {
+    opacity: 0.45;
+    transform: none;
+  }
+  .gh-chunk[data-selected="true"]::before {
+    opacity: 1;
+    transform: none;
+  }
+  @media (min-width: 640px) {
+    .gh-chunk::before {
+      left: -20px;
+    }
+  }
+}
+
+/* The Buy Me a Coffee bubble must clear the builder's sticky action bar. */
+@media (max-width: 1023.98px) {
+  body:has([data-builder-root]) #bmc-wbtn {
+    bottom: 88px !important;
+  }
+}
+
+/*
+ * Controls that draw their own focus state (framed inputs, the palette
+ * prompt, programmatic focus targets) opt out of the global ring. Unlayered
+ * on purpose: the global :focus-visible rule is unlayered too, so a layered
+ * `outline-none` utility could never override it.
+ */
+.focus-ring-none:focus-visible {
+  outline: none;
+}

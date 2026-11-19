@@ -244,6 +244,288 @@ export const translations = {
       download: "Download",
       engine: "Live Rendering Engine",
       source: "Markdown Source View"
+    },
+
+    // Builder workspace (Atelier redesign)
+    builder: {
+      skip: "Skip to the editor",
+      help: {
+        bio: "Your name, your title, a short bio and a few quick facts."
+      },
+      toolbar: {
+        home: "Readme Gen home page",
+        outline: "Sections",
+        search: "Jump to…",
+        searchLabel: "Search sections and commands",
+        more: "More",
+        copy: "Copy Markdown",
+        copied: "Copied",
+        download: "Download",
+        downloadLabel: "Download README.md",
+        themeToLight: "Switch to light theme",
+        themeToDark: "Switch to dark theme",
+        language: "Language"
+      },
+      meter: {
+        label: "{live} of {total} sections are in your README",
+        caption: "live",
+        live: "in README",
+        empty: "empty"
+      },
+      outline: {
+        title: "README outline",
+        liveShort: "live",
+        setup: "Setup",
+        sections: "Sections",
+        start: "Start",
+        style: "Style",
+        dragHint: "drag to reorder",
+        addFree: "Add a free section",
+        reorder: "Reorder {label}",
+        live: "in README",
+        empty: "empty",
+        close: "Close the outline",
+        credit: "Made by Seonay",
+        bug: "Report a bug",
+        instructions: "To reorder, press space or enter on a handle, move it with the arrow keys, then press space or enter again to drop it, or escape to cancel.",
+        announce: {
+          start: "Picked up {label}.",
+          over: "{label} is over {over}.",
+          end: "{label} dropped over {over}.",
+          endNoTarget: "{label} dropped.",
+          cancel: "Moving {label} was cancelled."
+        }
+      },
+      plate: {
+        of: "of",
+        setup: "Setup",
+        live: "In README",
+        empty: "Not in README yet",
+        emptyHint: "Fill in a field below and this section joins your README.",
+        heading: "Heading in README",
+        headingHint: "Leave it empty to show the section without a heading.",
+        previous: "Previous",
+        next: "Next",
+        pager: "Sections"
+      },
+      start: {
+        title: "Start from your GitHub profile",
+        help: "Type your GitHub username and we fill in what we can find: your name, bio, links and the skills mentioned in your current profile README.",
+        fieldLabel: "GitHub username",
+        fetch: "Fill from GitHub",
+        success: "Profile filled from GitHub",
+        continue: "Continue to Introduction",
+        elsewhere: "Or start another way",
+        writeIntro: "Write your introduction",
+        importConfig: "Import a saved config",
+        paletteTip: "jumps to any section or command, from anywhere.",
+        checklist: [
+          "Your name and bio",
+          "Website, X / Twitter, LinkedIn and email",
+          "Skills mentioned in your current README",
+          "Nothing you have already written is overwritten"
+        ],
+        receipt: {
+          title: "Filled from @{user}",
+          name: "name",
+          bio: "bio",
+          links: "links",
+          skills: "skills",
+          filled: "filled",
+          added: "{n} added",
+          detected: "{n} detected",
+          legend: "— means unchanged: already filled in, or not found on GitHub."
+        }
+      },
+      style: {
+        help: "Choices that apply to every section: alignment, badges, headings.",
+        layout: "Layout",
+        badgeHint: "Applies to every badge: skills, networks, support and custom badges.",
+        footer: "Footer",
+        headingsHint: "Every section heading in one place. Each one can also be edited at the top of its section."
+      },
+      preview: {
+        title: "Preview",
+        rendered: "Rendered",
+        markdown: "Markdown",
+        ghTheme: "GitHub theme",
+        ghLight: "GitHub light",
+        ghDark: "GitHub dark",
+        collapse: "Hide the preview",
+        expand: "Show the preview",
+        resize: "Resize the preview",
+        edit: "Edit {label}",
+        emptyTitle: "Nothing to preview yet.",
+        emptyBody: "Fill in a section and it shows up here as you type.",
+        lines: "{n} lines",
+        chars: "{n} characters",
+        downloaded: "README.md downloaded",
+        copyError: "Copy failed: the browser blocked clipboard access.",
+        downloadError: "README.md could not be created.",
+        yourName: "username",
+        source: "Markdown source"
+      },
+      mobile: {
+        edit: "Edit",
+        preview: "Preview",
+        view: "View"
+      },
+      palette: {
+        label: "Command palette",
+        placeholder: "Type a section or a command…",
+        empty: "Nothing matches “{q}”.",
+        jump: "Go to",
+        actions: "Actions",
+        view: "View",
+        help: "Help",
+        newSection: "New free section",
+        autofill: "Fill from GitHub",
+        exportConfig: "Export config (.json)",
+        importConfig: "Import config…",
+        reset: "Reset everything…",
+        switchLanguage: "Passer en français",
+        ghTheme: "Toggle the GitHub preview theme",
+        viewRaw: "Show the Markdown source",
+        viewRendered: "Show the rendered preview",
+        tour: "Replay the tour",
+        bug: "Report a bug or an idea",
+        navigate: "move",
+        run: "run",
+        close: "close"
+      },
+      tour: {
+        progress: "Step {n} of {total}",
+        back: "Back",
+        steps: {
+          autofill: {
+            title: "Start from GitHub",
+            body: "Type your username and we fill in what GitHub knows. You can also skip this and write everything yourself."
+          },
+          outline: {
+            title: "Your README, in order",
+            body: "Every section, in the order it will appear. Drag a handle to move one; a lime dot means it is live.",
+            bodyCompact: "Your sections live behind this button: open it to jump between them or drag them into a new order."
+          },
+          plate: {
+            title: "One section at a time",
+            body: "Each section has its own page. Fill in a field and the section joins your README."
+          },
+          preview: {
+            title: "Proofread it like GitHub",
+            body: "The preview uses GitHub's own styles. Switch GitHub light or dark, read the raw Markdown, or click a block to edit it."
+          },
+          export: {
+            title: "Ship it",
+            body: "Copy the Markdown or download README.md, then commit it to your username/username repository. Ctrl+K (⌘K on a Mac) opens every command."
+          }
+        }
+      },
+      confirm: {
+        cancel: "Cancel"
+      },
+      reset: {
+        done: "Everything was reset",
+        undo: "Undo",
+        restored: "Your README is back"
+      },
+      banner: {
+        urlLabel: "Image URL",
+        loadError: "This image could not be loaded. Check that the URL points to an image.",
+        previewAlt: "Banner preview"
+      },
+      typing: {
+        colorHint: "Leave empty for the default, F1F1F1.",
+        pickColor: "Pick a color",
+        previewAlt: "Preview of the typing animation"
+      },
+      bio: {
+        identity: "Identity",
+        facts: "Quick facts",
+        factsHint: "Each filled fact becomes a bullet. The italic label before it can be edited too.",
+        factLabel: "Label for “{field}”",
+        freeLinesHint: "Extra bullets, written exactly as you type them. Markdown works.",
+        placeholders: {
+          name: "Ada Lovelace",
+          title: "Fullstack developer",
+          currentWork: "Project name or URL",
+          learning: "A language, a framework…",
+          collaboration: "Open source projects…",
+          askMeAbout: "Topics you know well",
+          pronouns: "she/her, he/him, they/them…",
+          funFact: "I love pizza…"
+        }
+      },
+      badges: {
+        hint: "Anything shields.io can draw: a text, a color, an optional logo and link.",
+        hintWithLink: "Anything shields.io can draw. A badge needs a text and a link to appear.",
+        incomplete: "Add a text to show this badge.",
+        incompleteWithLink: "Add a text and a link to show this badge."
+      },
+      skills: {
+        library: "Library",
+        viewLabel: "Display",
+        searchLabel: "Search",
+        selected: "{n} selected",
+        remove: "Remove {label}",
+        noResults: "No technology matches “{q}”."
+      },
+      github: {
+        setUsername: "Set your GitHub username",
+        online: "online",
+        offline: "offline",
+        checking: "checking",
+        usernameHint: "Used by every card, and by the Projects, Network and Modern Stats sections.",
+        cards: "Cards",
+        serviceOffline: "This service is offline right now.",
+        themeHint: "Applies to the stats, languages, streak, trophies and project cards."
+      },
+      statstats: {
+        needsUser: "These cards need your GitHub username.",
+        pick: "Cards to show",
+        look: "Look",
+        previews: "Card previews",
+        sampleNote: "Previews use a sample profile until your username is set."
+      },
+      wakatime: {
+        usernameLabel: "WakaTime username (for the graph)",
+        badgeId: "Badge ID (UUID)",
+        badgeHelp: "Find it in your WakaTime settings, under “Embeddable badges”.",
+        offline: "WakaTime is unreachable right now: the graph may not load."
+      },
+      socials: {
+        profiles: "Profiles",
+        placeholders: {
+          linkedin: "username or profile URL",
+          twitter: "@username",
+          portfolio: "https://…",
+          email: "you@example.com"
+        }
+      },
+      donations: {
+        platforms: "Platforms",
+        placeholder: "username"
+      },
+      projects: {
+        needsUser: "Pinned projects need your GitHub username.",
+        repoLabel: "Repository name",
+        exists: "This repository is already pinned.",
+        emptyBody: "Add a repository name and it appears as a card.",
+        remove: "Remove {repo}"
+      },
+      followers: {
+        needsUser: "Followers need your GitHub username.",
+        limitHint: "How many avatars to fetch for the grid."
+      },
+      spotify: {
+        urlLabel: "Spotify card URL"
+      },
+      rss: {
+        urlLabel: "Feed URL"
+      },
+      custom: {
+        deleted: "Section deleted",
+        undo: "Undo"
+      }
     }
   },
   fr: {
@@ -491,6 +773,288 @@ export const translations = {
       download: "Télécharger",
       engine: "Moteur de rendu temps réel",
       source: "Vue Source Markdown"
+    },
+
+    // Builder workspace (Atelier redesign)
+    builder: {
+      skip: "Aller à l’éditeur",
+      help: {
+        bio: "Votre nom, votre titre, une courte bio et quelques infos en bref."
+      },
+      toolbar: {
+        home: "Accueil de Readme Gen",
+        outline: "Sections",
+        search: "Aller à…",
+        searchLabel: "Rechercher une section ou une commande",
+        more: "Plus",
+        copy: "Copier le Markdown",
+        copied: "Copié",
+        download: "Télécharger",
+        downloadLabel: "Télécharger README.md",
+        themeToLight: "Passer au thème clair",
+        themeToDark: "Passer au thème sombre",
+        language: "Langue"
+      },
+      meter: {
+        label: "{live} sections sur {total} sont dans votre README",
+        caption: "actives",
+        live: "dans le README",
+        empty: "vide"
+      },
+      outline: {
+        title: "Plan du README",
+        liveShort: "actives",
+        setup: "Préparation",
+        sections: "Sections",
+        start: "Départ",
+        style: "Style",
+        dragHint: "glisser pour réordonner",
+        addFree: "Ajouter une section libre",
+        reorder: "Déplacer {label}",
+        live: "dans le README",
+        empty: "vide",
+        close: "Fermer le plan",
+        credit: "Fait par Seonay",
+        bug: "Signaler un bug",
+        instructions: "Pour réordonner, appuyez sur espace ou entrée sur une poignée, déplacez-la avec les flèches, puis appuyez de nouveau sur espace ou entrée pour la déposer, ou sur échap pour annuler.",
+        announce: {
+          start: "{label} saisie.",
+          over: "{label} est au-dessus de {over}.",
+          end: "{label} déposée sur {over}.",
+          endNoTarget: "{label} déposée.",
+          cancel: "Déplacement de {label} annulé."
+        }
+      },
+      plate: {
+        of: "sur",
+        setup: "Préparation",
+        live: "Dans le README",
+        empty: "Pas encore dans le README",
+        emptyHint: "Remplissez un champ ci-dessous et cette section rejoint votre README.",
+        heading: "Titre dans le README",
+        headingHint: "Laissez vide pour afficher la section sans titre.",
+        previous: "Précédente",
+        next: "Suivante",
+        pager: "Sections"
+      },
+      start: {
+        title: "Partir de votre profil GitHub",
+        help: "Entrez votre pseudo GitHub et on remplit ce qu’on trouve : votre nom, votre bio, vos liens et les compétences citées dans votre README de profil actuel.",
+        fieldLabel: "Pseudo GitHub",
+        fetch: "Remplir depuis GitHub",
+        success: "Profil rempli depuis GitHub",
+        continue: "Continuer vers l’introduction",
+        elsewhere: "Ou commencer autrement",
+        writeIntro: "Écrire votre introduction",
+        importConfig: "Importer une configuration",
+        paletteTip: "ouvre n’importe quelle section ou commande, où que vous soyez.",
+        checklist: [
+          "Votre nom et votre bio",
+          "Site, X / Twitter, LinkedIn et e-mail",
+          "Les compétences citées dans votre README actuel",
+          "Rien de ce que vous avez déjà écrit n’est remplacé"
+        ],
+        receipt: {
+          title: "Rempli depuis @{user}",
+          name: "nom",
+          bio: "bio",
+          links: "liens",
+          skills: "compétences",
+          filled: "remplie",
+          added: "{n} ajouté(s)",
+          detected: "{n} détectée(s)",
+          legend: "— signifie inchangé : déjà rempli, ou introuvable sur GitHub."
+        }
+      },
+      style: {
+        help: "Les réglages communs à toutes les sections : alignement, badges, titres.",
+        layout: "Mise en page",
+        badgeHint: "S’applique à tous les badges : compétences, réseaux, soutien et badges personnalisés.",
+        footer: "Pied de page",
+        headingsHint: "Tous les titres de section au même endroit. Chacun se modifie aussi en haut de sa section."
+      },
+      preview: {
+        title: "Aperçu",
+        rendered: "Rendu",
+        markdown: "Markdown",
+        ghTheme: "Thème GitHub",
+        ghLight: "GitHub clair",
+        ghDark: "GitHub sombre",
+        collapse: "Masquer l’aperçu",
+        expand: "Afficher l’aperçu",
+        resize: "Redimensionner l’aperçu",
+        edit: "Modifier {label}",
+        emptyTitle: "Rien à afficher pour l’instant.",
+        emptyBody: "Remplissez une section : elle apparaît ici au fil de la frappe.",
+        lines: "{n} lignes",
+        chars: "{n} caractères",
+        downloaded: "README.md téléchargé",
+        copyError: "Échec de la copie : le navigateur a bloqué l’accès au presse-papiers.",
+        downloadError: "Impossible de créer README.md.",
+        yourName: "pseudo",
+        source: "Source Markdown"
+      },
+      mobile: {
+        edit: "Éditer",
+        preview: "Aperçu",
+        view: "Vue"
+      },
+      palette: {
+        label: "Palette de commandes",
+        placeholder: "Tapez une section ou une commande…",
+        empty: "Rien ne correspond à « {q} ».",
+        jump: "Aller à",
+        actions: "Actions",
+        view: "Affichage",
+        help: "Aide",
+        newSection: "Nouvelle section libre",
+        autofill: "Remplir depuis GitHub",
+        exportConfig: "Exporter la configuration (.json)",
+        importConfig: "Importer une configuration…",
+        reset: "Tout réinitialiser…",
+        switchLanguage: "Switch to English",
+        ghTheme: "Basculer le thème de l’aperçu GitHub",
+        viewRaw: "Afficher la source Markdown",
+        viewRendered: "Afficher l’aperçu rendu",
+        tour: "Revoir la visite guidée",
+        bug: "Signaler un bug ou une idée",
+        navigate: "naviguer",
+        run: "lancer",
+        close: "fermer"
+      },
+      tour: {
+        progress: "Étape {n} sur {total}",
+        back: "Retour",
+        steps: {
+          autofill: {
+            title: "Partir de GitHub",
+            body: "Entrez votre pseudo et on remplit ce que GitHub sait de vous. Vous pouvez aussi passer cette étape et tout écrire vous-même."
+          },
+          outline: {
+            title: "Votre README, dans l’ordre",
+            body: "Toutes les sections, dans l’ordre où elles apparaîtront. Glissez une poignée pour en déplacer une ; un point vert indique qu’elle est active.",
+            bodyCompact: "Vos sections sont derrière ce bouton : ouvrez-le pour passer de l’une à l’autre ou les glisser dans un nouvel ordre."
+          },
+          plate: {
+            title: "Une section à la fois",
+            body: "Chaque section a sa propre page. Remplissez un champ et la section rejoint votre README."
+          },
+          preview: {
+            title: "Relisez comme sur GitHub",
+            body: "L’aperçu reprend les styles de GitHub. Passez en clair ou en sombre, lisez le Markdown brut, ou cliquez sur un bloc pour le modifier."
+          },
+          export: {
+            title: "À vous de publier",
+            body: "Copiez le Markdown ou téléchargez README.md, puis ajoutez-le à votre dépôt pseudo/pseudo. Ctrl+K (⌘K sur Mac) ouvre toutes les commandes."
+          }
+        }
+      },
+      confirm: {
+        cancel: "Annuler"
+      },
+      reset: {
+        done: "Tout a été réinitialisé",
+        undo: "Annuler",
+        restored: "Votre README est de retour"
+      },
+      banner: {
+        urlLabel: "URL de l’image",
+        loadError: "Impossible de charger cette image. Vérifiez que l’URL pointe vers une image.",
+        previewAlt: "Aperçu de la bannière"
+      },
+      typing: {
+        colorHint: "Laissez vide pour la couleur par défaut, F1F1F1.",
+        pickColor: "Choisir une couleur",
+        previewAlt: "Aperçu de l’animation de texte"
+      },
+      bio: {
+        identity: "Identité",
+        facts: "En bref",
+        factsHint: "Chaque info remplie devient une puce. Le libellé en italique devant elle se modifie aussi.",
+        factLabel: "Libellé de « {field} »",
+        freeLinesHint: "Des puces en plus, reprises telles que vous les tapez. Le Markdown fonctionne.",
+        placeholders: {
+          name: "Ada Lovelace",
+          title: "Développeuse fullstack",
+          currentWork: "Nom ou URL du projet",
+          learning: "Un langage, un framework…",
+          collaboration: "Projets open source…",
+          askMeAbout: "Sujets que vous maîtrisez",
+          pronouns: "elle, il, iel…",
+          funFact: "J’adore la pizza…"
+        }
+      },
+      badges: {
+        hint: "Tout ce que shields.io sait dessiner : un texte, une couleur, un logo et un lien facultatifs.",
+        hintWithLink: "Tout ce que shields.io sait dessiner. Un badge a besoin d’un texte et d’un lien pour apparaître.",
+        incomplete: "Ajoutez un texte pour afficher ce badge.",
+        incompleteWithLink: "Ajoutez un texte et un lien pour afficher ce badge."
+      },
+      skills: {
+        library: "Bibliothèque",
+        viewLabel: "Affichage",
+        searchLabel: "Rechercher",
+        selected: "{n} sélectionnée(s)",
+        remove: "Retirer {label}",
+        noResults: "Aucune techno ne correspond à « {q} »."
+      },
+      github: {
+        setUsername: "Renseigner votre pseudo GitHub",
+        online: "en ligne",
+        offline: "hors ligne",
+        checking: "vérification",
+        usernameHint: "Utilisé par toutes les cartes, et par les sections Projets, Réseau et Stats modernes.",
+        cards: "Cartes",
+        serviceOffline: "Ce service est hors ligne pour le moment.",
+        themeHint: "S’applique aux cartes de stats, langages, séquence, trophées et projets."
+      },
+      statstats: {
+        needsUser: "Ces cartes ont besoin de votre pseudo GitHub.",
+        pick: "Cartes à afficher",
+        look: "Apparence",
+        previews: "Aperçu des cartes",
+        sampleNote: "Les aperçus utilisent un profil d’exemple tant que votre pseudo n’est pas renseigné."
+      },
+      wakatime: {
+        usernameLabel: "Pseudo WakaTime (pour le graphique)",
+        badgeId: "ID du badge (UUID)",
+        badgeHelp: "Dans vos réglages WakaTime, rubrique « Embeddable badges ».",
+        offline: "WakaTime est injoignable pour le moment : le graphique risque de ne pas s’afficher."
+      },
+      socials: {
+        profiles: "Profils",
+        placeholders: {
+          linkedin: "pseudo ou URL du profil",
+          twitter: "@pseudo",
+          portfolio: "https://…",
+          email: "vous@exemple.com"
+        }
+      },
+      donations: {
+        platforms: "Plateformes",
+        placeholder: "pseudo"
+      },
+      projects: {
+        needsUser: "Les projets épinglés ont besoin de votre pseudo GitHub.",
+        repoLabel: "Nom du dépôt",
+        exists: "Ce dépôt est déjà épinglé.",
+        emptyBody: "Ajoutez un nom de dépôt : il apparaîtra sous forme de carte.",
+        remove: "Retirer {repo}"
+      },
+      followers: {
+        needsUser: "Les abonnés ont besoin de votre pseudo GitHub.",
+        limitHint: "Nombre d’avatars à récupérer pour la grille."
+      },
+      spotify: {
+        urlLabel: "URL de la carte Spotify"
+      },
+      rss: {
+        urlLabel: "URL du flux"
+      },
+      custom: {
+        deleted: "Section supprimée",
+        undo: "Annuler"
+      }
     }
   }
 };
