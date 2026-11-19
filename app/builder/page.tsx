@@ -30,6 +30,11 @@ import { ConfirmModal } from '@/components/ConfirmModal';
 import { OnboardingTour } from '@/components/OnboardingTour';
 import { useKeyboardShortcuts } from '@/hooks/useKeyboardShortcuts';
 import { toast } from 'sonner';
+import { FeaturePanels } from '@/components/features/FeaturePanels';
+import { FeatureSectionEditor, isFeatureSectionId } from '@/components/features/featureSections';
+import { HistoryControls } from '@/components/features/HistoryControls';
+import { ShareLinkButton, ShareLinkLoader } from '@/components/features/ShareLink';
+import { RssFeedOptions, SkillIconsConfig, StatsProviderSwitch, WakaReadmeToggle } from '@/components/features/SectionExtras';
 
 export default function Home() {
   const store = useReadmeStore();
@@ -119,6 +124,7 @@ export default function Home() {
         return (
           <CollapsibleSection key={id} title={sectionTitles.skills || t.layout.skills} subtitle={t.skills.help}>
             <SkillSelector />
+            <SkillIconsConfig />
           </CollapsibleSection>
         );
       case 'projects':
@@ -131,12 +137,14 @@ export default function Home() {
         return (
           <CollapsibleSection key={id} title={sectionTitles.stats || t.layout.stats} subtitle={t.github.help}>
             <GithubStatsConfig />
+            <StatsProviderSwitch />
           </CollapsibleSection>
         );
       case 'wakatime':
         return (
           <CollapsibleSection key={id} title={sectionTitles.wakatime || t.layout.wakatime} subtitle={t.wakatime.help}>
             <WakatimeConfig />
+            <WakaReadmeToggle />
           </CollapsibleSection>
         );
       case 'spotify':
@@ -149,6 +157,7 @@ export default function Home() {
         return (
           <CollapsibleSection key={id} title={sectionTitles.rss || t.layout.rss} subtitle={t.rss.help}>
             <RssConfig />
+            <RssFeedOptions />
           </CollapsibleSection>
         );
       case 'followers':
@@ -176,7 +185,11 @@ export default function Home() {
           </CollapsibleSection>
         );
       default:
-        return null;
+        return isFeatureSectionId(id) ? (
+          <CollapsibleSection key={id} title={sectionTitles[id] || t.engine.sections[id]} subtitle={t.engine.help[id]}>
+            <FeatureSectionEditor id={id} />
+          </CollapsibleSection>
+        ) : null;
     }
   };
 
@@ -192,6 +205,7 @@ export default function Home() {
         cancelText={language === 'fr' ? "Annuler" : "Cancel"}
       />
       <OnboardingTour />
+      <ShareLinkLoader />
       <section className={`w-1/2 h-full flex flex-col border-r ${isDark ? 'border-zinc-800 bg-zinc-900/50' : 'border-zinc-200 bg-white/80'} backdrop-blur-sm overflow-y-auto custom-scrollbar`}>
         <header className="p-8 pb-4 flex flex-wrap items-start justify-between gap-4">
           <div>
@@ -215,6 +229,8 @@ export default function Home() {
           <div className="flex flex-wrap items-center justify-end gap-x-4 gap-y-2">
             <ThemeSwitcher />
             <LanguageSwitcher />
+            <HistoryControls />
+            <ShareLinkButton />
             <ConfigTransfer />
             <button
               onClick={() => setIsResetModalOpen(true)}
@@ -229,6 +245,8 @@ export default function Home() {
           <div className="px-8 mb-8 mt-4">
             <GithubProfileFetcher ref={onboardingInputRef} />
           </div>
+
+          <FeaturePanels Section={CollapsibleSection} />
 
           <CollapsibleSection title={t.style.label} subtitle={t.style.help}>
             <StyleConfig />
