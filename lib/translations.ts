@@ -15,6 +15,7 @@ export const translations = {
         label: "Main",
         builder: "Open the builder",
         builderShort: "Builder",
+        templates: "Templates",
         language: "Language",
         theme: "Theme",
         ink: "Ink",
@@ -152,6 +153,71 @@ export const translations = {
           shortcut: "Ctrl or ⌘ + S downloads the file from the builder."
         }
       },
+      faq: {
+        chapter: "Questions",
+        title: "Asked often, *answered plainly.*",
+        lede: "Everything about GitHub profile READMEs and this generator, without the jargon.",
+        items: {
+          what: {
+            q: "What is a GitHub profile README?",
+            a: "It’s a `README.md` file in a public repository named exactly like your GitHub username. GitHub shows that file at the top of your profile page, above your pinned repositories, so it’s the first thing visitors read."
+          },
+          add: {
+            q: "How do I add a README to my GitHub profile?",
+            a: "Create a public repository named after your username (for example `octocat/octocat`), build your README here, then copy the Markdown or download `README.md` and commit it to that repository. Your profile updates as soon as the file lands."
+          },
+          free: {
+            q: "Is Ultimate README Gen free? Do I need an account?",
+            a: "It’s free, open source and needs no sign-up. Your draft is saved in your browser only, and you can export it as a JSON file or a share link whenever you like."
+          },
+          templates: {
+            q: "Can I start from a template?",
+            a: "Yes. Ten templates cover the common looks: minimal, terminal hacker, open-source maintainer, designer, student, data and ML, indie maker, bilingual, game dev and recruiter-ready. A template only changes the layout and styles; your name, links and stack stay as they are."
+          },
+          stats: {
+            q: "How do I add GitHub stats, streaks and trophies?",
+            a: "Enter your GitHub username, then switch on the cards you want: stats, top languages, streak, trophies, activity graph or the contribution snake. They are live images served by open-source services, so they refresh on their own."
+          },
+          badges: {
+            q: "How do I add tech stack and social badges?",
+            a: "Pick your technologies from the list, or make your own shields.io badges with any label, colour and Simple Icons logo. One switch restyles every badge in five styles, from `for-the-badge` to `flat-square`."
+          },
+          update: {
+            q: "Will my README stay up to date?",
+            a: "Stats cards, streaks and activity graphs update by themselves. The snake, your latest blog posts and WakaTime need a GitHub Action: the builder writes the workflow files for you to commit."
+          },
+          import: {
+            q: "Can I edit the README I already have?",
+            a: "Yes. Fetch your current profile README from GitHub with the importer, or start from your username to auto-fill your name, bio, links and the stack listed in your profile."
+          }
+        },
+        templatesLink: "Browse the ten templates"
+      },
+      templatesPage: {
+        chapter: "Templates",
+        title: "GitHub profile README templates, *ready to fill.*",
+        lede: "Ten looks for your profile, each one the builder’s real output. Pick one, open it in the builder, and your own name, links and stack replace the sample.",
+        home: "Home",
+        crumb: "Templates",
+        kind: "GitHub profile README template",
+        bestFor: "Best for",
+        sourceNote: "Paste it into README.md as it is, or open the template in the builder to make it yours.",
+        view: "View template",
+        use: "Use this template",
+        rendered: "Rendered on GitHub",
+        markdown: "Markdown source",
+        copy: "Copy Markdown",
+        copied: "Markdown copied",
+        copyError: "Couldn’t copy. Select the Markdown and copy it by hand.",
+        sectionsTitle: "Sections, in order",
+        sample: "Sample profile. Robin Quill is made up; the live cards use GitHub’s public demo account, @octocat.",
+        howTitle: "Use this template in three steps",
+        howApply: "Open it in the builder: the layout, headings and styles are applied, and anything you already wrote is kept.",
+        howFill: "Enter your GitHub username to auto-fill your name, bio, links and stack, then adjust each section.",
+        howShip: "Copy the Markdown or download README.md and commit it to the public repository named after your username.",
+        more: "Other templates",
+        all: "All templates"
+      },
       closing: {
         title: "Your profile is *one commit away.*",
         cta: "Open the builder",
@@ -167,6 +233,8 @@ export const translations = {
         source: "Source on GitHub",
         bug: "Report a bug",
         author: "Made by Seonay",
+        templates: "README templates",
+        faq: "FAQ",
         settingsTitle: "Settings",
         eof: "EOF"
       }
@@ -1017,6 +1085,7 @@ export const translations = {
         label: "Principal",
         builder: "Ouvrir l’éditeur",
         builderShort: "Éditeur",
+        templates: "Modèles",
         language: "Langue",
         theme: "Thème",
         ink: "Encre",
@@ -1154,6 +1223,71 @@ export const translations = {
           shortcut: "Ctrl ou ⌘ + S télécharge le fichier depuis l’éditeur."
         }
       },
+      faq: {
+        chapter: "Questions",
+        title: "Souvent posées, *simplement répondues.*",
+        lede: "Tout sur les README de profil GitHub et sur ce générateur, sans jargon.",
+        items: {
+          what: {
+            q: "Qu’est-ce qu’un README de profil GitHub ?",
+            a: "C’est un fichier `README.md` placé dans un dépôt public qui porte exactement votre pseudo GitHub. GitHub l’affiche en haut de votre profil, au-dessus des dépôts épinglés : c’est la première chose que lisent les visiteurs."
+          },
+          add: {
+            q: "Comment ajouter un README à mon profil GitHub ?",
+            a: "Créez un dépôt public qui porte votre pseudo (par exemple `octocat/octocat`), composez votre README ici, puis copiez le Markdown ou téléchargez `README.md` et committez-le dans ce dépôt. Votre profil se met à jour dès l’arrivée du fichier."
+          },
+          free: {
+            q: "Ultimate README Gen est-il gratuit ? Faut-il un compte ?",
+            a: "C’est gratuit, open source et sans inscription. Votre brouillon reste dans votre navigateur, et vous pouvez l’exporter en fichier JSON ou en lien de partage quand vous voulez."
+          },
+          templates: {
+            q: "Puis-je partir d’un modèle ?",
+            a: "Oui. Dix modèles couvrent les styles courants : minimal, terminal hacker, mainteneur open source, designer, étudiant·e, data et ML, indie maker, bilingue, game dev et prêt pour les recruteurs. Un modèle ne change que la mise en page et le style ; votre nom, vos liens et votre stack restent tels quels."
+          },
+          stats: {
+            q: "Comment ajouter des stats GitHub, des séries et des trophées ?",
+            a: "Saisissez votre pseudo GitHub, puis activez les cartes voulues : stats, langages principaux, série de contributions, trophées, graphe d’activité ou serpent des contributions. Ce sont des images servies en direct par des services open source : elles se mettent à jour toutes seules."
+          },
+          badges: {
+            q: "Comment ajouter des badges de stack et de réseaux ?",
+            a: "Choisissez vos technologies dans la liste, ou créez vos propres badges shields.io avec le libellé, la couleur et le logo Simple Icons de votre choix. Un seul réglage change le style de tous les badges, parmi cinq, de `for-the-badge` à `flat-square`."
+          },
+          update: {
+            q: "Mon README restera-t-il à jour ?",
+            a: "Les cartes de stats, les séries et les graphes d’activité se mettent à jour seuls. Le serpent, vos derniers articles de blog et WakaTime demandent une GitHub Action : l’éditeur écrit pour vous les fichiers de workflow à committer."
+          },
+          import: {
+            q: "Puis-je modifier le README que j’ai déjà ?",
+            a: "Oui. Récupérez votre README de profil actuel depuis GitHub avec l’importateur, ou partez de votre pseudo pour préremplir nom, bio, liens et la stack citée dans votre profil."
+          }
+        },
+        templatesLink: "Parcourir les dix modèles"
+      },
+      templatesPage: {
+        chapter: "Modèles",
+        title: "Modèles de README de profil GitHub, *prêts à remplir.*",
+        lede: "Dix styles pour votre profil, chacun tiré du vrai moteur de l’éditeur. Choisissez-en un, ouvrez-le dans l’éditeur, et vos nom, liens et stack remplacent l’exemple.",
+        home: "Accueil",
+        crumb: "Modèles",
+        kind: "Modèle de README de profil GitHub",
+        bestFor: "Idéal pour",
+        sourceNote: "Collez-le tel quel dans README.md, ou ouvrez le modèle dans l’éditeur pour vous l’approprier.",
+        view: "Voir le modèle",
+        use: "Utiliser ce modèle",
+        rendered: "Rendu sur GitHub",
+        markdown: "Source Markdown",
+        copy: "Copier le Markdown",
+        copied: "Markdown copié",
+        copyError: "Copie impossible. Sélectionnez le Markdown et copiez-le à la main.",
+        sectionsTitle: "Sections, dans l’ordre",
+        sample: "Profil d’exemple. Robin Quill est inventé ; les cartes en direct utilisent le compte de démonstration public de GitHub, @octocat.",
+        howTitle: "Utiliser ce modèle en trois gestes",
+        howApply: "Ouvrez-le dans l’éditeur : mise en page, titres et styles sont appliqués, et ce que vous aviez déjà écrit est conservé.",
+        howFill: "Saisissez votre pseudo GitHub pour préremplir nom, bio, liens et stack, puis ajustez chaque section.",
+        howShip: "Copiez le Markdown ou téléchargez README.md et committez-le dans le dépôt public qui porte votre pseudo.",
+        more: "Autres modèles",
+        all: "Tous les modèles"
+      },
       closing: {
         title: "Votre profil n’est plus *qu’à un commit.*",
         cta: "Ouvrir l’éditeur",
@@ -1169,6 +1303,8 @@ export const translations = {
         source: "Code source sur GitHub",
         bug: "Signaler un bug",
         author: "Fait par Seonay",
+        templates: "Modèles de README",
+        faq: "FAQ",
         settingsTitle: "Réglages",
         eof: "EOF"
       }

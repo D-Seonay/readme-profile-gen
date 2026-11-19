@@ -55,6 +55,16 @@ export function Colophon() {
                 </Link>
               </li>
               <li>
+                <Link href="/templates" className={LINK}>
+                  <T k="footer.templates" />
+                </Link>
+              </li>
+              <li>
+                <Link href="/#faq" className={LINK}>
+                  <T k="footer.faq" />
+                </Link>
+              </li>
+              <li>
                 <a href={REPO_URL} target="_blank" rel="noopener noreferrer" className={LINK}>
                   <T k="footer.source" />
                 </a>

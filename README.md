@@ -98,8 +98,15 @@ The home page is a Server Component, so every section is in the HTML; only the p
 - **§2 Type case**: the anatomy of a custom badge, the five badge styles rendered by shields.io, and each section with the first line of Markdown it writes.
 - **§3 Proofs**: three sample profiles from the same engine, each one can be turned over to show its Markdown.
 - **§4 Press run**: the three moves above.
+- **§5 Questions**: the FAQ, in native `<details>` so every answer is in the HTML (and in the `FAQPage` structured data).
 
 The Open Graph image is generated at build time (`app/opengraph-image.tsx`) with fonts from `assets/og` (SIL Open Font License, licences included).
+
+## Template pages and search
+
+`/templates` lists the ten templates, and `/templates/<id>` shows each one: a sample README rendered the way GitHub shows it, its section list, its Markdown source and a "Use this template" link (`/builder?template=<id>` applies it on arrival, undoable). The samples are the engine's real output (`lib/templatePreview.ts`); the search titles and "best for" lines live in `lib/templateSeo.ts`. Every template page is static and has its own social card.
+
+Search and AI crawlers also get: one title, description and canonical per page, schema.org JSON-LD (`WebSite`, `WebApplication`, `Person`, `FAQPage`, `BreadcrumbList`, `CollectionPage`, `CreativeWork`, see `lib/structuredData.ts`), a sitemap with every page, a web manifest and an [`/llms.txt`](https://readme-profile-gen.matheodelaunay.studio/llms.txt) built from the same data.
 
 ## Design system: Atelier
 
@@ -149,9 +156,11 @@ Continuous integration runs the lint, `tsc --noEmit` and the tests on every push
 app/
   page.tsx               landing page (Server Component)
   builder/page.tsx       the builder
+  templates/             template index and one static page per template
   opengraph-image.tsx    social card, generated at build time
   api/health/route.ts    status of the third-party stats services
-  layout.tsx, globals.css, sitemap.ts, robots.ts, icon.svg
+  llms.txt/route.ts      site map for AI assistants
+  layout.tsx, globals.css, sitemap.ts, robots.ts, manifest.ts, icon.svg, apple-icon.tsx
 components/              builder panels
 components/landing/      landing sections and their client islands
 store/useReadmeStore.ts  state, persistence, JSON import/export, GitHub auto-fill
