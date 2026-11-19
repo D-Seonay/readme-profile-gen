@@ -1,16 +1,20 @@
-export default function sitemap() {
+import type { MetadataRoute } from 'next';
+import { SITE_URL } from '@/lib/site';
+
+export default function sitemap(): MetadataRoute.Sitemap {
+  const lastModified = new Date();
   return [
     {
-      url: 'https://readme-profile-gen.seonay.com',
-      lastModified: new Date(),
-      changeFrequency: 'daily' as const,
+      url: SITE_URL,
+      lastModified,
+      changeFrequency: 'monthly',
       priority: 1,
     },
     {
-      url: 'https://readme-profile-gen.seonay.com/generator',
-      lastModified: new Date(),
-      changeFrequency: 'daily' as const,
-      priority: 1,
+      url: `${SITE_URL}/builder`,
+      lastModified,
+      changeFrequency: 'monthly',
+      priority: 0.9,
     },
   ];
 }
