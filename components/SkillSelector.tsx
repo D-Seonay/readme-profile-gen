@@ -4,6 +4,7 @@ import React, { useState, useMemo } from 'react';
 import { skillsData, SKILL_CATEGORIES, Skill } from '@/lib/skillsData';
 import { useReadmeStore, BadgeStyle } from '@/store/useReadmeStore';
 import { useTranslation } from '@/hooks/useTranslation';
+import { CustomBadgeList } from '@/components/CustomBadgeList';
 
 const BADGE_STYLES: { label: string; value: BadgeStyle }[] = [
   { label: 'For the Badge', value: 'for-the-badge' },
@@ -164,6 +165,8 @@ export const SkillSelector = () => {
           </div>
         )}
       </div>
+
+      <CustomBadgeList list="customSkills" />
     </div>
   );
 };
